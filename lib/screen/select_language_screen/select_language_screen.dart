@@ -100,7 +100,7 @@ class SelectLanguageScreen extends StatelessWidget {
                           () {
                             bool isSelected =
                                 language == controller.selectedLanguage.value;
-                            return RadioGroup<Language?>(
+                            return/* RadioGroup<Language?>(
                               groupValue: controller.selectedLanguage.value,
                               onChanged: controller.onLanguageChange,
                               child: Container(
@@ -137,7 +137,7 @@ class SelectLanguageScreen extends StatelessWidget {
                                       style: TextStyleCustom.outFitMedium500(fontSize: 17, color: whitePure(context)),
                                     )),
                               ),
-                            );
+                            )*/Container();
                           },
                         );
                       }),
