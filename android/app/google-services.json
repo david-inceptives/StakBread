@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "503717627382",
+    "project_id": "stakbread",
+    "storage_bucket": "stakbread.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:503717627382:android:20c0dd9f328886ec0273d7",
+        "android_client_info": {
+          "package_name": "com.id.stakbread"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "503717627382-aaoods60op0a53mkh110ftil1p98vs58.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.id.stakbread",
+            "certificate_hash": "8f194e4b70c92d506822cf237f13e9639e8b7bf7"
+          }
+        },
+        {
+          "client_id": "503717627382-rv2erkm5vcmlgsj58hu3ioa2am3qkpd3.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA05U_3DAXxbaX_c_S2_Yk1EYE594S9YRQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "503717627382-rv2erkm5vcmlgsj58hu3ioa2am3qkpd3.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
