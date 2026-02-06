@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:stakBread/common/widget/custom_shimmer_fill_text.dart';
-import 'package:stakBread/common/widget/theme_blur_bg.dart';
 import 'package:stakBread/screen/splash_screen/splash_screen_controller.dart';
-import 'package:stakBread/utilities/app_res.dart';
-import 'package:stakBread/utilities/text_style_custom.dart';
+import 'package:stakBread/utilities/asset_res.dart';
 import 'package:stakBread/utilities/color_res.dart';
 
 class SplashScreen extends StatelessWidget {
@@ -14,21 +11,15 @@ class SplashScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     Get.put(SplashScreenController());
     return Scaffold(
-      body: Stack(
-        children: [
-          const ThemeBlurBg(),
-          Align(
-            alignment: Alignment.center,
-            child: CustomShimmerFillText(
-              text: AppRes.appName.toUpperCase(),
-              baseColor: ColorRes.whitePure,
-              textStyle: TextStyleCustom.unboundedBlack900(
-                  color: ColorRes.whitePure, fontSize: 30),
-              finalColor: ColorRes.whitePure,
-              shimmerColor: ColorRes.themeAccentSolid,
-            ),
-          )
-        ],
+      backgroundColor: ColorRes.whitePure,
+      body: Center(
+        child: Image.asset(
+          AssetRes.splash,
+          fit: BoxFit.contain,
+          width: 220,
+          height: 220,
+          errorBuilder: (_, __, ___) => const SizedBox(),
+        ),
       ),
     );
   }

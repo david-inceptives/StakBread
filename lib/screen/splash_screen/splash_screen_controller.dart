@@ -91,10 +91,10 @@ class SplashScreenController extends BaseController {
         });
       } else {
         bool isLanguageSelect = SessionManager.instance.getBool(SessionKeys.isLanguageScreenSelect);
-        bool onBoardingShow = SessionManager.instance.getBool(SessionKeys.isOnBoardingScreenSelect);
+        bool onBoardingShow = true;
         if (kTranslationFeatureEnabled && isLanguageSelect == false) {
           Get.off(() => const SelectLanguageScreen(languageNavigationType: LanguageNavigationType.fromStart));
-        } else if (onBoardingShow == false && (SessionManager.instance.getSettings()?.onBoarding ?? []).isNotEmpty) {
+        } else if (onBoardingShow == true) {
           Get.off(() => const OnBoardingScreen());
         } else {
           Get.off(() => const LoginScreen());

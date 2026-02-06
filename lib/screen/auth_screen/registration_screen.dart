@@ -35,15 +35,10 @@ class RegistrationScreen extends StatelessWidget {
                   width: 40,
                   height: 40,
                   margin: const EdgeInsets.only(right: 8),
-                  decoration: BoxDecoration(
+                  decoration: const BoxDecoration(
                     shape: BoxShape.circle,
-                    border: Border.all(color: ColorRes.borderLight),
                   ),
-                  child: Icon(
-                    Icons.info_outline_rounded,
-                    size: 22,
-                    color: ColorRes.textDarkGrey,
-                  ),
+                  child: const SizedBox()
                 ),
               ),
             ),

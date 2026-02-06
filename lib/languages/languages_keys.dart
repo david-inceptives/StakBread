@@ -5,6 +5,17 @@ class LKey {
   static const String shareYourTalent =
       "Share your talent with the\npeople around the world\nand build your healthy fanbase.";
   static const String next = "Next";
+  static const String skip = "Skip";
+  static const String getStarted = "Get Started";
+  static const String onboardingTitle = "Your Trusted App to\nBook Home Services";
+  static const String onboardingTitle2 = "All Your Service Requests in One Place";
+  static const String onboardingTitle3 = "Chat, Schedule, and Stay Connected Easily";
+  static const String onboardingDesc =
+      "Find reliable technicians anytime and manage all your service needs with ease.";
+  static const String onboardingDesc2 =
+      "Browse services, post tasks, track progress, and connect with providers instantly.";
+  static const String onboardingDesc3 =
+      "Message technicians, manage bookings, and stay updated throughout every task.";
   static const String getAppreciated = "GET\nAPPRECIATED";
   static const String select = "Select";
   static const String collectLikesAndComments =
@@ -51,6 +62,7 @@ class LKey {
       "By proceeding forward, You agree to the,";
   static const String privacyPolicy = "Privacy Policy";
   static const String andText = "and";
+  static const String orText = "Or";
   static const String termsOfUse = "Terms of Use";
   static const String descriptionHere = "Description here..";
   static const String signIn = "SIGN IN";
@@ -81,6 +93,11 @@ class LKey {
   static const String reTypePassword = "Re-Type Password";
   static const String enterHere = "Enter here..";
   static const String createAccount = "Create Account";
+  static const String useEmail = "Use Email";
+  static const String continueWithGoogle = "Continue with Google";
+  static const String continueWithApple = "Continue with Apple";
+  static const String signUpIntroText =
+      "Create a profile, follow other people's accounts, create your own posts and more.";
   static const String createYourAccount = "Create Your Account";
   static const String registerNowDesc =
       "Register now to book experts, follow your task updates, and stay connected.";

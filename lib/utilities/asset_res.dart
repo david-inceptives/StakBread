@@ -15,6 +15,10 @@ class AssetRes {
   static const String countriesCSV = '${csv}countries.csv';
 
   // Images
+  static const String splash = '${images}splash.png';
+  static const String onboarding1 = '${images}onboarding_2.png';
+  static const String onboarding2 = '${images}onboarding_1.png';
+  static const String onboarding3 = '${images}onboarding_3.png';
   static const String icBackground = '${images}ic_background.jpg';
   static const String icNoImage = '${images}ic_no_image.png';
   static const String icNoFilter = '${images}ic_no_filter.png';
@@ -146,4 +150,5 @@ class AssetRes {
   static const String icAddNew = '${icons}add_new.png';
   static const String icProfile = '${icons}profile.png';
   static const String icStore = '${icons}store.png';
+  static const String icLogo = '${icons}logo.png';
 }
