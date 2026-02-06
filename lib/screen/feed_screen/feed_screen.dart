@@ -21,7 +21,6 @@ class FeedScreen extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        FeedTopView(controller: controller),
         Expanded(
             child: MyRefreshIndicator(
           refreshKey: controller.refreshKey,
@@ -56,7 +55,7 @@ class FeedScreen extends StatelessWidget {
 
                 child: Column(
                   children: [
-                    StoryView(controller: controller),
+
                     PostList(
                         posts: controller.posts,
                         isLoading: false.obs,

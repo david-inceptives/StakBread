@@ -6,11 +6,8 @@ import 'package:proste_indexed_stack/proste_indexed_stack.dart';
 import 'package:stakBread/common/widget/banner_ads_custom.dart';
 import 'package:stakBread/model/user_model/user_model.dart';
 import 'package:stakBread/screen/dashboard_screen/dashboard_screen_controller.dart';
-import 'package:stakBread/screen/explore_screen/explore_screen.dart';
-import 'package:stakBread/screen/feed_screen/feed_screen.dart';
+import 'package:stakBread/screen/discover_screen/discover_screen.dart';
 import 'package:stakBread/screen/home_screen/home_screen.dart';
-import 'package:stakBread/screen/live_stream/live_stream_search_screen/live_stream_search_screen.dart';
-import 'package:stakBread/screen/message_screen/message_screen.dart';
 import 'package:stakBread/screen/profile_screen/profile_screen.dart';
 import 'package:stakBread/utilities/style_res.dart';
 import 'package:stakBread/utilities/text_style_custom.dart';
@@ -34,8 +31,8 @@ class DashboardScreen extends StatelessWidget {
               child: ProsteIndexedStack(
                 index: controller.selectedPageIndex.value,
                 children: [
-                  IndexedStackChild(child: const HomeScreen(), preload: true),
-                  IndexedStackChild(child: FeedScreen(myUser: myUser), preload: true),
+                  IndexedStackChild(child: DiscoverScreen(myUser: myUser), preload: true),
+                  IndexedStackChild(child: Container(), preload: false),
                   IndexedStackChild(child: Container(), preload: false),
                   IndexedStackChild(child: Container(), preload: false),
                   IndexedStackChild(child: ProfileScreen(isDashBoard: false, user: myUser, isTopBarVisible: false), preload: true)

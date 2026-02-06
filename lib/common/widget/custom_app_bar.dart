@@ -71,7 +71,7 @@ class CustomAppBar extends StatelessWidget {
                 rowWidget ?? const SizedBox(width: 48)
               ],
             ),
-            widget ?? const SizedBox(height: 10),
+            widget ?? const SizedBox(height: 0),
           ],
         ),
       ),

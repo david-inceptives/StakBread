@@ -116,7 +116,6 @@ class _ReelsScreenState extends State<ReelsScreen> {
                   ),
                 ),
               ),
-              ReelsTextField(controller: controller),
             ],
           ),
           ReelsTopBar(controller: controller, widget: widget.widget),

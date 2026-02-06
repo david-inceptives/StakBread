@@ -14,6 +14,7 @@ class ReelsTopBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final canPop = Navigator.of(context).canPop();
     return Stack(
       children: [
         SafeArea(
@@ -24,66 +25,39 @@ class ReelsTopBar extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                if (controller.isHomePage)
-                  Obx(() {
-                    final reels = controller.reels;
-                    final index = controller.currentIndex.value;
-
-                    // Prevent invalid index access
-                    if (reels.isEmpty || index < 0 || index >= reels.length) {
-                      return const SizedBox(width: 30, height: 30);
-                    }
-
-                    bool isVisible = reels[index].userId != SessionManager.instance.getUserID();
-
-                    return Visibility(
-                      visible: isVisible,
-                      replacement: const SizedBox(width: 30, height: 30),
-                      child: InkWell(
-                        onTap: controller.onReportTap,
-                        child: Image.asset(AssetRes.icAlert, width: 30, height: 30),
-                      ),
-                    );
-                  })
+                if (canPop || !controller.isHomePage)
+                  CustomBackButton(
+                    color: ColorRes.whitePure,
+                    height: 30,
+                    width: 30,
+                    padding: EdgeInsets.zero,
+                    image: AssetRes.icBackArrow_1,
+                  )
                 else
-                  Visibility(
-                    visible: !controller.isHomePage,
-                    replacement: const SizedBox(width: 30),
-                    child: CustomBackButton(
-                        color: ColorRes.whitePure,
-                        height: 30,
-                        width: 30,
-                        padding: EdgeInsets.zero,
-                        image: AssetRes.icBackArrow_1),
-                  ),
+                  const SizedBox(width: 30, height: 30),
                 if (widget != null) Flexible(child: widget!),
-                if (controller.isHomePage)
-                  InkWell(
-                      onTap: (){},//controller.openPostOptionsSheet,
+                Obx(() {
+                  final reels = controller.reels;
+                  final index = controller.currentIndex.value;
+                  if (reels.isEmpty || index < 0 || index >= reels.length) {
+                    return const SizedBox(width: 30, height: 30);
+                  }
+                  bool reportVisible =
+                      reels[index].userId != SessionManager.instance.getUserID();
+                  return Visibility(
+                    visible: reportVisible,
+                    replacement: const SizedBox(width: 30, height: 30),
+                    child: InkWell(
+                      onTap: controller.onReportTap,
                       child: Image.asset(
-                        AssetRes.icAdd,
+                        AssetRes.icAlert,
                         width: 30,
                         height: 30,
-                        color: Colors.transparent,
-                      ))
-                else
-                  Obx(() {
-                    if (controller.reels.isEmpty) {
-                      return const SizedBox(width: 30, height: 30);
-                    }
-
-                    bool isVisible =
-                        controller.reels[controller.currentIndex.value].userId != SessionManager.instance.getUserID();
-
-                    return Visibility(
-                      visible: isVisible,
-                      replacement: const SizedBox(width: 30, height: 30),
-                      child: InkWell(
-                        onTap: controller.onReportTap,
-                        child: Image.asset(AssetRes.icAlert, width: 30, height: 30),
+                        color: ColorRes.whitePure,
                       ),
-                    );
-                  })
+                    ),
+                  );
+                }),
               ],
             ),
           ),

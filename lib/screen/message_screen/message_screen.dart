@@ -10,7 +10,8 @@ import 'package:stakBread/screen/message_screen/message_screen_controller.dart';
 import 'package:stakBread/screen/message_screen/widget/chat_conversation_user_card.dart';
 import 'package:stakBread/utilities/color_res.dart';
 import 'package:stakBread/utilities/text_style_custom.dart';
-import 'package:stakBread/utilities/color_res.dart';
+
+import '../../common/widget/custom_app_bar.dart';
 
 class MessageScreen extends StatelessWidget {
   const MessageScreen({super.key});
@@ -21,19 +22,19 @@ class MessageScreen extends StatelessWidget {
     return Scaffold(
       body: Column(
         children: [
-          Container(
-            color: ColorRes.whitePure,
-            child: SafeArea(
-              minimum: const EdgeInsets.only(top: 15),
-              child: Column(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 10.0),
-                    child: Text(LKey.messages.tr,
-                        style: TextStyleCustom.unboundedMedium500(
-                            fontSize: 15, color: ColorRes.textDarkGrey)),
-                  ),
-                  CustomTabSwitcher(
+          CustomAppBar(
+            title: LKey.messages.tr,
+            titleStyle: TextStyleCustom.unboundedSemiBold600(
+                fontSize: 15, color: ColorRes.textDarkGrey),
+          ),
+          Expanded(
+            child: Column(
+              children: [
+
+                Container(
+                  color: ColorRes.whitePure,
+                  padding: const EdgeInsets.symmetric(horizontal: 10),
+                  child: CustomTabSwitcher(
                     items: controller.chatCategories,
                     onTap: (index) {
                       controller.onPageChanged(index);
@@ -62,30 +63,30 @@ class MessageScreen extends StatelessWidget {
                       );
                     }),
                     widgetTabIndex: 1,
-                    margin: const EdgeInsets.all(10),
+                    margin: EdgeInsets.zero,
                   ),
-                ],
-              ),
+                ),
+                const CustomSearchTextField(),
+                Expanded(
+                  child: Obx(
+                    () => controller.isLoading.value &&
+                            (controller.selectedChatCategory.value == 0
+                                ? controller.chatsUsers.isEmpty
+                                : controller.requestsUsers.isEmpty)
+                        ? const LoaderWidget()
+                        : PageView(
+                            controller: controller.pageController,
+                            onPageChanged: controller.onPageChanged,
+                            children: const [
+                              ChatsListView(),
+                              RequestsListView(),
+                            ],
+                          ),
+                  ),
+                )
+              ],
             ),
           ),
-          const CustomSearchTextField(),
-          Expanded(
-            child: Obx(
-              () => controller.isLoading.value &&
-                      (controller.selectedChatCategory.value == 0
-                          ? controller.chatsUsers.isEmpty
-                          : controller.requestsUsers.isEmpty)
-                  ? const LoaderWidget()
-                  : PageView(
-                      controller: controller.pageController,
-                      onPageChanged: controller.onPageChanged,
-                      children: const [
-                        ChatsListView(),
-                        RequestsListView(),
-                      ],
-                    ),
-            ),
-          )
         ],
       ),
     );

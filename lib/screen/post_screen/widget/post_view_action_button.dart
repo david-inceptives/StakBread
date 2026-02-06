@@ -50,12 +50,12 @@ class PostViewActionButton extends StatelessWidget {
                   ? AssetRes.icFillBookmark
                   : AssetRes.icPostBookmark,
               count: post.saves),
-          if (post.userId != SessionManager.instance.getUserID())
+          /*if (post.userId != SessionManager.instance.getUserID())
             PostViewIconWithCount(
               onTap: () => controller.onGiftTap(post),
               image: AssetRes.icGift_2,
               isCountVisible: false,
-            ),
+            ),*/
         ],
       ),
     );
