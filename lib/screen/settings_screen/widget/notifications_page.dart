@@ -42,12 +42,12 @@ class NotificationsPage extends StatelessWidget {
             'title': LKey.mentions.tr,
             'value': user?.notifyMention
           },
-          {
+     /*     {
             'id': SettingToggle.notifyGiftReceived,
             'icon': AssetRes.icGift_1,
             'title': LKey.giftsReceived.tr,
             'value': user?.notifyGiftReceived
-          },
+          },*/
           {
             'id': SettingToggle.notifyChat,
             'icon': AssetRes.icChat_1,

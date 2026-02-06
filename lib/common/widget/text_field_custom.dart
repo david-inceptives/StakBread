@@ -65,10 +65,11 @@ class _TextFieldCustomState extends State<TextFieldCustom> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20.0),
+          padding: const EdgeInsets.symmetric(horizontal: 0.0),
           child: Text(widget.title,
               style: TextStyleCustom.outFitRegular400(
-                  color: ColorRes.textDarkGrey, fontSize: 17)),
+                fontSize: 15,
+                color: ColorRes.textLightGrey,)),
         ),
         Container(
           height: widget.height,
@@ -139,7 +140,7 @@ class _TextFieldCustomState extends State<TextFieldCustom> {
                           child: (widget.prefixIcon ??
                               Container(
                                 height: 49,
-                                color: ColorRes.textDarkGrey,
+                                color: const Color(0xFFF0F0F0),
                                 alignment: Alignment.center,
                                 margin: EdgeInsets.only(
                                     right: TextDirection.ltr ==
@@ -156,10 +157,10 @@ class _TextFieldCustomState extends State<TextFieldCustom> {
                                     Obx(() => Text(
                                         '${controller.selectedCode.value?.countryCode ?? ''} ${controller.selectedCode.value?.phoneCode ?? ''}',
                                         style: TextStyleCustom.outFitLight300(
-                                            fontSize: 17,
-                                            color: ColorRes.whitePure))),
+                                            fontSize: 15,
+                                            color: ColorRes.blackPure))),
                                     Icon(Icons.arrow_drop_down,
-                                        color: ColorRes.whitePure, size: 30)
+                                        color: ColorRes.blackPure, size: 30)
                                   ],
                                 ),
                               )),

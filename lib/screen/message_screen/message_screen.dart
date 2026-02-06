@@ -18,74 +18,76 @@ class MessageScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final controller = Get.put(MessageScreenController());
-    return Column(
-      children: [
-        Container(
-          color: ColorRes.whitePure,
-          child: SafeArea(
-            minimum: const EdgeInsets.only(top: 15),
-            child: Column(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 10.0),
-                  child: Text(LKey.messages.tr,
-                      style: TextStyleCustom.unboundedMedium500(
-                          fontSize: 15, color: ColorRes.textDarkGrey)),
-                ),
-                CustomTabSwitcher(
-                  items: controller.chatCategories,
-                  onTap: (index) {
-                    controller.onPageChanged(index);
-                    controller.pageController.animateToPage(index,
-                        duration: const Duration(milliseconds: 300),
-                        curve: Curves.linear);
-                  },
-                  selectedIndex: controller.selectedChatCategory,
-                  widget: Obx(() {
-                    int length = controller.dashboardController.requestUnReadCount.value;
-                    if (length <= 0) {
-                      return const SizedBox();
-                    }
-                    return Container(
-                      height: 22,
-                      width: 22,
-                      margin: const EdgeInsets.symmetric(horizontal: 5),
-                      decoration: const BoxDecoration(
-                          shape: BoxShape.circle, color: ColorRes.likeRed),
-                      alignment: Alignment.center,
-                      child: Text(
-                        '$length',
-                        style: TextStyleCustom.outFitRegular400(
-                            fontSize: 12, color: ColorRes.whitePure),
-                      ),
-                    );
-                  }),
-                  widgetTabIndex: 1,
-                  margin: const EdgeInsets.all(10),
-                ),
-              ],
+    return Scaffold(
+      body: Column(
+        children: [
+          Container(
+            color: ColorRes.whitePure,
+            child: SafeArea(
+              minimum: const EdgeInsets.only(top: 15),
+              child: Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 10.0),
+                    child: Text(LKey.messages.tr,
+                        style: TextStyleCustom.unboundedMedium500(
+                            fontSize: 15, color: ColorRes.textDarkGrey)),
+                  ),
+                  CustomTabSwitcher(
+                    items: controller.chatCategories,
+                    onTap: (index) {
+                      controller.onPageChanged(index);
+                      controller.pageController.animateToPage(index,
+                          duration: const Duration(milliseconds: 300),
+                          curve: Curves.linear);
+                    },
+                    selectedIndex: controller.selectedChatCategory,
+                    widget: Obx(() {
+                      int length = controller.dashboardController.requestUnReadCount.value;
+                      if (length <= 0) {
+                        return const SizedBox();
+                      }
+                      return Container(
+                        height: 22,
+                        width: 22,
+                        margin: const EdgeInsets.symmetric(horizontal: 5),
+                        decoration: const BoxDecoration(
+                            shape: BoxShape.circle, color: ColorRes.likeRed),
+                        alignment: Alignment.center,
+                        child: Text(
+                          '$length',
+                          style: TextStyleCustom.outFitRegular400(
+                              fontSize: 12, color: ColorRes.whitePure),
+                        ),
+                      );
+                    }),
+                    widgetTabIndex: 1,
+                    margin: const EdgeInsets.all(10),
+                  ),
+                ],
+              ),
             ),
           ),
-        ),
-        const CustomSearchTextField(),
-        Expanded(
-          child: Obx(
-            () => controller.isLoading.value &&
-                    (controller.selectedChatCategory.value == 0
-                        ? controller.chatsUsers.isEmpty
-                        : controller.requestsUsers.isEmpty)
-                ? const LoaderWidget()
-                : PageView(
-                    controller: controller.pageController,
-                    onPageChanged: controller.onPageChanged,
-                    children: const [
-                      ChatsListView(),
-                      RequestsListView(),
-                    ],
-                  ),
-          ),
-        )
-      ],
+          const CustomSearchTextField(),
+          Expanded(
+            child: Obx(
+              () => controller.isLoading.value &&
+                      (controller.selectedChatCategory.value == 0
+                          ? controller.chatsUsers.isEmpty
+                          : controller.requestsUsers.isEmpty)
+                  ? const LoaderWidget()
+                  : PageView(
+                      controller: controller.pageController,
+                      onPageChanged: controller.onPageChanged,
+                      children: const [
+                        ChatsListView(),
+                        RequestsListView(),
+                      ],
+                    ),
+            ),
+          )
+        ],
+      ),
     );
   }
 }

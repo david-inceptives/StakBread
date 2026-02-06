@@ -133,6 +133,18 @@ class LKey {
   static const String showChatBtn = "Show Chat Button";
   static const String notifications = "Notifications";
   static const String general = "General";
+  static const String accountSettings = "Account Settings";
+  static const String updatePassword = "Update Password";
+  static const String pushNotifications = "Push Notifications";
+  static const String orderManagement = "Order Management";
+  static const String productsSold = "Products Sold";
+  static const String productsPurchased = "Products Purchased";
+  static const String paymentAndBilling = "Payment & Billing";
+  static const String savedCardsPaymentMethods = "Saved Cards / Payment Methods";
+  static const String transactionHistory = "Transaction History";
+  static const String subscriptionIfApplicable = "Subscription (if applicable)";
+  static const String legalAndPolicies = "Legal & Policies";
+  static const String termsAndConditions = "Terms & Conditions";
   static const String postLikes = "Post Likes";
   static const String commentsOnPost = "Comments On Post";
   static const String mentions = "Mentions";
@@ -158,6 +170,7 @@ class LKey {
   static const String edit = "Edit";
   static const String delete = "Delete";
   static const String save = "Save";
+  static const String saveChanges = "Save Changes";
   static const String share = "Share";
   static const String sharePost = "Share Post";
   static const String pin = "Pin";

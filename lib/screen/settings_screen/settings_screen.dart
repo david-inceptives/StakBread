@@ -1,27 +1,20 @@
-import 'package:figma_squircle_updated/figma_squircle.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:stakBread/common/widget/custom_app_bar.dart';
-import 'package:stakBread/common/widget/custom_drop_down.dart';
-import 'package:stakBread/common/widget/custom_toggle.dart';
 import 'package:stakBread/languages/languages_keys.dart';
 import 'package:stakBread/model/user_model/user_model.dart';
-import 'package:stakBread/screen/blocked_user_screen/blocked_user_screen.dart';
-import 'package:stakBread/screen/coin_wallet_screen/coin_wallet_screen.dart';
 import 'package:stakBread/screen/edit_profile_screen/edit_profile_screen.dart';
-import 'package:stakBread/screen/qr_code_screen/qr_code_screen.dart';
-import 'package:stakBread/screen/saved_post_screen/saved_post_screen.dart';
-import 'package:stakBread/screen/select_language_screen/select_language_screen.dart';
 import 'package:stakBread/screen/settings_screen/settings_screen_controller.dart';
 import 'package:stakBread/screen/settings_screen/widget/notifications_page.dart';
-import 'package:stakBread/screen/settings_screen/widget/setting_icon_text_with_arrow.dart';
 import 'package:stakBread/screen/subscription_screen/subscription_screen.dart';
 import 'package:stakBread/screen/term_and_privacy_screen/term_and_privacy_screen.dart';
-import 'package:stakBread/utilities/asset_res.dart';
-import 'package:stakBread/utilities/const_res.dart';
-import 'package:stakBread/utilities/style_res.dart';
+import 'package:stakBread/screen/withdrawals_screen/withdrawals_screen.dart';
 import 'package:stakBread/utilities/text_style_custom.dart';
 import 'package:stakBread/utilities/color_res.dart';
+
+import '../../common/widget/custom_drop_down.dart';
+import '../../common/widget/custom_toggle.dart';
+import '../blocked_user_screen/blocked_user_screen.dart';
+import '../saved_post_screen/saved_post_screen.dart';
 
 class SettingsScreen extends StatelessWidget {
   final Function(User? user)? onUpdateUser;
@@ -32,243 +25,292 @@ class SettingsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final controller = Get.put(SettingsScreenController());
     return Scaffold(
-        body: Column(
-      children: [
-        CustomAppBar(title: LKey.settings.tr),
-        Expanded(
-            child: SingleChildScrollView(
-          padding: EdgeInsets.only(bottom: AppBar().preferredSize.height),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              SubscriptionCard(
-                  controller: controller, onUpdateUser: onUpdateUser),
-              SettingLabel(title: LKey.personal.toUpperCase()),
-              SettingIconTextWithArrow(
-                icon: AssetRes.icEdit,
-                title: LKey.editProfile,
-                onTap: () {
-                  Get.to(() => EditProfileScreen(onUpdateUser: onUpdateUser));
-                },
-              ),
-              SettingIconTextWithArrow(
-                icon: AssetRes.icPostBookmark,
-                title: LKey.savedPosts,
-                onTap: () {
-                  Get.to(() => const SavedPostScreen());
-                },
-              ),
-              if (kTranslationFeatureEnabled)
-                SettingIconTextWithArrow(
-                  icon: AssetRes.icLanguage_1,
-                  title: LKey.languages,
-                  onTap: () {
-                    Get.to(() => const SelectLanguageScreen(
-                        languageNavigationType:
-                            LanguageNavigationType.fromSetting));
-                  },
-                ),
-              SettingIconTextWithArrow(
-                icon: AssetRes.icBlock,
-                title: LKey.blockedUsers,
-                onTap: () {
-                  Get.to(() => const BlockedUserScreen());
-                },
-              ),
-              SettingIconTextWithArrow(
-                icon: AssetRes.icQrCode_1,
-                title: LKey.myQrCode,
-                onTap: () {
-                  Get.to(() => const QrCodeScreen());
-                },
-              ),
-              SettingIconTextWithArrow(
-                icon: AssetRes.icWallet,
-                title: LKey.coinWallet,
-                onTap: () {
-                  Get.to(() => const CoinWalletScreen());
-                },
-              ),
-              SettingLabel(title: LKey.privacy.toUpperCase()),
-              Obx(
-                () => SettingIconTextWithArrow(
-                  icon: AssetRes.icEye_1,
-                  title: LKey.whoCanSeePosts,
-                  widget: CustomDropDownBtn<WhoCanSeePost>(
-                    items: WhoCanSeePost.values,
-                    onChanged: controller.isUpdateApiCalled.value
-                        ? null
-                        : controller.onChangedWhoCanSeePost,
-                    selectedValue: controller.selectedWhoCanSeePost.value,
-                    style: TextStyleCustom.outFitRegular400(
-                        fontSize: 15, color: ColorRes.textLightGrey),
-                    getTitle: (value) => value.title,
+      backgroundColor: ColorRes.whitePure,
+      body: SafeArea(
+        bottom: false,
+        child: Column(
+          children: [
+            _buildAppBar(context),
+            Expanded(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.only(bottom: 24),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _SectionHeader(title: LKey.accountSettings.tr),
+                    _SettingTile(
+                      title: LKey.editProfile.tr,
+                      onTap: () =>
+                          Get.to(() => EditProfileScreen(onUpdateUser: onUpdateUser)),
+                    ),
+                    _SettingTile(
+                      title: LKey.updatePassword.tr,
+                      onTap: () => _showUpdatePasswordHint(),
+                    ),
+                    _SettingTile(
+
+                      title: LKey.savedPosts,
+                      onTap: () {
+                        Get.to(() => const SavedPostScreen());
+                      },
+                    ),
+                _SettingTile(
+                      title: LKey.blockedUsers,
+                      onTap: () {
+                        Get.to(() => const BlockedUserScreen());
+                      },
+                    ),
+
+              /*  Obx(
+                      () => SettingIconTextWithArrow(
+                    title: LKey.whoCanSeePosts,
+                    widget: CustomDropDownBtn<WhoCanSeePost>(
+                      items: WhoCanSeePost.values,
+                      onChanged: controller.isUpdateApiCalled.value
+                          ? null
+                          : controller.onChangedWhoCanSeePost,
+                      selectedValue: controller.selectedWhoCanSeePost.value,
+                      style: TextStyleCustom.outFitRegular400(
+                          fontSize: 15, color: ColorRes.textLightGrey),
+                      getTitle: (value) => value.title,
+                    ),
                   ),
                 ),
-              ),
-              Obx(
-                () {
-                  return SettingIconTextWithArrow(
-                    icon: AssetRes.icEye_1,
-                    title: LKey.showMyFollowings,
-                    widget: CustomToggle(
-                      isOn: (controller.myUser.value?.showMyFollowing == 1).obs,
-                      onChanged: (value) {
-                        controller.onChangedToggle(
-                            value, SettingToggle.showMyFollowings);
-                      },
+                Obx(
+                      () {
+                    return SettingIconTextWithArrow(
+                      title: LKey.showMyFollowings,
+                      widget: CustomToggle(
+                        isOn: (controller.myUser.value?.showMyFollowing == 1).obs,
+                        onChanged: (value) {
+                          controller.onChangedToggle(
+                              value, SettingToggle.showMyFollowings);
+                        },
+                      ),
+                    );
+                  },),*/
+                    _SectionHeader(title: LKey.notifications.tr),
+                    _SettingTile(
+                      title: LKey.pushNotifications.tr,
+                      onTap: () => Get.to(() => const NotificationsPage()),
                     ),
-                  );
-                },
-              ),
-              Obx(
-                () {
-                  return SettingIconTextWithArrow(
-                    icon: AssetRes.icMessage,
-                    title: LKey.showChatBtn,
-                    widget: CustomToggle(
-                      isOn: (controller.myUser.value?.receiveMessage == 1).obs,
-                      onChanged: (value) async {
-                        controller.onChangedToggle(
-                            value, SettingToggle.receiveMessage);
-                      },
+                    _SectionHeader(title: LKey.orderManagement.tr),
+                    _SettingTile(
+                      title: LKey.productsSold.tr,
+                      onTap: () {},
                     ),
-                  );
-                },
-              ),
-              SettingIconTextWithArrow(
-                icon: AssetRes.icNotification_1,
-                title: LKey.notifications,
-                onTap: () {
-                  Get.to(() => const NotificationsPage());
-                },
-              ),
-              SettingLabel(title: LKey.general.toUpperCase()),
-              SettingIconTextWithArrow(
-                icon: AssetRes.icReport,
-                title: LKey.termsOfUse,
-                onTap: () {
-                  Get.to(() => const TermAndPrivacyScreen(
-                      type: TermAndPrivacyType.termAndCondition));
-                },
-              ),
-              SettingIconTextWithArrow(
-                icon: AssetRes.icReport,
-                title: LKey.privacyPolicy,
-                onTap: () {
-                  Get.to(() => const TermAndPrivacyScreen(
-                      type: TermAndPrivacyType.privacyPolicy));
-                },
-              ),
-              SettingIconTextWithArrow(
-                icon: AssetRes.icLogout,
-                title: LKey.logOut,
-                onTap: controller.onLogout,
-                widget: const SizedBox(),
-              ),
-              SettingIconTextWithArrow(
-                icon: AssetRes.icDelete2,
-                title: LKey.deleteAccount,
-                onTap: controller.onDeleteAccount,
-                widget: const SizedBox(),
-              ),
-            ],
-          ),
-        ))
-      ],
-    ));
-  }
-}
-
-class SubscriptionCard extends StatefulWidget {
-  final SettingsScreenController controller;
-  final Function(User? user)? onUpdateUser;
-
-  const SubscriptionCard(
-      {super.key, required this.controller, this.onUpdateUser});
-
-  @override
-  State<SubscriptionCard> createState() => _SubscriptionCardState();
-}
-
-class _SubscriptionCardState extends State<SubscriptionCard> {
-  @override
-  Widget build(BuildContext context) {
-    return Obx(() {
-      bool isVerify = widget.controller.myUser.value?.isVerify == 1;
-      return InkWell(
-        onTap: () {
-          if (!isVerify) {
-            Get.to<bool>(
-                    () => SubscriptionScreen(onUpdateUser: widget.onUpdateUser))
-                ?.then((value) {
-              if (value == true) {
-                widget.controller.myUser.update((val) => val?.isVerify = 1);
-              }
-            });
-          }
-        },
-        child: Container(
-          height: 47,
-          padding: const EdgeInsets.symmetric(horizontal: 15),
-          margin: const EdgeInsets.all(5),
-          decoration: ShapeDecoration(
-              shape: SmoothRectangleBorder(
-                  borderRadius:
-                      SmoothBorderRadius(cornerRadius: 7, cornerSmoothing: 1)),
-              gradient: StyleRes.themeGradient),
-          child: Row(
-            spacing: 11,
-            children: [
-              Image.asset(AssetRes.icPro, width: 24, height: 24),
-              Expanded(
-                child: RichText(
-                  text: TextSpan(
-                      text: isVerify ? LKey.youAre.tr : LKey.become.tr,
-                      style: TextStyleCustom.outFitRegular400(
-                          color: ColorRes.whitePure, fontSize: 15),
-                      children: [
-                        TextSpan(
-                            text: ' ${LKey.plus.tr} ',
-                            style: TextStyleCustom.outFitExtraBold800(
-                                color: ColorRes.whitePure, fontSize: 15)),
-                        TextSpan(
-                            text: isVerify ? LKey.member.tr : '',
-                            style: TextStyleCustom.outFitRegular400(
-                                color: ColorRes.whitePure, fontSize: 15)),
-                      ]),
+                    _SettingTile(
+                      title: LKey.productsPurchased.tr,
+                      onTap: () {},
+                    ),
+                    _SectionHeader(title: LKey.paymentAndBilling.tr),
+                    _SettingTile(
+                      title: LKey.savedCardsPaymentMethods.tr,
+                      onTap: () {},
+                    ),
+                    _SettingTile(
+                      title: LKey.transactionHistory.tr,
+                      onTap: () => Get.to(() => const WithdrawalsScreen()),
+                    ),
+                    /*_SettingTile(
+                      title: LKey.subscriptionIfApplicable.tr,
+                      onTap: () => Get.to<bool>(
+                            () => SubscriptionScreen(onUpdateUser: onUpdateUser),
+                          )?.then((v) {
+                        if (v == true) controller.initData();
+                      }),
+                    ),*/
+                    _SectionHeader(title: LKey.legalAndPolicies.tr),
+                    _SettingTile(
+                      title: LKey.termsAndConditions.tr,
+                      onTap: () => Get.to(() => const TermAndPrivacyScreen(
+                            type: TermAndPrivacyType.termAndCondition,
+                          )),
+                    ),
+                    _SettingTile(
+                      title: LKey.privacyPolicy.tr,
+                      onTap: () => Get.to(() => const TermAndPrivacyScreen(
+                            type: TermAndPrivacyType.privacyPolicy,
+                          )),
+                    ),
+                  ],
                 ),
               ),
-              if (!isVerify)
-                Image.asset(AssetRes.icForwardArrow,
-                    width: 24, height: 20, color: ColorRes.whitePure)
-            ],
-          ),
+            ),
+          ],
         ),
-      );
-    });
+      ),
+    );
+  }
+
+  Widget _buildAppBar(BuildContext context) {
+    return Container(
+      color: ColorRes.whitePure,
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      child: Row(
+        children: [
+          GestureDetector(
+            onTap: () => Get.back(),
+            child: Container(
+              width: 40,
+              height: 40,
+              decoration: BoxDecoration(
+                color: const Color(0xFFF0F0F0),
+                shape: BoxShape.circle,
+              ),
+              alignment: Alignment.center,
+              child: Icon(
+                Icons.arrow_back_ios_new_rounded,
+                size: 18,
+                color: ColorRes.textDarkGrey,
+              ),
+            ),
+          ),
+          Expanded(
+            child: Text(
+              LKey.settings.tr,
+              textAlign: TextAlign.center,
+              style: TextStyleCustom.unboundedSemiBold600(
+                fontSize: 18,
+                color: ColorRes.textDarkGrey,
+              ),
+            ),
+          ),
+          GestureDetector(
+            onTap: () => _showMoreOptions(context),
+            child: Container(
+              width: 40,
+              height: 40,
+              decoration: BoxDecoration(
+                color: const Color(0xFFF0F0F0),
+                shape: BoxShape.circle,
+              ),
+              alignment: Alignment.center,
+              child: Icon(
+                Icons.more_horiz_rounded,
+                size: 22,
+                color: ColorRes.textDarkGrey,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showUpdatePasswordHint() {
+    Get.snackbar(
+      LKey.updatePassword.tr,
+      'Reset link can be sent to your email. Use Forget Password on login screen.',
+      snackPosition: SnackPosition.BOTTOM,
+      backgroundColor: ColorRes.textDarkGrey,
+      colorText: ColorRes.whitePure,
+    );
+  }
+
+  void _showMoreOptions(BuildContext context) {
+    final controller = Get.find<SettingsScreenController>();
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: ColorRes.whitePure,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      ),
+      builder: (ctx) => SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(
+              leading: Icon(Icons.logout_rounded, color: ColorRes.textDarkGrey),
+              title: Text(
+                LKey.logOut.tr,
+                style: TextStyleCustom.outFitRegular400(
+                  fontSize: 16,
+                  color: ColorRes.textDarkGrey,
+                ),
+              ),
+              onTap: () {
+                Navigator.pop(ctx);
+                controller.onLogout();
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.delete_outline_rounded, color: ColorRes.likeRed),
+              title: Text(
+                LKey.deleteAccount.tr,
+                style: TextStyleCustom.outFitRegular400(
+                  fontSize: 16,
+                  color: ColorRes.likeRed,
+                ),
+              ),
+              onTap: () {
+                Navigator.pop(ctx);
+                controller.onDeleteAccount();
+              },
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }
 
-class SettingLabel extends StatelessWidget {
+class _SectionHeader extends StatelessWidget {
   final String title;
 
-  const SettingLabel({super.key, required this.title});
+  const _SectionHeader({required this.title});
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: 39,
-      width: double.infinity,
-      color: ColorRes.bgMediumGrey,
-      alignment: AlignmentDirectional.centerStart,
-      padding: const EdgeInsets.symmetric(horizontal: 20),
-      margin: const EdgeInsets.symmetric(vertical: 1),
+    return Padding(
+      padding: const EdgeInsets.only(left: 20, top: 24, bottom: 12),
       child: Text(
-        title.tr.toUpperCase(),
-        style: TextStyleCustom.outFitMedium500(
-                fontSize: 13, color: ColorRes.textLightGrey)
-            .copyWith(letterSpacing: 2),
+        title,
+        style: TextStyleCustom.unboundedSemiBold600(
+          fontSize: 16,
+          color: ColorRes.textDarkGrey,
+        ),
+      ),
+    );
+  }
+}
+
+class _SettingTile extends StatelessWidget {
+  final String title;
+  final VoidCallback onTap;
+
+  const _SettingTile({required this.title, required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: onTap,
+      child: Container(
+        width: double.infinity,
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+        decoration: BoxDecoration(
+          border: Border(
+            bottom: BorderSide(color: ColorRes.borderLight, width: 1),
+          ),
+        ),
+        child: Row(
+          children: [
+            Expanded(
+              child: Text(
+                title,
+                style: TextStyleCustom.outFitRegular400(
+                  fontSize: 15,
+                  color: ColorRes.textDarkGrey,
+                ),
+              ),
+            ),
+            Icon(
+              Icons.arrow_forward_ios_rounded,
+              size: 14,
+              color: ColorRes.textDarkGrey,
+            ),
+          ],
+        ),
       ),
     );
   }

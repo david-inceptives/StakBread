@@ -10,6 +10,7 @@ import 'package:stakBread/common/widget/text_button_custom.dart';
 import 'package:stakBread/languages/languages_keys.dart';
 import 'package:stakBread/model/user_model/user_model.dart';
 import 'package:stakBread/screen/dashboard_screen/dashboard_screen_controller.dart';
+import 'package:stakBread/screen/message_screen/message_screen.dart';
 import 'package:stakBread/screen/notification_screen/notification_screen.dart';
 import 'package:stakBread/screen/profile_screen/profile_screen_controller.dart';
 import 'package:stakBread/screen/profile_screen/widget/profile_page_view.dart';
@@ -249,11 +250,7 @@ class _ProfileTopBar extends StatelessWidget {
             _NotificationIcon(
               icon: Icons.chat_bubble_outline_rounded,
               count: messageCount,
-              onTap: () {
-                if (Get.isRegistered<DashboardScreenController>()) {
-                  Get.find<DashboardScreenController>().onChanged(4);
-                }
-              },
+              onTap: () => Get.to(() => const MessageScreen()),
             ),
           ],
         ),

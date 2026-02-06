@@ -311,18 +311,18 @@ class UserNameView extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 decoration: BoxDecoration(
-                  color: ColorRes.themeAccentSolid,
+                  color:  ColorRes.themeAccentSolid.withValues(alpha: 0.15),
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Icon(Icons.check_rounded, size: 14, color: ColorRes.whitePure),
+                    Icon(Icons.check_rounded, size: 14, color: ColorRes.themeAccentSolid),
                     const SizedBox(width: 4),
                     Text(
                       LKey.verify.tr,
                       style: TextStyleCustom.outFitSemiBold600(
-                        color: ColorRes.whitePure,
+                        color: ColorRes.themeAccentSolid,
                         fontSize: 12,
                       ),
                     ),
@@ -330,7 +330,7 @@ class UserNameView extends StatelessWidget {
                 ),
               ),
             ],
-            if (user?.getLevel.id != null) ...[
+            /*if (user?.getLevel.id != null) ...[
               const SizedBox(width: 8),
               InkWell(
                 onTap: () => Get.to(() => LevelScreen(userLevels: user?.getLevel)),
@@ -351,7 +351,7 @@ class UserNameView extends StatelessWidget {
                   ),
                 ),
               ),
-            ],
+            ],*/
           ],
         ),
         const SizedBox(height: 4),
@@ -580,7 +580,7 @@ class RowButton extends StatelessWidget {
             const SizedBox(width: 12),
             Expanded(
               child: InkWell(
-                onTap: () => controller.handlePublishOrMessageBtn(true),
+                onTap: () => {},
                 child: Container(
                   height: 46,
                   alignment: Alignment.center,
