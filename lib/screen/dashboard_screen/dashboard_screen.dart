@@ -4,10 +4,12 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:proste_indexed_stack/proste_indexed_stack.dart';
 import 'package:stakBread/common/widget/banner_ads_custom.dart';
+import 'package:stakBread/languages/languages_keys.dart';
 import 'package:stakBread/model/user_model/user_model.dart';
+import 'package:stakBread/screen/camera_screen/camera_screen.dart';
+import 'package:stakBread/screen/create_feed_screen/create_feed_screen.dart';
 import 'package:stakBread/screen/dashboard_screen/dashboard_screen_controller.dart';
 import 'package:stakBread/screen/discover_screen/discover_screen.dart';
-import 'package:stakBread/screen/home_screen/home_screen.dart';
 import 'package:stakBread/screen/profile_screen/profile_screen.dart';
 import 'package:stakBread/utilities/style_res.dart';
 import 'package:stakBread/utilities/text_style_custom.dart';
@@ -69,8 +71,14 @@ class DashboardScreen extends StatelessWidget {
               children: List.generate(
                 controller.bottomIconList.length,
                 (index) {
+                  final isAddButton = index == 2;
                   return _buildBottomNavItem(
-                      context, controller, index, isPostUploading);
+                    context,
+                    controller,
+                    index,
+                    isPostUploading,
+                    isAddButton: isAddButton,
+                  );
                 },
               ),
             ),
@@ -127,8 +135,90 @@ class DashboardScreen extends StatelessWidget {
     });
   }
 
-  Widget _buildBottomNavItem(BuildContext context,
-      DashboardScreenController controller, int index, bool isPostUploading) {
+  void _showUploadOptionsSheet(BuildContext context) {
+    Get.bottomSheet(
+      Container(
+        decoration: BoxDecoration(
+          color: ColorRes.whitePure,
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.1),
+              blurRadius: 12,
+              offset: const Offset(0, -2),
+            ),
+          ],
+        ),
+        margin: const EdgeInsets.fromLTRB(140, 0, 140, 100),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            InkWell(
+              onTap: () {
+                Get.back();
+                Get.to(() => CreateFeedScreen(createType: CreateFeedType.feed));
+              },
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(Icons.article_outlined, size: 24, color: ColorRes.textDarkGrey),
+                    const SizedBox(width: 5),
+                    Text(
+                      LKey.feed.tr,
+                      style: TextStyleCustom.outFitRegular400(
+                        fontSize: 16,
+                        color: ColorRes.textDarkGrey,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            Divider(height: 1, color: ColorRes.borderLight),
+            InkWell(
+              onTap: () {
+                Get.back();
+                Get.to(() => const CameraScreen(cameraType: CameraScreenType.post));
+              },
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(Icons.add_circle_outline, size: 24, color: ColorRes.textDarkGrey),
+                    const SizedBox(width: 5),
+                    Text(
+                      LKey.reels.tr,
+                      style: TextStyleCustom.outFitRegular400(
+                        fontSize: 16,
+                        color: ColorRes.textDarkGrey,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      barrierColor: Colors.black54,
+    );
+  }
+
+  Widget _buildBottomNavItem(
+    BuildContext context,
+    DashboardScreenController controller,
+    int index,
+    bool isPostUploading, {
+    bool isAddButton = false,
+  }) {
     return Obx(() {
       final isSelected = controller.selectedPageIndex.value == index;
       final iconColor = isSelected
@@ -138,7 +228,13 @@ class DashboardScreen extends StatelessWidget {
       return SafeArea(
         bottom: isPostUploading ? false : true,
         child: InkWell(
-          onTap: () => controller.onChanged(index),
+          onTap: () {
+            if (isAddButton) {
+              _showUploadOptionsSheet(context);
+            } else {
+              controller.onChanged(index);
+            }
+          },
           child: Padding(
             padding: const EdgeInsets.symmetric(vertical: 10),
             child: SizedBox(

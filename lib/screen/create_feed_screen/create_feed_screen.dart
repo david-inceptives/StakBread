@@ -40,7 +40,7 @@ class CreateFeedScreen extends StatelessWidget {
     return Scaffold(
       body: Column(
         children: [
-          CustomAppBar(title: LKey.createFeed.tr),
+          CustomAppBar(title: LKey.createPost.tr),
           Expanded(
             child: GestureDetector(
               onTap: () =>
@@ -52,7 +52,10 @@ class CreateFeedScreen extends StatelessWidget {
                       children: [
                         ReelPreviewCard(controller: controller),
                         CreateFeedLocationBar(controller: controller),
-                        const FeedTextFieldView(),
+                        const Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 16),
+                          child: FeedTextFieldView(),
+                        ),
                         UrlMetaDataCard(controller: controller),
                         if (createType == CreateFeedType.feed)
                           mediaSelectionView(controller),
@@ -109,7 +112,7 @@ class CreateFeedScreen extends StatelessWidget {
 
       return TextButtonCustom(
         onTap: controller.handleUpload,
-        title: LKey.uploadNow.tr,
+        title: LKey.postNow.tr,
         backgroundColor:
             ColorRes.textDarkGrey.withValues(alpha: isEmpty.value ? .5 : 1),
         titleColor:

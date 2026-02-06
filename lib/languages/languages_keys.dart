@@ -622,4 +622,6 @@ class LKey {
   static const String shareProfile = "Share Profile";
   static const String noPost = "No Post";
   static const String shop = "Shop";
+  static const String createPost = "Create Post";
+  static const String postNow = "Post Now";
 }
