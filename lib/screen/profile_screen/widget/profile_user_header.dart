@@ -455,22 +455,42 @@ class UserButtonView extends StatelessWidget {
 
     bool isMe = user?.id?.toInt() == SessionManager.instance.getUserID();
     bool isBlock = (user?.isBlock == true && user?.id != SessionManager.instance.getUserID());
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 20.0, top: 10),
-      child: Row(
-        children: [
-          Expanded(
-            child: isBlock
-                ? UnblockButton(onTap: () => controller.toggleBlockUnblock(true))
-                : RowButton(controller: controller, isMe: isMe, user: user),
-          ),
-          const SizedBox(width: 8),
-          if (isMe)
-            InkWell(
-              onTap: () {
-                ShareManager.shared.showCustomShareSheet(user: user, keys: ShareKeys.user);
-              },
-              child: Container(
+    return Row(
+      children: [
+        Expanded(
+          child: isBlock
+              ? UnblockButton(onTap: () => controller.toggleBlockUnblock(true))
+              : RowButton(controller: controller, isMe: isMe, user: user),
+        ),
+        const SizedBox(width: 8),
+        if (isMe)
+          InkWell(
+            onTap: () {
+              ShareManager.shared.showCustomShareSheet(user: user, keys: ShareKeys.user);
+            },
+            child: Container(
+                height: 45,
+                padding: const EdgeInsets.symmetric(horizontal: 12),
+                decoration: ShapeDecoration(
+                  shape:
+                      SmoothRectangleBorder(borderRadius: SmoothBorderRadius(cornerRadius: 10, cornerSmoothing: 1)),
+                  color: ColorRes.bgGrey,
+                ),
+                child: Image.asset(isMe ? AssetRes.icShare1 : AssetRes.icMore, height: 21, width: 21)),
+          )
+        else
+          Obx(
+            () => CustomPopupMenuButton(
+                items: [
+                  MenuItem(user?.isBlock == true ? LKey.unBlock.tr : LKey.block.tr, () {
+                    controller.toggleBlockUnblock(user?.isBlock ?? false);
+                  }),
+                  MenuItem(LKey.report.tr, () => controller.reportUser(user)),
+                  if (SessionManager.instance.isModerator.value == 1)
+                    MenuItem(user?.isFreez == 1 ? LKey.unFreeze.tr : LKey.freeze.tr,
+                        () => controller.freezeUnfreezeUser(user?.isFreez == 1))
+                ],
+                child: Container(
                   height: 45,
                   padding: const EdgeInsets.symmetric(horizontal: 12),
                   decoration: ShapeDecoration(
@@ -478,33 +498,10 @@ class UserButtonView extends StatelessWidget {
                         SmoothRectangleBorder(borderRadius: SmoothBorderRadius(cornerRadius: 10, cornerSmoothing: 1)),
                     color: ColorRes.bgGrey,
                   ),
-                  child: Image.asset(isMe ? AssetRes.icShare1 : AssetRes.icMore, height: 21, width: 21)),
-            )
-          else
-            Obx(
-              () => CustomPopupMenuButton(
-                  items: [
-                    MenuItem(user?.isBlock == true ? LKey.unBlock.tr : LKey.block.tr, () {
-                      controller.toggleBlockUnblock(user?.isBlock ?? false);
-                    }),
-                    MenuItem(LKey.report.tr, () => controller.reportUser(user)),
-                    if (SessionManager.instance.isModerator.value == 1)
-                      MenuItem(user?.isFreez == 1 ? LKey.unFreeze.tr : LKey.freeze.tr,
-                          () => controller.freezeUnfreezeUser(user?.isFreez == 1))
-                  ],
-                  child: Container(
-                    height: 45,
-                    padding: const EdgeInsets.symmetric(horizontal: 12),
-                    decoration: ShapeDecoration(
-                      shape:
-                          SmoothRectangleBorder(borderRadius: SmoothBorderRadius(cornerRadius: 10, cornerSmoothing: 1)),
-                      color: ColorRes.bgGrey,
-                    ),
-                    child: Image.asset(AssetRes.icMore, height: 21, width: 21),
-                  )),
-            )
-        ],
-      ),
+                  child: Image.asset(AssetRes.icMore, height: 21, width: 21),
+                )),
+          )
+      ],
     );
   }
 }

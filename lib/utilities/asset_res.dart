@@ -33,7 +33,6 @@ class AssetRes {
   static const String icGift_2 = '${icons}ic_gift_2.png';
   static const String icGift = '${icons}ic_gift.png';
   static const String icFollow = '${icons}ic_follow.png';
-  static const String icProfile = '${icons}ic_profile.png';
   static const String icPost = '${icons}ic_post.png';
   static const String icReel = '${icons}ic_reel.png';
   static const String icSearch = '${icons}ic_search.png';
@@ -142,4 +141,9 @@ class AssetRes {
   static const String icNoInternet = '${icons}ic_no_internet.png';
   static const String icLinkPlaceholder = '${icons}ic_link_placeholder.png';
   static const String icAdd = '${icons}ic_add.png';
+  static const String icHome = '${icons}home.png';
+  static const String icDiscover = '${icons}discover.png';
+  static const String icAddNew = '${icons}add_new.png';
+  static const String icProfile = '${icons}profile.png';
+  static const String icStore = '${icons}store.png';
 }

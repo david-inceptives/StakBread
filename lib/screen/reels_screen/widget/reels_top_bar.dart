@@ -59,11 +59,12 @@ class ReelsTopBar extends StatelessWidget {
                 if (widget != null) Flexible(child: widget!),
                 if (controller.isHomePage)
                   InkWell(
-                      onTap: controller.openPostOptionsSheet,
+                      onTap: (){},//controller.openPostOptionsSheet,
                       child: Image.asset(
                         AssetRes.icAdd,
                         width: 30,
                         height: 30,
+                        color: Colors.transparent,
                       ))
                 else
                   Obx(() {

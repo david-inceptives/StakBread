@@ -620,4 +620,5 @@ class LKey {
       "Your Profile is already in use for Dummy Live from admin panel. So you can't start livestreaming now.";
   static const String shareProfile = "Share Profile";
   static const String noPost = "No Post";
+  static const String shop = "Shop";
 }

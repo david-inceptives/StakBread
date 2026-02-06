@@ -34,14 +34,38 @@ class ProfilePageView extends StatelessWidget {
                       controller: controller.pageController,
                       onPageChanged: controller.onTabChanged,
                       children: [
-                        PostList(
+
+                        isMe?PostList(
                           posts: controller.posts,
                           onFetchMoreData: controller.fetchPost,
                           isLoading: controller.isPostLoading,
                           shouldShowPinOption: true,
                           isMe: isMe,
-                        ),
-                        ReelList(
+                        ):ReelList(
+                            reels: controller.reels,
+                            isLoading: controller.isReelLoading,
+                            onFetchMoreData: controller.fetchReel,
+                            menus: isMe
+                                ? [
+                              ContextMenuElement(
+                                  title: '',
+                                  onTap: controller.onPinUnpinReel),
+                              ContextMenuElement(
+                                  title: LKey.delete.tr,
+                                  onTap: (post) =>
+                                      controller.onDeleteReel(post,
+                                          isModerator: false))
+                            ]
+                                : [
+                              if (isModerator)
+                                ContextMenuElement(
+                                    title: LKey.delete.tr,
+                                    onTap: (post) =>
+                                        controller.onDeleteReel(post,
+                                            isModerator: true))
+                            ],
+                            isPinShow: true),
+                        isMe?ReelList(
                             reels: controller.reels,
                             isLoading: controller.isReelLoading,
                             onFetchMoreData: controller.fetchReel,
@@ -64,7 +88,7 @@ class ProfilePageView extends StatelessWidget {
                                               controller.onDeleteReel(post,
                                                   isModerator: true))
                                   ],
-                            isPinShow: true),
+                            isPinShow: true):Container(),
                       ],
                     );
     }));

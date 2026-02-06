@@ -73,8 +73,7 @@ class SideBarList extends StatelessWidget {
               text: isPlaceholder ? '1' : (reel.shares ?? 0).toString(),
             ),
             Visibility(
-              visible: controller.reelData.value.user?.id !=
-                  SessionManager.instance.getUserID(),
+              visible: false,//controller.reelData.value.user?.id != SessionManager.instance.getUserID(),
               child: IconWithGift(onTap: controller.onGiftTap),
             ),
             Visibility(

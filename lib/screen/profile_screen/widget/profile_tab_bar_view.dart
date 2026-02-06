@@ -5,6 +5,9 @@ import 'package:stakBread/screen/profile_screen/profile_screen_controller.dart';
 import 'package:stakBread/utilities/text_style_custom.dart';
 import 'package:stakBread/utilities/color_res.dart';
 
+import '../../../common/manager/session_manager.dart';
+import '../../../model/user_model/user_model.dart';
+
 class ProfileTabs extends StatelessWidget {
   final ProfileScreenController controller;
 
@@ -12,6 +15,8 @@ class ProfileTabs extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    User? user = controller.profileController.user;
+    bool isMe = user?.id == SessionManager.instance.getUserID();
     return Column(
       children: [
         Row(
@@ -35,7 +40,7 @@ class ProfileTabs extends StatelessWidget {
                       child: Obx(() {
                         final selected = controller.selectedTabIndex.value == 0;
                         return Text(
-                          LKey.posts.tr,
+                          isMe? LKey.posts.tr: LKey.reels.tr,
                           style: TextStyleCustom.unboundedSemiBold600(
                             fontSize: 15,
                             color: selected
@@ -72,7 +77,7 @@ class ProfileTabs extends StatelessWidget {
                       child: Obx(() {
                         final selected = controller.selectedTabIndex.value == 1;
                         return Text(
-                          LKey.reels.tr,
+                          isMe? LKey.reels.tr: LKey.shop.tr,
                           style: TextStyleCustom.unboundedSemiBold600(
                             fontSize: 15,
                             color: selected
