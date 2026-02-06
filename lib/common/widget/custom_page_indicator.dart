@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:stakBread/utilities/theme_res.dart';
+import 'package:stakBread/utilities/color_res.dart';
 
 class CustomPageIndicator extends StatelessWidget {
   final int length;
@@ -25,7 +25,7 @@ class CustomPageIndicator extends StatelessWidget {
                   child: Container(
                       height: 1.5,
                       margin: const EdgeInsets.symmetric(horizontal: 2),
-                      color: whitePure(context)
+                      color: ColorRes.whitePure
                           .withValues(alpha: isSelected ? 1 : .4)),
                 );
               },

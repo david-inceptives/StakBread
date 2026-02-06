@@ -19,7 +19,7 @@ import 'package:stakBread/screen/search_screen/search_screen.dart';
 import 'package:stakBread/utilities/asset_res.dart';
 import 'package:stakBread/utilities/style_res.dart';
 import 'package:stakBread/utilities/text_style_custom.dart';
-import 'package:stakBread/utilities/theme_res.dart';
+import 'package:stakBread/utilities/color_res.dart';
 
 class ExploreScreen extends StatelessWidget {
   const ExploreScreen({super.key});
@@ -66,7 +66,7 @@ class SearchScreenTopView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: scaffoldBackgroundColor(context),
+      color: ColorRes.whitePure,
       padding: const EdgeInsets.symmetric(vertical: 10),
       child: Column(
         children: [
@@ -92,16 +92,16 @@ class SearchScreenTopView extends StatelessWidget {
                 decoration: ShapeDecoration(
                   shape: SmoothRectangleBorder(
                     borderRadius: SmoothBorderRadius(cornerRadius: 7),
-                    side: BorderSide(color: bgGrey(context)),
+                    side: BorderSide(color: ColorRes.bgGrey),
                   ),
-                  color: bgMediumGrey(context),
+                  color: ColorRes.bgMediumGrey,
                 ),
                 alignment: AlignmentDirectional.centerStart,
                 child: Text(
                   LKey.searchHere.tr,
                   style: TextStyleCustom.outFitLight300(
                     fontSize: 15,
-                    color: textLightGrey(context),
+                    color: ColorRes.textLightGrey,
                   ),
                 ),
               ),
@@ -164,15 +164,15 @@ class SearchScreenHashTagView extends StatelessWidget {
             shape: SmoothRectangleBorder(
               borderRadius:
                   SmoothBorderRadius(cornerRadius: 7, cornerSmoothing: 1),
-              side: BorderSide(color: bgGrey(context)),
+              side: BorderSide(color: ColorRes.bgGrey),
             ),
-            color: bgMediumGrey(context),
+            color: ColorRes.bgMediumGrey,
           ),
           alignment: Alignment.center,
           child: Text(
             '#${hashtag.hashtag}',
             style: TextStyleCustom.outFitRegular400(
-              color: textLightGrey(context),
+              color: ColorRes.textLightGrey,
               fontSize: 15,
             ),
           ),
@@ -252,7 +252,7 @@ class SearchScreenGridView extends StatelessWidget {
       decoration: BoxDecoration(
         shape: BoxShape.circle,
         border: Border.all(
-          color: themeAccentSolid(context).withValues(alpha: .2),
+          color: ColorRes.themeAccentSolid.withValues(alpha: .2),
           width: 1.5,
         ),
       ),
@@ -273,13 +273,13 @@ class SearchScreenGridView extends StatelessWidget {
           Text(
             highPostHashtags.hashtag ?? '',
             style: TextStyleCustom.unboundedSemiBold600(
-              color: textDarkGrey(context),
+              color: ColorRes.textDarkGrey,
             ),
           ),
           Text(
             '${(highPostHashtags.postList?.length ?? 0).numberFormat} ${LKey.posts.tr}',
             style: TextStyleCustom.outFitLight300(
-              color: textLightGrey(context),
+              color: ColorRes.textLightGrey,
             ),
           ),
         ],
@@ -296,12 +296,12 @@ class SearchScreenGridView extends StatelessWidget {
           Text(
             LKey.explore.tr,
             style: TextStyleCustom.outFitLight300(
-              color: textLightGrey(context),
+              color: ColorRes.textLightGrey,
             ),
           ),
           Image.asset(
             AssetRes.icRightArrow,
-            color: textLightGrey(context),
+            color: ColorRes.textLightGrey,
             height: 20,
           ),
         ],

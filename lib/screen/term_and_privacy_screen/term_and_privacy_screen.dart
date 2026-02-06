@@ -6,7 +6,7 @@ import 'package:stakBread/common/widget/custom_app_bar.dart';
 import 'package:stakBread/languages/languages_keys.dart';
 import 'package:stakBread/model/general/settings_model.dart';
 import 'package:stakBread/utilities/text_style_custom.dart';
-import 'package:stakBread/utilities/theme_res.dart';
+import 'package:stakBread/utilities/color_res.dart';
 
 enum TermAndPrivacyType {
   privacyPolicy,
@@ -58,7 +58,7 @@ class _TermAndPrivacyScreenState extends State<TermAndPrivacyScreen> {
                         ? settings.value?.privacyPolicy ?? ''
                         : settings.value?.termsOfUses ?? '',
                     textStyle: TextStyleCustom.outFitRegular400(
-                        fontSize: 15, color: textDarkGrey(context)),
+                        fontSize: 15, color: ColorRes.textDarkGrey),
                     renderMode: RenderMode.listView,
                   ),
                 ),

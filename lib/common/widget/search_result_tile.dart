@@ -5,7 +5,7 @@ import 'package:stakBread/common/widget/load_more_widget.dart';
 import 'package:stakBread/common/widget/loader_widget.dart';
 import 'package:stakBread/common/widget/no_data_widget.dart';
 import 'package:stakBread/utilities/text_style_custom.dart';
-import 'package:stakBread/utilities/theme_res.dart';
+import 'package:stakBread/utilities/color_res.dart';
 
 class SearchResultTile extends StatelessWidget {
   final VoidCallback onTap;
@@ -35,10 +35,10 @@ class SearchResultTile extends StatelessWidget {
                   height: 40,
                   width: 40,
                   decoration: BoxDecoration(
-                      color: bgMediumGrey(context), shape: BoxShape.circle),
+                      color: ColorRes.bgMediumGrey, shape: BoxShape.circle),
                   alignment: Alignment.center,
                   child: Image.asset(image,
-                      height: 20, width: 20, color: textLightGrey(context)),
+                      height: 20, width: 20, color: ColorRes.textLightGrey),
                 ),
                 const SizedBox(width: 12),
                 Expanded(
@@ -47,10 +47,10 @@ class SearchResultTile extends StatelessWidget {
                     children: [
                       Text(title,
                           style: TextStyleCustom.outFitMedium500(
-                              fontSize: 16, color: textDarkGrey(context))),
+                              fontSize: 16, color: ColorRes.textDarkGrey)),
                       Text(description,
                           style: TextStyleCustom.outFitLight300(
-                              color: textLightGrey(context))),
+                              color: ColorRes.textLightGrey)),
                     ],
                   ),
                 )
@@ -114,14 +114,14 @@ class ImageTextListTile<T> extends StatelessWidget {
                                       height: 40,
                                       width: 40,
                                       decoration: BoxDecoration(
-                                          color: bgMediumGrey(context),
+                                          color: ColorRes.bgMediumGrey,
                                           shape: BoxShape.circle),
                                       alignment: Alignment.center,
                                       child: Image.asset(
                                         image,
                                         height: 20,
                                         width: 20,
-                                        color: textLightGrey(context),
+                                        color: ColorRes.textLightGrey,
                                       ),
                                     ),
                                     const SizedBox(width: 12),
@@ -134,13 +134,11 @@ class ImageTextListTile<T> extends StatelessWidget {
                                               style: TextStyleCustom
                                                   .outFitMedium500(
                                                       fontSize: 16,
-                                                      color: textDarkGrey(
-                                                          context))),
+                                                      color: ColorRes.textDarkGrey)),
                                           Text(getDisplayDescription(item),
                                               style: TextStyleCustom
                                                   .outFitLight300(
-                                                      color: textLightGrey(
-                                                          context))),
+                                                      color: ColorRes.textLightGrey)),
                                         ],
                                       ),
                                     )

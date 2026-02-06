@@ -10,7 +10,7 @@ import 'package:stakBread/screen/camera_screen/camera_screen_controller.dart';
 import 'package:stakBread/utilities/app_res.dart';
 import 'package:stakBread/utilities/asset_res.dart';
 import 'package:stakBread/utilities/text_style_custom.dart';
-import 'package:stakBread/utilities/theme_res.dart';
+import 'package:stakBread/utilities/color_res.dart';
 
 class CameraBottomView extends StatelessWidget {
   final CameraScreenType cameraType;
@@ -102,7 +102,7 @@ class _EffectList extends StatelessWidget {
             child: Obx(() {
               final isSelected = controller.selectedEffect.value == effect;
               final borderColor =
-                  whitePure(context).withAlpha(isSelected ? 255 : 76);
+                  ColorRes.whitePure.withAlpha(isSelected ? 255 : 76);
               return Container(
                 margin: const EdgeInsets.symmetric(horizontal: 10),
                 width: 79,
@@ -121,7 +121,7 @@ class _EffectList extends StatelessWidget {
                       padding: const EdgeInsets.all(3),
                       child: Container(
                         decoration: BoxDecoration(
-                          color: whitePure(context),
+                          color: ColorRes.whitePure,
                           shape: BoxShape.circle,
                         ),
                         child: ClipSmoothRect(
@@ -139,7 +139,7 @@ class _EffectList extends StatelessWidget {
                     Text(
                       effect.title ?? '',
                       style: TextStyleCustom.outFitLight300(
-                        color: whitePure(context),
+                        color: ColorRes.whitePure,
                         fontSize: 13,
                       ),
                       maxLines: 1,
@@ -191,7 +191,7 @@ class _RecordingDurationSelector extends StatelessWidget {
     return Obx(() {
       final isSelected = second == controller.selectedSecond.value;
       final textStyle = TextStyleCustom.outFitRegular400(
-          color: whitePure(context), fontSize: 15);
+          color: ColorRes.whitePure, fontSize: 15);
 
       return InkWell(
         onTap: () => controller.selectedSecond.value = second,
@@ -200,11 +200,11 @@ class _RecordingDurationSelector extends StatelessWidget {
           width: 60,
           decoration: isSelected
               ? ShapeDecoration(
-                  color: whitePure(context).withAlpha(51),
+                  color: ColorRes.whitePure.withAlpha(51),
                   shape: SmoothRectangleBorder(
                     borderRadius: SmoothBorderRadius(cornerRadius: 30),
                     side: BorderSide(
-                        color: whitePure(context).withAlpha(128), width: 0.5),
+                        color: ColorRes.whitePure.withAlpha(128), width: 0.5),
                   ))
               : null,
           alignment: Alignment.center,
@@ -256,7 +256,7 @@ class RecordingControlButton extends StatelessWidget {
               height: 30,
               width: 12,
               decoration: ShapeDecoration(
-                color: whitePure(context),
+                color: ColorRes.whitePure,
                 shape: SmoothRectangleBorder(
                   borderRadius:
                       SmoothBorderRadius(cornerRadius: 2, cornerSmoothing: 1),

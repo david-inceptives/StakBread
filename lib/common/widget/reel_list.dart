@@ -12,7 +12,7 @@ import 'package:stakBread/model/post_story/post_model.dart';
 import 'package:stakBread/screen/reels_screen/reels_screen.dart';
 import 'package:stakBread/utilities/asset_res.dart';
 import 'package:stakBread/utilities/text_style_custom.dart';
-import 'package:stakBread/utilities/theme_res.dart';
+import 'package:stakBread/utilities/color_res.dart';
 
 class ReelList extends StatelessWidget {
   final RxList<Post> reels;
@@ -141,7 +141,7 @@ class ReelGridCardView extends StatelessWidget {
                     (post?.views?.toInt() ?? 0).numberFormat,
                     style: TextStyleCustom.outFitMedium500(
                       fontSize: 13,
-                      color: whitePure(context),
+                      color: ColorRes.whitePure,
                     ),
                   ),
                 ],

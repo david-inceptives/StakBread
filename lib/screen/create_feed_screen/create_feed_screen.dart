@@ -20,7 +20,7 @@ import 'package:stakBread/screen/create_feed_screen/widget/reel_preview_card.dar
 import 'package:stakBread/screen/create_feed_screen/widget/url_meta_data_card.dart';
 import 'package:stakBread/utilities/app_res.dart';
 import 'package:stakBread/utilities/asset_res.dart';
-import 'package:stakBread/utilities/theme_res.dart';
+import 'package:stakBread/utilities/color_res.dart';
 
 enum CreateFeedType { feed, reel }
 
@@ -111,9 +111,9 @@ class CreateFeedScreen extends StatelessWidget {
         onTap: controller.handleUpload,
         title: LKey.uploadNow.tr,
         backgroundColor:
-            textDarkGrey(context).withValues(alpha: isEmpty.value ? .5 : 1),
+            ColorRes.textDarkGrey.withValues(alpha: isEmpty.value ? .5 : 1),
         titleColor:
-            whitePure(context).withValues(alpha: isEmpty.value ? .5 : 1),
+            ColorRes.whitePure.withValues(alpha: isEmpty.value ? .5 : 1),
         margin: EdgeInsets.symmetric(
             vertical: AppBar().preferredSize.height, horizontal: 20),
       );
@@ -156,7 +156,7 @@ class CreateFeedScreen extends StatelessWidget {
     return Container(
       color: (!controller.commentHelper.isLoading.value && items.isEmpty)
           ? null
-          : bgLightGrey(context),
+          : ColorRes.bgLightGrey,
       height: double.infinity,
       width: double.infinity,
       margin: const EdgeInsets.only(top: 180),
@@ -186,10 +186,10 @@ class BuildImageContainer extends StatelessWidget {
         onTap: onTap,
         child: Container(
           height: 59,
-          decoration: BoxDecoration(color: bgLightGrey(context)),
+          decoration: BoxDecoration(color: ColorRes.bgLightGrey),
           child: Center(
             child: Image.asset(image,
-                color: textDarkGrey(context), height: 29, width: 29),
+                color: ColorRes.textDarkGrey, height: 29, width: 29),
           ),
         ),
       ),

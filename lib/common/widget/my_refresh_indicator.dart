@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:stakBread/utilities/theme_res.dart';
+import 'package:stakBread/utilities/color_res.dart';
 
 class MyRefreshIndicator extends StatelessWidget {
   final Future<void> Function() onRefresh;
@@ -25,8 +25,8 @@ class MyRefreshIndicator extends StatelessWidget {
         notificationPredicate: (notification) {
           return notification.depth == depth;
         },
-        color: themeAccentSolid(context),
-        backgroundColor: whitePure(context),
+        color: ColorRes.themeAccentSolid,
+        backgroundColor: ColorRes.whitePure,
         triggerMode: RefreshIndicatorTriggerMode.onEdge,
         child: child,
       );

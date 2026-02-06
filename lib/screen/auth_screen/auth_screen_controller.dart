@@ -25,6 +25,8 @@ class AuthScreenController extends BaseController {
   TextEditingController passwordController = TextEditingController();
   TextEditingController confirmPassController = TextEditingController();
 
+  final RxBool rememberMe = false.obs;
+
   @override
   void onInit() {
     CommonService.instance.fetchGlobalSettings();

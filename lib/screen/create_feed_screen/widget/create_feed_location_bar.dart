@@ -4,7 +4,7 @@ import 'package:stakBread/model/general/location_place_model.dart';
 import 'package:stakBread/screen/create_feed_screen/create_feed_screen_controller.dart';
 import 'package:stakBread/utilities/asset_res.dart';
 import 'package:stakBread/utilities/text_style_custom.dart';
-import 'package:stakBread/utilities/theme_res.dart';
+import 'package:stakBread/utilities/color_res.dart';
 
 class CreateFeedLocationBar extends StatelessWidget {
   final CreateFeedScreenController controller;
@@ -24,14 +24,14 @@ class CreateFeedLocationBar extends StatelessWidget {
         height: 47,
         padding: const EdgeInsets.symmetric(horizontal: 15),
         margin: const EdgeInsets.only(top: 5),
-        color: bgLightGrey(context),
+        color: ColorRes.bgLightGrey,
         child: Row(
           children: [
             Image.asset(AssetRes.icLocation, height: 17, width: 17),
             const SizedBox(width: 5),
             Expanded(
                 child: Text(place.placeTitle,
-                    style: TextStyleCustom.outFitLight300(color: textDarkGrey(context)),
+                    style: TextStyleCustom.outFitLight300(color: ColorRes.textDarkGrey),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis)),
             const SizedBox(width: 5),
@@ -40,7 +40,7 @@ class CreateFeedLocationBar extends StatelessWidget {
                 controller.selectedLocation.value = null;
               },
               child: Image.asset(AssetRes.icClose,
-                  height: 17, width: 17, color: textLightGrey(context)),
+                  height: 17, width: 17, color: ColorRes.textLightGrey),
             )
           ],
         ),

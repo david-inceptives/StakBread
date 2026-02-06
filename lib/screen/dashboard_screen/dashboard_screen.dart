@@ -4,8 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:proste_indexed_stack/proste_indexed_stack.dart';
 import 'package:stakBread/common/widget/banner_ads_custom.dart';
-import 'package:stakBread/common/widget/gradient_border.dart';
-import 'package:stakBread/common/widget/gradient_icon.dart';
 import 'package:stakBread/model/user_model/user_model.dart';
 import 'package:stakBread/screen/dashboard_screen/dashboard_screen_controller.dart';
 import 'package:stakBread/screen/explore_screen/explore_screen.dart';
@@ -16,7 +14,7 @@ import 'package:stakBread/screen/message_screen/message_screen.dart';
 import 'package:stakBread/screen/profile_screen/profile_screen.dart';
 import 'package:stakBread/utilities/style_res.dart';
 import 'package:stakBread/utilities/text_style_custom.dart';
-import 'package:stakBread/utilities/theme_res.dart';
+import 'package:stakBread/utilities/color_res.dart';
 
 class DashboardScreen extends StatelessWidget {
   final User? myUser;
@@ -27,7 +25,7 @@ class DashboardScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final controller = Get.put(DashboardScreenController());
     return Scaffold(
-      backgroundColor: scaffoldBackgroundColor(context),
+      backgroundColor: ColorRes.whitePure,
       resizeToAvoidBottomInset: true,
       body: Obx(() {
         return Column(
@@ -38,13 +36,9 @@ class DashboardScreen extends StatelessWidget {
                 children: [
                   IndexedStackChild(child: const HomeScreen(), preload: true),
                   IndexedStackChild(child: FeedScreen(myUser: myUser), preload: true),
-                  IndexedStackChild(child: const LiveStreamSearchScreen(), preload: true),
                   IndexedStackChild(child: const ExploreScreen(), preload: true),
                   IndexedStackChild(child: const MessageScreen(), preload: true),
-                  IndexedStackChild(
-                      child: ProfileScreen(isDashBoard: false, user: myUser,
-                          isTopBarVisible: false),
-                      preload: true)
+                  IndexedStackChild(child: ProfileScreen(isDashBoard: false, user: myUser, isTopBarVisible: false), preload: true)
                 ],
               ),
             ),
@@ -65,8 +59,11 @@ class DashboardScreen extends StatelessWidget {
           postUpload.uploadType == UploadType.none ? false : true;
       return AnimatedContainer(
         duration: const Duration(milliseconds: 100),
-        color: blackPure(context),
-        padding: const EdgeInsets.only(top: 5),
+        decoration: BoxDecoration(
+          color: ColorRes.whitePure,
+          border: Border(top: BorderSide(color: ColorRes.borderLight, width: 1)),
+        ),
+        padding: const EdgeInsets.only(top: 8),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -102,7 +99,7 @@ class DashboardScreen extends StatelessWidget {
                           height: 30,
                           width: constraints.maxWidth - progress,
                           duration: const Duration(milliseconds: 250),
-                          decoration: BoxDecoration(color: textDarkGrey(context)),
+                          decoration: BoxDecoration(color: ColorRes.textDarkGrey),
                         );
                       }),
                     ),
@@ -115,11 +112,11 @@ class DashboardScreen extends StatelessWidget {
                           if (postUpload.uploadType != UploadType.error)
                             Text('${postUpload.progress.toInt()}%',
                                 style: TextStyleCustom.outFitMedium500(
-                                  color: whitePure(context),
+                                  color: ColorRes.whitePure,
                                   fontSize: 16,
                                 )),
                           Text(' ${postUpload.uploadType.title(postUpload.type)}',
-                              style: TextStyleCustom.outFitLight300(color: whitePure(context), fontSize: 14)),
+                              style: TextStyleCustom.outFitLight300(color: ColorRes.whitePure, fontSize: 14)),
                         ],
                       ),
                     ),
@@ -137,31 +134,35 @@ class DashboardScreen extends StatelessWidget {
       DashboardScreenController controller, int index, bool isPostUploading) {
     return Obx(() {
       final isSelected = controller.selectedPageIndex.value == index;
-      final scaleValue = isSelected ? controller.scaleValue.value : 1.0;
+      final iconColor = isSelected
+          ? ColorRes.themeAccentSolid
+          : ColorRes.textLightGrey;
 
       return SafeArea(
         bottom: isPostUploading ? false : true,
-        child: GradientBorder(
-          onPressed: () => controller.onChanged(index),
-          strokeWidth: isSelected ? 2 : 0,
-          radius: 30,
-          gradient: isSelected ? StyleRes.themeGradient : null,
+        child: InkWell(
+          onTap: () => controller.onChanged(index),
           child: Padding(
-            padding: const EdgeInsets.all(3),
-            child: AnimatedScale(
-              scale: scaleValue,
-              duration: const Duration(milliseconds: 300),
+            padding: const EdgeInsets.symmetric(vertical: 10),
+            child: SizedBox(
+              width: 44,
+              height: 44,
               child: Stack(
                 alignment: Alignment.center,
                 children: [
-                  GradientIcon(
-                    gradient:
-                        isSelected ? null : StyleRes.textDarkGreyGradient(),
-                    child: Image.asset(controller.bottomIconList[index],
-                        height: 38, width: 38),
+                  ColorFiltered(
+                    colorFilter: ColorFilter.mode(
+                      iconColor,
+                      BlendMode.srcIn,
+                    ),
+                    child: Image.asset(
+                      controller.bottomIconList[index],
+                      height: 28,
+                      width: 28,
+                      fit: BoxFit.contain,
+                    ),
                   ),
                   if (index == 4) _buildUnreadCount(controller, context),
-                  // Moved to a separate function
                 ],
               ),
             ),
@@ -175,11 +176,25 @@ class DashboardScreen extends StatelessWidget {
       DashboardScreenController controller, BuildContext context) {
     return Obx(() {
       final count = controller.unReadCount.value;
-      return count > 0
-          ? Text(count > 9 ? '9+' : '$count',
-              style: TextStyleCustom.outFitRegular400(
-                  color: whitePure(context), fontSize: 12))
-          : const SizedBox();
+      if (count <= 0) return const SizedBox();
+      return Positioned(
+        top: 0,
+        right: 4,
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
+          decoration: BoxDecoration(
+            color: ColorRes.themeAccentSolid,
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: Text(
+            count > 9 ? '9+' : '$count',
+            style: TextStyleCustom.outFitRegular400(
+              color: ColorRes.whitePure,
+              fontSize: 10,
+            ),
+          ),
+        ),
+      );
     });
   }
 }

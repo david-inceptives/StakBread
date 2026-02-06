@@ -9,7 +9,7 @@ import 'package:stakBread/model/general/settings_model.dart';
 import 'package:stakBread/screen/on_boarding_screen/on_boarding_screen_controller.dart';
 import 'package:stakBread/utilities/app_res.dart';
 import 'package:stakBread/utilities/text_style_custom.dart';
-import 'package:stakBread/utilities/theme_res.dart';
+import 'package:stakBread/utilities/color_res.dart';
 
 class OnBoardingScreen extends StatelessWidget {
   const OnBoardingScreen({super.key});
@@ -60,7 +60,7 @@ class OnBoardingScreen extends StatelessWidget {
                                 height: 1,
                                 constraints: const BoxConstraints(maxWidth: 1),
                                 margin: const EdgeInsets.symmetric(horizontal: 2),
-                                color: whitePure(context).withValues(alpha: isSelected ? 1 : .4));
+                                color: ColorRes.whitePure.withValues(alpha: isSelected ? 1 : .4));
                           }),
                         );
                       },
@@ -71,8 +71,8 @@ class OnBoardingScreen extends StatelessWidget {
                 TextButtonCustom(
                   onTap: controller.onNextTap,
                   title: LKey.next.tr,
-                  titleColor: whitePure(context),
-                  backgroundColor: whitePure(context).withValues(alpha: .3),
+                  titleColor: ColorRes.whitePure,
+                  backgroundColor: ColorRes.whitePure.withValues(alpha: .3),
                   horizontalMargin: 40,
                 ),
                 SizedBox(height: AppBar().preferredSize.height),
@@ -125,7 +125,7 @@ class OnBoardingView extends StatelessWidget {
         children: [
           Text(
             title,
-            style: TextStyleCustom.unboundedBlack900(fontSize: 22, color: whitePure(context)),
+            style: TextStyleCustom.unboundedBlack900(fontSize: 22, color: ColorRes.whitePure),
             textAlign: TextAlign.center,
             overflow: TextOverflow.ellipsis,
             maxLines: AppRes.titleMaxLine,
@@ -133,7 +133,7 @@ class OnBoardingView extends StatelessWidget {
           const SizedBox(height: 20),
           Text(
             description,
-            style: TextStyleCustom.outFitRegular400(fontSize: 19, color: whitePure(context)),
+            style: TextStyleCustom.outFitRegular400(fontSize: 19, color: ColorRes.whitePure),
             textAlign: TextAlign.center,
             overflow: TextOverflow.ellipsis,
             maxLines: AppRes.descriptionMaxLine,

@@ -12,7 +12,6 @@ import 'package:stakBread/utilities/asset_res.dart';
 import 'package:stakBread/utilities/color_res.dart';
 import 'package:stakBread/utilities/style_res.dart';
 import 'package:stakBread/utilities/text_style_custom.dart';
-import 'package:stakBread/utilities/theme_res.dart';
 
 class ChatBottomActionView extends StatelessWidget {
   final ChatScreenController controller;
@@ -93,7 +92,7 @@ class ChatTextField extends StatelessWidget {
       decoration: ShapeDecoration(
         shape: SmoothRectangleBorder(
             borderRadius: SmoothBorderRadius(cornerRadius: 30),
-            side: BorderSide(color: borderColor ?? bgGrey(context))),
+            side: BorderSide(color: borderColor ?? ColorRes.bgGrey)),
       ),
       margin: const EdgeInsets.symmetric(horizontal: 15),
       child: Obx(() {
@@ -113,7 +112,7 @@ class ChatTextField extends StatelessWidget {
             border: InputBorder.none,
             hintText: '${LKey.writeHere.tr}..',
             hintStyle:
-                TextStyleCustom.outFitLight300(color: textLightGrey(context)),
+                TextStyleCustom.outFitLight300(color: ColorRes.textLightGrey),
             prefixIconConstraints: const BoxConstraints(),
             prefixIcon: InkWell(
               onTap: onCameraTap,
@@ -132,11 +131,11 @@ class ChatTextField extends StatelessWidget {
                     bottom: 2),
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: themeAccentSolid(context).withValues(alpha: .1),
+                  color: ColorRes.themeAccentSolid.withValues(alpha: .1),
                 ),
                 alignment: Alignment.center,
                 child: Image.asset(AssetRes.icCamera,
-                    height: 25, width: 25, color: themeAccentSolid(context)),
+                    height: 25, width: 25, color: ColorRes.themeAccentSolid),
               ),
             ),
             suffixIconConstraints: const BoxConstraints(),
@@ -185,7 +184,7 @@ class ChatTextField extends StatelessWidget {
             ),
           ),
           style: TextStyleCustom.outFitRegular400(
-              color: textLightGrey(context), fontSize: 16),
+              color: ColorRes.textLightGrey, fontSize: 16),
         );
       }),
     );
@@ -212,7 +211,7 @@ class ChatBottomRequestView extends StatelessWidget {
               LKey.chatRequestMessage.trParams(
                   {'chat_user_name': '${conversation.chatUser?.username}'}),
               style: TextStyleCustom.outFitLight300(
-                  fontSize: 15, color: textLightGrey(context))),
+                  fontSize: 15, color: ColorRes.textLightGrey)),
           const SizedBox(height: 10),
           Row(
             children: List.generate(
@@ -271,7 +270,7 @@ class AudioWavesContainer extends StatelessWidget {
               height: 46,
               margin: const EdgeInsets.symmetric(horizontal: 15),
               decoration: ShapeDecoration(
-                color: bgLightGrey(context),
+                color: ColorRes.bgLightGrey,
                 shape: SmoothRectangleBorder(
                   borderRadius: SmoothBorderRadius(cornerRadius: 30),
                 ),
@@ -307,7 +306,7 @@ class AudioWavesContainer extends StatelessWidget {
                                 extendWaveform: true,
                                 waveThickness: 1.5,
                                 spacing: 3,
-                                waveColor: bgGrey(context),
+                                waveColor: ColorRes.bgGrey,
                                 gradient: StyleRes.wavesGradient),
                           ),
                         ),
@@ -356,7 +355,7 @@ class ChatUnBlockedView extends StatelessWidget {
                   'block_user_name': '${conversationUser.chatUser?.username}'
                 }),
                 style: TextStyleCustom.outFitLight300(
-                    fontSize: 15, color: textLightGrey(context)),
+                    fontSize: 15, color: ColorRes.textLightGrey),
                 textAlign: TextAlign.center),
             InkWell(
               onTap: () => onTapUnblock(conversationUser),
@@ -365,14 +364,14 @@ class ChatUnBlockedView extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(horizontal: 15),
                 margin: const EdgeInsets.symmetric(horizontal: 5),
                 decoration: ShapeDecoration(
-                    color: bgGrey(context),
+                    color: ColorRes.bgGrey,
                     shape: SmoothRectangleBorder(
                         borderRadius: SmoothBorderRadius(cornerRadius: 30))),
                 alignment: Alignment.center,
                 child: Text(
                   LKey.unBlock.tr.capitalize ?? '',
                   style: TextStyleCustom.outFitRegular400(
-                      color: textDarkGrey(context)),
+                      color: ColorRes.textDarkGrey),
                 ),
               ),
             )
@@ -390,7 +389,7 @@ class ChatIBlockedView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Text(LKey.youAreBlockedByThisUser.tr,
         style: TextStyleCustom.outFitLight300(
-            fontSize: 15, color: textLightGrey(context)),
+            fontSize: 15, color: ColorRes.textLightGrey),
         textAlign: TextAlign.center);
   }
 }

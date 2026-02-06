@@ -12,7 +12,7 @@ import 'package:stakBread/screen/comment_sheet/helper/comment_helper.dart';
 import 'package:stakBread/screen/create_feed_screen/create_feed_screen_controller.dart';
 import 'package:stakBread/utilities/app_res.dart';
 import 'package:stakBread/utilities/asset_res.dart';
-import 'package:stakBread/utilities/theme_res.dart';
+import 'package:stakBread/utilities/color_res.dart';
 
 class HashTagSheet extends StatefulWidget {
   const HashTagSheet({super.key});
@@ -41,7 +41,7 @@ class _HashTagSheetState extends State<HashTagSheet> {
     return Container(
       margin: EdgeInsets.only(top: AppBar().preferredSize.height * 2),
       decoration: ShapeDecoration(
-          color: whitePure(context),
+          color: ColorRes.whitePure,
           shape: const SmoothRectangleBorder(
               borderRadius: SmoothBorderRadius.vertical(
                   top: SmoothRadius(cornerRadius: 30, cornerSmoothing: 1)))),

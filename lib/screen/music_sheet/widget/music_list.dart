@@ -8,7 +8,7 @@ import 'package:stakBread/model/post_story/music/music_model.dart';
 import 'package:stakBread/screen/music_sheet/music_sheet_controller.dart';
 import 'package:stakBread/utilities/asset_res.dart';
 import 'package:stakBread/utilities/text_style_custom.dart';
-import 'package:stakBread/utilities/theme_res.dart';
+import 'package:stakBread/utilities/color_res.dart';
 
 class MusicList extends StatelessWidget {
   final RxList<Music> musicList;
@@ -21,7 +21,7 @@ class MusicList extends StatelessWidget {
     final controller = Get.find<MusicSheetController>();
     return Obx(
       () => Container(
-        color: scaffoldBackgroundColor(context),
+        color: ColorRes.whitePure,
         child: controller.isLoading.value
             ? const LoaderWidget()
             : NoDataView(
@@ -74,12 +74,12 @@ class MusicCard extends StatelessWidget {
               children: [
                 Text(music.title ?? '',
                     style:
-                        TextStyleCustom.outFitMedium500(fontSize: 15, color: textDarkGrey(context)),
+                        TextStyleCustom.outFitMedium500(fontSize: 15, color: ColorRes.textDarkGrey),
                     overflow: TextOverflow.ellipsis,
                     maxLines: 1),
                 Text(
                   '${music.artist} • ${music.duration}',
-                  style: TextStyleCustom.outFitLight300(color: textLightGrey(context)),
+                  style: TextStyleCustom.outFitLight300(color: ColorRes.textLightGrey),
                   overflow: TextOverflow.ellipsis,
                   maxLines: 1,
                 )
@@ -92,7 +92,7 @@ class MusicCard extends StatelessWidget {
                   () {
                     bool isSaved = controller.savedMusicIds.contains(music.id);
                     return Image.asset(isSaved ? AssetRes.icFillBookmark1 : AssetRes.icBookmark,
-                        color: textDarkGrey(context), height: 22, width: 22);
+                        color: ColorRes.textDarkGrey, height: 22, width: 22);
                   },
                 )),
           ],

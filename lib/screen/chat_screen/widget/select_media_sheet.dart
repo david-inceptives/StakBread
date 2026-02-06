@@ -8,7 +8,7 @@ import 'package:stakBread/common/widget/bottom_sheet_top_view.dart';
 import 'package:stakBread/common/widget/custom_divider.dart';
 import 'package:stakBread/languages/languages_keys.dart';
 import 'package:stakBread/utilities/text_style_custom.dart';
-import 'package:stakBread/utilities/theme_res.dart';
+import 'package:stakBread/utilities/color_res.dart';
 
 class SelectMediaSheet extends StatelessWidget {
   final Function(MediaFile mediaFile) onSelectMedia;
@@ -26,7 +26,7 @@ class SelectMediaSheet extends StatelessWidget {
                   borderRadius: SmoothBorderRadius.vertical(
                 top: SmoothRadius(cornerRadius: 40, cornerSmoothing: 1),
               )),
-              color: scaffoldBackgroundColor(context)),
+              color: ColorRes.whitePure),
           child: SafeArea(
             top: false,
             minimum: const EdgeInsets.only(bottom: 20),

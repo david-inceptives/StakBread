@@ -8,7 +8,7 @@ import 'package:stakBread/languages/languages_keys.dart';
 import 'package:stakBread/model/user_model/user_model.dart';
 import 'package:stakBread/screen/profile_screen/profile_screen_controller.dart';
 import 'package:stakBread/utilities/text_style_custom.dart';
-import 'package:stakBread/utilities/theme_res.dart';
+import 'package:stakBread/utilities/color_res.dart';
 
 class ProfilePageView extends StatelessWidget {
   final ProfileScreenController controller;
@@ -34,6 +34,13 @@ class ProfilePageView extends StatelessWidget {
                       controller: controller.pageController,
                       onPageChanged: controller.onTabChanged,
                       children: [
+                        PostList(
+                          posts: controller.posts,
+                          onFetchMoreData: controller.fetchPost,
+                          isLoading: controller.isPostLoading,
+                          shouldShowPinOption: true,
+                          isMe: isMe,
+                        ),
                         ReelList(
                             reels: controller.reels,
                             isLoading: controller.isReelLoading,
@@ -58,13 +65,6 @@ class ProfilePageView extends StatelessWidget {
                                                   isModerator: true))
                                   ],
                             isPinShow: true),
-                        PostList(
-                          posts: controller.posts,
-                          onFetchMoreData: controller.fetchPost,
-                          isLoading: controller.isPostLoading,
-                          shouldShowPinOption: true,
-                          isMe: isMe,
-                        )
                       ],
                     );
     }));
@@ -80,7 +80,7 @@ class BlockUserView extends StatelessWidget {
       child: Text(
         LKey.youAreBlockThisUser.tr,
         style: TextStyleCustom.outFitRegular400(
-            color: textLightGrey(context), fontSize: 17),
+            color: ColorRes.textLightGrey, fontSize: 17),
       ),
     );
   }
@@ -95,7 +95,7 @@ class FreezeUser extends StatelessWidget {
       child: Text(
         LKey.thisUserIsFreeze.tr,
         style: TextStyleCustom.outFitRegular400(
-            color: textLightGrey(context), fontSize: 17),
+            color: ColorRes.textLightGrey, fontSize: 17),
       ),
     );
   }

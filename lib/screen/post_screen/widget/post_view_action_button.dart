@@ -6,7 +6,7 @@ import 'package:stakBread/screen/post_screen/post_screen_controller.dart';
 import 'package:stakBread/utilities/asset_res.dart';
 import 'package:stakBread/utilities/color_res.dart';
 import 'package:stakBread/utilities/text_style_custom.dart';
-import 'package:stakBread/utilities/theme_res.dart';
+import 'package:stakBread/utilities/color_res.dart';
 
 class PostViewActionButton extends StatelessWidget {
   final Post post;
@@ -92,7 +92,7 @@ class PostViewIconWithCount extends StatelessWidget {
           child: Image.asset(
               key: likeKey,
               image,
-              color: color ?? textDarkGrey(context),
+              color: color ?? ColorRes.textDarkGrey,
               height: 23,
               width: 23),
         ),
@@ -102,7 +102,7 @@ class PostViewIconWithCount extends StatelessWidget {
             child: Text(
               (count ?? 0).numberFormat,
               style: TextStyleCustom.outFitRegular400(
-                  fontSize: 12.5, color: textDarkGrey(context)),
+                  fontSize: 12.5, color: ColorRes.textDarkGrey),
             ),
           )
       ],

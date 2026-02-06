@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:stakBread/utilities/asset_res.dart';
 import 'package:stakBread/utilities/color_res.dart';
-import 'package:stakBread/utilities/theme_res.dart';
 
 enum UserRequestAction {
   block,
@@ -15,13 +14,13 @@ enum UserRequestAction {
   };
 
   static Map<UserRequestAction, Color> colors(BuildContext context) => {
-        UserRequestAction.block: bgGrey(context),
+        UserRequestAction.block: ColorRes.bgGrey,
         UserRequestAction.reject: ColorRes.likeRed.withValues(alpha: .15),
         UserRequestAction.accept: ColorRes.green.withValues(alpha: .15),
       };
 
   static Map<UserRequestAction, Color> titleColors(BuildContext context) => {
-        UserRequestAction.block: textDarkGrey(context),
+        UserRequestAction.block: ColorRes.textDarkGrey,
         UserRequestAction.reject: ColorRes.likeRed,
         UserRequestAction.accept: ColorRes.green,
       };

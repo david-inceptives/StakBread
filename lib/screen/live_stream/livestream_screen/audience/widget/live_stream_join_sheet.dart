@@ -9,7 +9,7 @@ import 'package:stakBread/languages/languages_keys.dart';
 import 'package:stakBread/model/livestream/app_user.dart';
 import 'package:stakBread/model/user_model/user_model.dart';
 import 'package:stakBread/utilities/text_style_custom.dart';
-import 'package:stakBread/utilities/theme_res.dart';
+import 'package:stakBread/utilities/color_res.dart';
 
 class LiveStreamJoinSheet extends StatelessWidget {
   final AppUser? hostUser;
@@ -33,7 +33,7 @@ class LiveStreamJoinSheet extends StatelessWidget {
               borderRadius: SmoothBorderRadius.vertical(
                   top: SmoothRadius(cornerRadius: 40, cornerSmoothing: 1)),
             ),
-            color: scaffoldBackgroundColor(context),
+            color: ColorRes.whitePure,
           ),
           child: SafeArea(
             top: false,
@@ -58,7 +58,7 @@ class LiveStreamJoinSheet extends StatelessWidget {
                               fullName: hostUser?.fullname,
                               strokeWidth: 2,
                               strokeColor:
-                                  whitePure(context).withValues(alpha: .55)),
+                                  ColorRes.whitePure.withValues(alpha: .55)),
                         ),
                       ),
                       Positioned(
@@ -73,7 +73,7 @@ class LiveStreamJoinSheet extends StatelessWidget {
                             fullName: myUser?.fullname ?? '',
                             strokeWidth: 2,
                             strokeColor:
-                                whitePure(context).withValues(alpha: .55),
+                                ColorRes.whitePure.withValues(alpha: .55),
                           ),
                         ),
                       ),
@@ -85,12 +85,12 @@ class LiveStreamJoinSheet extends StatelessWidget {
                   text: TextSpan(
                       text: hostUser?.username,
                       style: TextStyleCustom.outFitSemiBold600(
-                          color: textLightGrey(context), fontSize: 16),
+                          color: ColorRes.textLightGrey, fontSize: 16),
                       children: [
                         TextSpan(
                             text: ' ${LKey.wantsYouToBeEtc.tr}',
                             style: TextStyleCustom.outFitRegular400(
-                                color: textLightGrey(context), fontSize: 16)),
+                                color: ColorRes.textLightGrey, fontSize: 16)),
                       ]),
                   textAlign: TextAlign.center,
                 ),
@@ -105,8 +105,8 @@ class LiveStreamJoinSheet extends StatelessWidget {
                           onCancel?.call();
                         },
                         title: LKey.cancel.tr,
-                        titleColor: textLightGrey(context),
-                        backgroundColor: bgMediumGrey(context),
+                        titleColor: ColorRes.textLightGrey,
+                        backgroundColor: ColorRes.bgMediumGrey,
                         horizontalMargin: 0,
                       ),
                     ),
@@ -117,8 +117,8 @@ class LiveStreamJoinSheet extends StatelessWidget {
                           onJoined?.call();
                         },
                         title: LKey.join.tr,
-                        titleColor: whitePure(context),
-                        backgroundColor: blueFollow(context),
+                        titleColor: ColorRes.whitePure,
+                        backgroundColor: ColorRes.blueFollow,
                         horizontalMargin: 0,
                       ),
                     ),

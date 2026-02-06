@@ -13,7 +13,7 @@ import 'package:stakBread/screen/auth_screen/login_screen.dart';
 import 'package:stakBread/utilities/app_res.dart';
 import 'package:stakBread/utilities/asset_res.dart';
 import 'package:stakBread/utilities/text_style_custom.dart';
-import 'package:stakBread/utilities/theme_res.dart';
+import 'package:stakBread/utilities/color_res.dart';
 
 class SessionExpiredScreen extends StatefulWidget {
   final SessionType type;
@@ -41,7 +41,7 @@ class _SessionExpiredScreenState extends State<SessionExpiredScreen> {
                 children: [
                   const SizedBox(height: 10),
                   Image.asset(widget.type.icon,
-                      height: 150, width: 150, color: whitePure(context)),
+                      height: 150, width: 150, color: ColorRes.whitePure),
                   Expanded(
                       child: SingleChildScrollView(
                     child: Column(
@@ -49,7 +49,7 @@ class _SessionExpiredScreenState extends State<SessionExpiredScreen> {
                       children: [
                         Text(widget.type.title.tr,
                             style: TextStyleCustom.unboundedRegular400(
-                                color: whitePure(context), fontSize: 20)),
+                                color: ColorRes.whitePure, fontSize: 20)),
                         Obx(() {
                           final helpMail = settings.value?.helpMail ?? '';
 
@@ -61,7 +61,7 @@ class _SessionExpiredScreenState extends State<SessionExpiredScreen> {
                           return RichText(
                             text: TextSpan(
                               style: TextStyleCustom.outFitRegular400(
-                                  color: bgGrey(context), fontSize: 17),
+                                  color: ColorRes.bgGrey, fontSize: 17),
                               children: [
                                 TextSpan(text: parts.first),
                                 TextSpan(
@@ -72,7 +72,7 @@ class _SessionExpiredScreenState extends State<SessionExpiredScreen> {
                                         _url.lunchUrlWithHttps;
                                       },
                                     style: TextStyleCustom.outFitBold700(
-                                        color: bgGrey(context), fontSize: 17)),
+                                        color: ColorRes.bgGrey, fontSize: 17)),
                                 if (parts.length > 1)
                                   TextSpan(text: parts.last),
                               ],
@@ -95,8 +95,8 @@ class _SessionExpiredScreenState extends State<SessionExpiredScreen> {
                       }
                     },
                     title: widget.type.actionName,
-                    backgroundColor: whitePure(context),
-                    titleColor: blackPure(context),
+                    backgroundColor: ColorRes.whitePure,
+                    titleColor: ColorRes.blackPure,
                     margin: const EdgeInsets.only(top: 20),
                   )
                 ],

@@ -3,7 +3,6 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:stakBread/utilities/asset_res.dart';
 import 'package:stakBread/utilities/color_res.dart';
-import 'package:stakBread/utilities/theme_res.dart';
 
 class LiveStreamLikeButton extends StatefulWidget {
   final Function(Function())? onLikeTap;
@@ -114,7 +113,7 @@ class _LiveStreamLikeButtonState extends State<LiveStreamLikeButton>
         AssetRes.icFillHeart,
         width: 25,
         height: 25,
-        color: whitePure(context),
+        color: ColorRes.whitePure,
       ),
     );
   }

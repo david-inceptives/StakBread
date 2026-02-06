@@ -14,7 +14,7 @@ import 'package:stakBread/screen/reels_screen/reel/widget/side_bar_list.dart';
 import 'package:stakBread/screen/reels_screen/reel/widget/user_information.dart';
 import 'package:stakBread/screen/reels_screen/reels_screen_controller.dart';
 import 'package:stakBread/utilities/asset_res.dart';
-import 'package:stakBread/utilities/theme_res.dart';
+import 'package:stakBread/utilities/color_res.dart';
 import 'package:video_player/video_player.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 
@@ -185,7 +185,7 @@ class _ReelPageState extends State<ReelPage> {
                   ),
                   alignment: const Alignment(0.25, 0),
                   child: Image.asset(isPlaying ? AssetRes.icPause : AssetRes.icPlay,
-                      width: 45, height: 45, color: bgGrey(context)),
+                      width: 45, height: 45, color: ColorRes.bgGrey),
                 ),
               ),
             ),

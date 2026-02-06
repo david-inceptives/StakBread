@@ -6,7 +6,7 @@ import 'package:stakBread/common/widget/custom_search_text_field.dart';
 import 'package:stakBread/common/widget/text_button_custom.dart';
 import 'package:stakBread/languages/languages_keys.dart';
 import 'package:stakBread/utilities/text_style_custom.dart';
-import 'package:stakBread/utilities/theme_res.dart';
+import 'package:stakBread/utilities/color_res.dart';
 
 class BaseSelectSheet<T> extends StatelessWidget {
   final String title;
@@ -39,7 +39,7 @@ class BaseSelectSheet<T> extends StatelessWidget {
           top: SmoothRadius(cornerRadius: 15, cornerSmoothing: 1),
         ),
         child: Container(
-          color: whitePure(context),
+          color: ColorRes.whitePure,
           child: Column(
             children: [
               BottomSheetTopView(title: title, sideBtnVisibility: false),
@@ -75,9 +75,9 @@ class BaseSelectSheet<T> extends StatelessWidget {
                   child: TextButtonCustom(
                     title: LKey.save.tr,
                     onTap: () => Get.back(),
-                    titleColor: whitePure(context),
+                    titleColor: ColorRes.whitePure,
                     horizontalMargin: 0,
-                    backgroundColor: blackPure(context),
+                    backgroundColor: ColorRes.blackPure,
                   ),
                 ),
               ),
@@ -101,8 +101,8 @@ Widget _buildListItem<T>(
     onTap: onTap,
     child: Container(
       color: isSelected
-          ? themeAccentSolid(context).withValues(alpha: 0.2)
-          : bgLightGrey(context),
+          ? ColorRes.themeAccentSolid.withValues(alpha: 0.2)
+          : ColorRes.bgLightGrey,
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
       margin: const EdgeInsets.only(bottom: 2),
       child: Row(
@@ -113,16 +113,16 @@ Widget _buildListItem<T>(
             style: style ??
                 TextStyleCustom.outFitRegular400(
                     color: isSelected
-                        ? themeAccentSolid(context)
-                        : blackPure(context)),
+                        ? ColorRes.themeAccentSolid
+                        : ColorRes.blackPure),
           )),
           const SizedBox(width: 20),
           if (secondaryText != null) ...[
             Text(secondaryText,
                 style: TextStyleCustom.outFitRegular400(
                     color: isSelected
-                        ? themeAccentSolid(context)
-                        : blackPure(context))),
+                        ? ColorRes.themeAccentSolid
+                        : ColorRes.blackPure)),
           ],
         ],
       ),

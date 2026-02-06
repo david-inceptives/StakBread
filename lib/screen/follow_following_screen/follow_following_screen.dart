@@ -17,7 +17,7 @@ import 'package:stakBread/languages/languages_keys.dart';
 import 'package:stakBread/model/user_model/user_model.dart';
 import 'package:stakBread/screen/follow_following_screen/follow_following_screen_controller.dart';
 import 'package:stakBread/utilities/text_style_custom.dart';
-import 'package:stakBread/utilities/theme_res.dart';
+import 'package:stakBread/utilities/color_res.dart';
 
 enum FollowFollowingType { follower, following }
 
@@ -36,7 +36,7 @@ class FollowFollowingScreen extends StatelessWidget {
       body: Column(
         children: [
           Container(
-            decoration: BoxDecoration(color: bgLightGrey(context)),
+            decoration: BoxDecoration(color: ColorRes.bgLightGrey),
             padding: const EdgeInsets.symmetric(horizontal: 12),
             child: SafeArea(
               bottom: false,
@@ -63,7 +63,7 @@ class FollowFollowingScreen extends StatelessWidget {
                                 username: user?.username ?? '', fontSize: 13),
                             Text(user?.fullname ?? '',
                                 style: TextStyleCustom.outFitLight300(
-                                    color: textLightGrey(context),
+                                    color: ColorRes.textLightGrey,
                                     fontSize: 15))
                           ],
                         ),
@@ -238,7 +238,7 @@ class _UserProfileTileState extends State<UserProfileTile> {
                               Text(
                                 widget.user?.fullname ?? '',
                                 style: TextStyleCustom.outFitLight300(
-                                    color: textLightGrey(context)),
+                                    color: ColorRes.textLightGrey),
                               )
                             ],
                           ),
@@ -250,8 +250,8 @@ class _UserProfileTileState extends State<UserProfileTile> {
                 if (widget.user?.id != SessionManager.instance.getUserID())
                   Obx(() {
                     Color textColor = widget.isFollowOrIsBlock
-                        ? textLightGrey(context)
-                        : whitePure(context);
+                        ? ColorRes.textLightGrey
+                        : ColorRes.whitePure;
                     return TextButtonCustom(
                       onTap: () async {
                         if (isLoading.value) return;
@@ -274,10 +274,10 @@ class _UserProfileTileState extends State<UserProfileTile> {
                       padding: const EdgeInsets.symmetric(horizontal: 0),
                       radius: 8,
                       backgroundColor: widget.isFollowOrIsBlock
-                          ? whitePure(context)
-                          : blueFollow(context),
+                          ? ColorRes.whitePure
+                          : ColorRes.blueFollow,
                       borderSide: widget.isFollowOrIsBlock
-                          ? BorderSide(color: bgGrey(context))
+                          ? BorderSide(color: ColorRes.bgGrey)
                           : BorderSide.none,
                       child: isLoading.value
                           ? CupertinoActivityIndicator(

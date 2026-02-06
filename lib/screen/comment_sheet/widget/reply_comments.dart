@@ -3,7 +3,7 @@ import 'package:stakBread/common/widget/highlight_wrapper.dart';
 import 'package:stakBread/model/post_story/comment/fetch_comment_model.dart';
 import 'package:stakBread/screen/comment_sheet/comment_sheet_controller.dart';
 import 'package:stakBread/screen/comment_sheet/widget/comment_card.dart';
-import 'package:stakBread/utilities/theme_res.dart';
+import 'package:stakBread/utilities/color_res.dart';
 
 class ReplyCommentsView extends StatelessWidget {
   final List<Comment> replyComments;
@@ -30,7 +30,7 @@ class ReplyCommentsView extends StatelessWidget {
           }
         }
         return HighlightWrapper(
-          highlightColor: themeAccentSolid(context).withValues(alpha: 0.3),
+          highlightColor: ColorRes.themeAccentSolid.withValues(alpha: 0.3),
           highlight: isNotify,
           child: CommentCard(
             comment: _comment,

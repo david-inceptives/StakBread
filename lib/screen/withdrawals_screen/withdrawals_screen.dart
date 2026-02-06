@@ -12,7 +12,6 @@ import 'package:stakBread/screen/withdrawals_screen/withdrawals_screen_controlle
 import 'package:stakBread/utilities/app_res.dart';
 import 'package:stakBread/utilities/color_res.dart';
 import 'package:stakBread/utilities/text_style_custom.dart';
-import 'package:stakBread/utilities/theme_res.dart';
 
 class WithdrawalsScreen extends StatelessWidget {
   const WithdrawalsScreen({super.key});
@@ -42,7 +41,7 @@ class WithdrawalsScreen extends StatelessWidget {
                                   ? ColorRes.green
                                   : ColorRes.likeRed;
                           return Container(
-                            color: bgLightGrey(context),
+                            color: ColorRes.bgLightGrey,
                             margin: const EdgeInsets.symmetric(vertical: 1),
                             child: Column(
                               children: [
@@ -58,27 +57,22 @@ class WithdrawalsScreen extends StatelessWidget {
                                           children: [
                                             Text(
                                               '${AppRes.hash}${withdraw.requestNumber}',
-                                              style: TextStyleCustom
-                                                  .unboundedSemiBold600(
-                                                      color: textDarkGrey(
-                                                          context)),
+                                              style: TextStyleCustom.unboundedSemiBold600(
+                                                color: ColorRes.textDarkGrey,
+                                              ),
                                             ),
                                             Text(
                                               '${withdraw.gateway} : ${withdraw.account}',
-                                              style: TextStyleCustom
-                                                  .outFitLight300(
-                                                      color: textLightGrey(
-                                                          context),
-                                                      fontSize: 13),
+                                              style: TextStyleCustom.outFitLight300(
+                                                  color: ColorRes.textLightGrey,
+                                                  fontSize: 13),
                                             ),
                                             Text(
                                               (withdraw.createdAt ?? '')
                                                   .formatDate1,
-                                              style: TextStyleCustom
-                                                  .outFitLight300(
-                                                      color: textLightGrey(
-                                                          context),
-                                                      fontSize: 13),
+                                              style: TextStyleCustom.outFitLight300(
+                                                  color: ColorRes.textLightGrey,
+                                                  fontSize: 13),
                                             ),
                                           ],
                                         ),
@@ -93,7 +87,7 @@ class WithdrawalsScreen extends StatelessWidget {
                                                 TextStyleCustom.outFitBold700(
                                                     fontSize: 18,
                                                     color:
-                                                        textDarkGrey(context)),
+                                                        ColorRes.textDarkGrey),
                                           ),
                                           const SizedBox(height: 5),
                                           TextButtonCustom(
@@ -119,7 +113,7 @@ class WithdrawalsScreen extends StatelessWidget {
                                   ),
                                 ),
                                 Container(
-                                  color: bgGrey(context),
+                                  color: ColorRes.bgGrey,
                                   height: 29,
                                   width: double.infinity,
                                   padding: const EdgeInsets.symmetric(
@@ -130,7 +124,7 @@ class WithdrawalsScreen extends StatelessWidget {
                                       ':'
                                       ' ${(withdraw.coinValue ?? 0).currencyFormat} / ${LKey.coin.tr}',
                                       style: TextStyleCustom.outFitLight300(
-                                          color: textLightGrey(context))),
+                                          color: ColorRes.textLightGrey)),
                                 )
                               ],
                             ),

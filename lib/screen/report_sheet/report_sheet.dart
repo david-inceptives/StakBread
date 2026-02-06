@@ -9,7 +9,7 @@ import 'package:stakBread/languages/languages_keys.dart';
 import 'package:stakBread/screen/report_sheet/report_sheet_controller.dart';
 import 'package:stakBread/utilities/app_res.dart';
 import 'package:stakBread/utilities/text_style_custom.dart';
-import 'package:stakBread/utilities/theme_res.dart';
+import 'package:stakBread/utilities/color_res.dart';
 
 enum ReportType { post, user }
 
@@ -29,7 +29,7 @@ class ReportSheet extends StatelessWidget {
           borderRadius: SmoothBorderRadius.vertical(
               top: SmoothRadius(cornerRadius: 40, cornerSmoothing: 1)),
         ),
-        color: scaffoldBackgroundColor(context),
+        color: ColorRes.whitePure,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -52,7 +52,7 @@ class ReportSheet extends StatelessWidget {
                   child: Text(
                     LKey.reason.tr,
                     style: TextStyleCustom.outFitRegular400(
-                        fontSize: 17, color: textDarkGrey(context)),
+                        fontSize: 17, color: ColorRes.textDarkGrey),
                   ),
                 ),
                 Obx(
@@ -63,13 +63,13 @@ class ReportSheet extends StatelessWidget {
                       return Container(
                         height: 50,
                         padding: const EdgeInsets.symmetric(horizontal: 15.0),
-                        color: bgLightGrey(context),
+                        color: ColorRes.bgLightGrey,
                         width: double.infinity,
                         alignment: AlignmentDirectional.centerStart,
                         child: Text(AppRes.emptyReportReason,
                             style: TextStyleCustom.outFitLight300(
                               fontSize: 17,
-                              color: textLightGrey(context),
+                              color: ColorRes.textLightGrey,
                             )),
                       );
                     }
@@ -89,9 +89,9 @@ class ReportSheet extends StatelessWidget {
                       isExpanded: true,
                       menuMaxHeight: 200,
                       padding: const EdgeInsets.symmetric(horizontal: 5),
-                      bgColor: bgLightGrey(context),
+                      bgColor: ColorRes.bgLightGrey,
                       style: TextStyleCustom.outFitLight300(
-                          fontSize: 17, color: textLightGrey(context)),
+                          fontSize: 17, color: ColorRes.textLightGrey),
                     );
                   },
                 ),
@@ -102,11 +102,11 @@ class ReportSheet extends StatelessWidget {
                   child: Text(
                     LKey.description.tr,
                     style: TextStyleCustom.outFitRegular400(
-                        fontSize: 17, color: textDarkGrey(context)),
+                        fontSize: 17, color: ColorRes.textDarkGrey),
                   ),
                 ),
                 Container(
-                  color: bgLightGrey(context),
+                  color: ColorRes.bgLightGrey,
                   child: TextField(
                       controller: controller.descriptionController,
                       onTapOutside: (event) =>
@@ -118,19 +118,19 @@ class ReportSheet extends StatelessWidget {
                           contentPadding: const EdgeInsets.all(15),
                           hintText: LKey.descriptionHere.tr,
                           hintStyle: TextStyleCustom.outFitLight300(
-                              fontSize: 17, color: textLightGrey(context))),
+                              fontSize: 17, color: ColorRes.textLightGrey)),
                       expands: true,
                       minLines: null,
                       maxLines: null,
                       style: TextStyleCustom.outFitLight300(
-                          fontSize: 17, color: textLightGrey(context))),
+                          fontSize: 17, color: ColorRes.textLightGrey)),
                 ),
                 const SizedBox(height: 30),
                 TextButtonCustom(
                   onTap: controller.onReportSubmit,
                   title: LKey.submit.tr,
-                  backgroundColor: textDarkGrey(context),
-                  titleColor: whitePure(context),
+                  backgroundColor: ColorRes.textDarkGrey,
+                  titleColor: ColorRes.whitePure,
                 ),
                 SizedBox(height: AppBar().preferredSize.height),
                 const PrivacyPolicyText()

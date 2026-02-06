@@ -10,7 +10,7 @@ import 'package:stakBread/screen/camera_edit_screen/text_story/widget/story_text
 import 'package:stakBread/utilities/app_res.dart';
 
 import 'package:stakBread/utilities/text_style_custom.dart';
-import 'package:stakBread/utilities/theme_res.dart';
+import 'package:stakBread/utilities/color_res.dart';
 import 'package:uuid/uuid.dart';
 
 class TextEditorSheet extends StatelessWidget {
@@ -31,7 +31,7 @@ class TextEditorSheet extends StatelessWidget {
       ..selectedFontSize.value = data.fontSize;
 
     return Container(
-      color: blackPure(context).withValues(alpha: 0.4),
+      color: ColorRes.blackPure.withValues(alpha: 0.4),
       child: Column(
         children: [
           SafeArea(
@@ -83,14 +83,14 @@ class ConfirmButton extends StatelessWidget {
             decoration: ShapeDecoration(
               shape: SmoothRectangleBorder(
                 borderRadius: SmoothBorderRadius(cornerRadius: 30),
-                side: BorderSide(color: whitePure(context), width: 1),
+                side: BorderSide(color: ColorRes.whitePure, width: 1),
               ),
-              color: whitePure(context).withValues(alpha: 0.2),
+              color: ColorRes.whitePure.withValues(alpha: 0.2),
             ),
             child: Text(
               LKey.done.tr,
               style: TextStyleCustom.outFitRegular400(
-                  fontSize: 17, color: whitePure(context)),
+                  fontSize: 17, color: ColorRes.whitePure),
             ),
           ),
         ),
@@ -122,7 +122,7 @@ class CustomStoryTextField extends StatelessWidget {
             border: InputBorder.none,
             hintText: LKey.typeSomething,
             // hintStyle: TextStyleCustom.outFitMedium500(
-            //     fontSize: 25, color: whitePure(context), opacity: 0.5),
+            //     fontSize: 25, color: ColorRes.whitePure, opacity: 0.5),
             hintStyle: _getTextStyle(
                 font: controller.selectedFontFamily.value,
                 fontSize: controller.selectedFontSize.value,
@@ -136,7 +136,7 @@ class CustomStoryTextField extends StatelessWidget {
               color: controller.selectedColor.value,
               opacity: controller.selectedTextOpacity.value),
           cursorHeight: controller.selectedFontSize.value,
-          cursorColor: whitePure(Get.context!),
+          cursorColor: ColorRes.whitePure,
         ),
       );
     });
@@ -188,7 +188,7 @@ class StoryTextEditorToolbar extends StatelessWidget {
         }),
         Container(
           decoration: ShapeDecoration(
-            color: blackPure(Get.context!).withValues(alpha: 1),
+            color: ColorRes.blackPure.withValues(alpha: 1),
             shape: const SmoothRectangleBorder(
                 borderRadius: SmoothBorderRadius.zero),
           ),
@@ -233,7 +233,7 @@ class StoryTextImageWithText extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final color = isSelect ? whitePure(context) : textLightGrey(context);
+    final color = isSelect ? ColorRes.whitePure : ColorRes.textLightGrey;
     return InkWell(
       onTap: onTap,
       child: Column(

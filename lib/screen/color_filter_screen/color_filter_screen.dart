@@ -11,7 +11,7 @@ import 'package:stakBread/screen/color_filter_screen/widget/color_filtered.dart'
 import 'package:stakBread/screen/create_feed_screen/create_feed_screen_controller.dart';
 import 'package:stakBread/utilities/asset_res.dart';
 import 'package:stakBread/utilities/text_style_custom.dart';
-import 'package:stakBread/utilities/theme_res.dart';
+import 'package:stakBread/utilities/color_res.dart';
 import 'package:video_player/video_player.dart';
 
 enum MediaType { image, video }
@@ -128,7 +128,7 @@ class _ColorFilterScreenState extends State<ColorFilterScreen> {
         return Container(
           width: Get.width,
           height: Get.width,
-          color: blackPure(context),
+          color: ColorRes.blackPure,
           child: Stack(
             alignment: Alignment.center,
             children: [
@@ -156,7 +156,7 @@ class _ColorFilterScreenState extends State<ColorFilterScreen> {
                           image: value.isPlaying
                               ? AssetRes.icPause
                               : AssetRes.icPlay,
-                          bgColor: textDarkGrey(context).withValues(alpha: .4),
+                          bgColor: ColorRes.textDarkGrey.withValues(alpha: .4),
                           size: const Size(65, 65),
                           iconSize: 40,
                           onTap: () {
@@ -172,7 +172,7 @@ class _ColorFilterScreenState extends State<ColorFilterScreen> {
                           width: double.infinity,
                           margin: const EdgeInsets.symmetric(horizontal: 15),
                           decoration: ShapeDecoration(
-                            color: textDarkGrey(context).withValues(alpha: .3),
+                            color: ColorRes.textDarkGrey.withValues(alpha: .3),
                             shape: SmoothRectangleBorder(
                               borderRadius: SmoothBorderRadius(
                                 cornerRadius: 5,
@@ -188,7 +188,7 @@ class _ColorFilterScreenState extends State<ColorFilterScreen> {
                                 child: Text(
                                   value.position.printDuration,
                                   style: TextStyleCustom.outFitMedium500(
-                                    color: whitePure(context),
+                                    color: ColorRes.whitePure,
                                     fontSize: 12,
                                   ),
                                 ),
@@ -199,10 +199,10 @@ class _ColorFilterScreenState extends State<ColorFilterScreen> {
                                       value.position.inMicroseconds.toDouble(),
                                   min: 0,
                                   max: value.duration.inMicroseconds.toDouble(),
-                                  thumbColor: themeAccentSolid(context),
-                                  activeColor: whitePure(context),
+                                  thumbColor: ColorRes.themeAccentSolid,
+                                  activeColor: ColorRes.whitePure,
                                   inactiveColor:
-                                      whitePure(context).withValues(alpha: .3),
+                                      ColorRes.whitePure.withValues(alpha: .3),
                                   onChangeStart: (_) => controller.pause(),
                                   onChangeEnd: (_) => controller.play(),
                                   onChanged: (value) {
@@ -219,7 +219,7 @@ class _ColorFilterScreenState extends State<ColorFilterScreen> {
                                 child: Text(
                                   value.duration.printDuration,
                                   style: TextStyleCustom.outFitMedium500(
-                                    color: whitePure(context),
+                                    color: ColorRes.whitePure,
                                     fontSize: 12,
                                   ),
                                 ),
@@ -270,7 +270,7 @@ class _ColorFilterScreenState extends State<ColorFilterScreen> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: blackPure(context),
+      color: ColorRes.blackPure,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -285,7 +285,7 @@ class _ColorFilterScreenState extends State<ColorFilterScreen> {
                 children: [
                   CustomBackButton(
                     image: AssetRes.icClose,
-                    color: whitePure(context),
+                    color: ColorRes.whitePure,
                     width: 25,
                     height: 25,
                   ),
@@ -299,13 +299,13 @@ class _ColorFilterScreenState extends State<ColorFilterScreen> {
                       padding: const EdgeInsets.symmetric(horizontal: 20),
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(30),
-                        border: Border.all(color: whitePure(context)),
+                        border: Border.all(color: ColorRes.whitePure),
                       ),
                       alignment: const Alignment(0, -0.1),
                       child: Text(
                         LKey.done.tr,
                         style: TextStyleCustom.outFitRegular400(
-                          color: whitePure(context),
+                          color: ColorRes.whitePure,
                           fontSize: 17,
                         ),
                       ),
@@ -333,7 +333,7 @@ class _ColorFilterScreenState extends State<ColorFilterScreen> {
                       padding: const EdgeInsets.symmetric(
                           vertical: 5, horizontal: 10),
                       decoration: ShapeDecoration(
-                        color: whitePure(context),
+                        color: ColorRes.whitePure,
                         shape: SmoothRectangleBorder(
                           borderRadius: SmoothBorderRadius(
                             cornerRadius: 7,
@@ -344,7 +344,7 @@ class _ColorFilterScreenState extends State<ColorFilterScreen> {
                       child: Text(
                         LKey.applyAll.tr,
                         style: TextStyleCustom.outFitRegular400(
-                          color: blackPure(context),
+                          color: ColorRes.blackPure,
                           fontSize: 13,
                         ),
                       ),
@@ -419,8 +419,8 @@ class FilterThumbnail extends StatelessWidget {
                       decoration: BoxDecoration(
                         border: Border.all(
                             color: isSelected
-                                ? whitePure(context)
-                                : whitePure(context).withValues(alpha: .2),
+                                ? ColorRes.whitePure
+                                : ColorRes.whitePure.withValues(alpha: .2),
                             width: 1.5),
                         borderRadius: SmoothBorderRadius(
                           cornerRadius: 10,
@@ -437,7 +437,7 @@ class FilterThumbnail extends StatelessWidget {
             filter.filterName.capitalizeFirst ?? '',
             style: TextStyleCustom.unboundedRegular400(
               fontSize: 12,
-              color: whitePure(context),
+              color: ColorRes.whitePure,
             ),
             overflow: TextOverflow.ellipsis,
           ),

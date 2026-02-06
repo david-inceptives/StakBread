@@ -3,7 +3,6 @@ import 'dart:ui' as ui show Gradient;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:stakBread/utilities/color_res.dart';
-import 'package:stakBread/utilities/theme_res.dart';
 
 class StyleRes {
   static Gradient themeGradient = const LinearGradient(
@@ -14,8 +13,8 @@ class StyleRes {
 
   static Gradient textDarkGreyGradient({double opacity = 1}) => LinearGradient(
         colors: [
-          textDarkGrey(Get.context!).withValues(alpha: opacity),
-          textDarkGrey(Get.context!).withValues(alpha: opacity)
+          ColorRes.textDarkGrey.withValues(alpha: opacity),
+          ColorRes.textDarkGrey.withValues(alpha: opacity)
         ],
         begin: Alignment.centerLeft,
         end: Alignment.centerRight,
@@ -32,8 +31,8 @@ class StyleRes {
 
   static Gradient textLightGreyGradient({double opacity = 1}) => LinearGradient(
         colors: [
-          textLightGrey(Get.context!).withValues(alpha: opacity),
-          textLightGrey(Get.context!).withValues(alpha: opacity)
+          ColorRes.textLightGrey.withValues(alpha: opacity),
+          ColorRes.textLightGrey.withValues(alpha: opacity)
         ],
         begin: Alignment.centerLeft,
         end: Alignment.centerRight,

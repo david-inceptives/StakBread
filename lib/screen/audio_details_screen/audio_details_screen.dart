@@ -11,7 +11,7 @@ import 'package:stakBread/screen/audio_details_screen/audio_sheet.dart';
 import 'package:stakBread/screen/audio_details_screen/audio_sheet_controller.dart';
 import 'package:stakBread/utilities/asset_res.dart';
 import 'package:stakBread/utilities/text_style_custom.dart';
-import 'package:stakBread/utilities/theme_res.dart';
+import 'package:stakBread/utilities/color_res.dart';
 
 class AudioDetailsScreen extends StatelessWidget {
   final Rx<Music?> music;
@@ -37,7 +37,7 @@ class AudioDetailsScreen extends StatelessWidget {
                             : AssetRes.icBookmark,
                         width: 22,
                         height: 22,
-                        color: textDarkGrey(context)),
+                        color: ColorRes.textDarkGrey),
                   ),
                 )),
           ),
@@ -90,20 +90,20 @@ class AudioDetailsProfile extends StatelessWidget {
                           Text(
                             (music?.postCount ?? 0).numberFormat,
                             style: TextStyleCustom.unboundedSemiBold600(
-                                color: textDarkGrey(context), fontSize: 16),
+                                color: ColorRes.textDarkGrey, fontSize: 16),
                           ),
                           Text(
                             LKey.reels.tr,
                             style: TextStyleCustom.outFitRegular400(
-                                color: textLightGrey(context), fontSize: 15),
+                                color: ColorRes.textLightGrey, fontSize: 15),
                           ),
                         ],
                       ),
                       TextButtonCustom(
                         onTap: controller.onMakeReel,
                         title: LKey.makeReel.tr,
-                        titleColor: whitePure(context),
-                        backgroundColor: themeAccentSolid(context),
+                        titleColor: ColorRes.whitePure,
+                        backgroundColor: ColorRes.themeAccentSolid,
                         btnHeight: 40,
                         horizontalMargin: 0,
                         padding: const EdgeInsets.symmetric(horizontal: 30),
@@ -114,7 +114,7 @@ class AudioDetailsProfile extends StatelessWidget {
                   Text(
                     music?.title ?? '',
                     style: TextStyleCustom.outFitRegular400(
-                        fontSize: 15, color: textDarkGrey(context)),
+                        fontSize: 15, color: ColorRes.textDarkGrey),
                   ),
                   const SizedBox(height: 7),
                   FullNameWithBlueTick(
@@ -127,7 +127,7 @@ class AudioDetailsProfile extends StatelessWidget {
                   Text(
                     music?.user?.fullname ?? LKey.admin.tr,
                     style: TextStyleCustom.outFitRegular400(
-                        color: textLightGrey(context), fontSize: 16),
+                        color: ColorRes.textLightGrey, fontSize: 16),
                   ),
                 ],
               ),

@@ -6,7 +6,7 @@ import 'package:stakBread/common/widget/custom_bg_circle_button.dart';
 import 'package:stakBread/common/widget/custom_image.dart';
 import 'package:stakBread/utilities/asset_res.dart';
 import 'package:stakBread/utilities/text_style_custom.dart';
-import 'package:stakBread/utilities/theme_res.dart';
+import 'package:stakBread/utilities/color_res.dart';
 
 class UrlCard extends StatelessWidget {
   final UrlMetadata? metadata;
@@ -31,7 +31,7 @@ class UrlCard extends StatelessWidget {
               shape: SmoothRectangleBorder(
                   borderRadius:
                       SmoothBorderRadius(cornerRadius: 9, cornerSmoothing: 1),
-                  side: BorderSide(color: bgGrey(context))),
+                  side: BorderSide(color: ColorRes.bgGrey)),
             ),
             child: Row(
               spacing: 10,
@@ -45,7 +45,7 @@ class UrlCard extends StatelessWidget {
                           left: SmoothRadius(
                               cornerRadius: 8, cornerSmoothing: 1)),
                     ),
-                    color: bgGrey(context),
+                    color: ColorRes.bgGrey,
                   ),
                   alignment: Alignment.center,
                   child: ClipRRect(
@@ -69,7 +69,7 @@ class UrlCard extends StatelessWidget {
                     Text(
                       metadata?.title ?? '',
                       style: TextStyleCustom.outFitRegular400(
-                          color: textDarkGrey(context), fontSize: 15),
+                          color: ColorRes.textDarkGrey, fontSize: 15),
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                     ),
@@ -77,7 +77,7 @@ class UrlCard extends StatelessWidget {
                       Text(
                         metadata?.host ?? '',
                         style: TextStyleCustom.outFitRegular400(
-                            color: textLightGrey(context), fontSize: 15),
+                            color: ColorRes.textLightGrey, fontSize: 15),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                       ),
@@ -93,7 +93,7 @@ class UrlCard extends StatelessWidget {
                 padding: const EdgeInsets.all(5),
                 child: CustomBgCircleButton(
                   image: AssetRes.icClose1,
-                  bgColor: textDarkGrey(context),
+                  bgColor: ColorRes.textDarkGrey,
                   size: const Size(25, 25),
                 ),
               ),

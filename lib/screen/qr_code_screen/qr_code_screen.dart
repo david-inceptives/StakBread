@@ -12,7 +12,7 @@ import 'package:stakBread/screen/share_sheet_widget/share_sheet_widget.dart';
 import 'package:stakBread/utilities/asset_res.dart';
 import 'package:stakBread/utilities/style_res.dart';
 import 'package:stakBread/utilities/text_style_custom.dart';
-import 'package:stakBread/utilities/theme_res.dart';
+import 'package:stakBread/utilities/color_res.dart';
 
 class QrCodeScreen extends StatelessWidget {
   const QrCodeScreen({super.key});
@@ -32,13 +32,13 @@ class QrCodeScreen extends StatelessWidget {
                 RepaintBoundary(
                   key: controller.screenshotKey,
                   child: Container(
-                    color: whitePure(context),
+                    color: ColorRes.whitePure,
                     padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 20),
                     child: Column(
                       spacing: 30,
                       children: [
                         Text(LKey.scanCodeToCheckProfile.tr,
-                            style: TextStyleCustom.unboundedRegular400(color: textDarkGrey(context), fontSize: 15),
+                            style: TextStyleCustom.unboundedRegular400(color: ColorRes.textDarkGrey, fontSize: 15),
                             textAlign: TextAlign.center),
                         GradientBorder(
                             strokeWidth: 15,
@@ -57,7 +57,7 @@ class QrCodeScreen extends StatelessWidget {
                                     size: const Size(40, 40),
                                     image: controller.myUser?.profilePhoto?.addBaseURL(),
                                     fullName: controller.myUser?.fullname,
-                                    strokeColor: whitePure(context),
+                                    strokeColor: ColorRes.whitePure,
                                     strokeWidth: 5)
                               ],
                             )),
@@ -71,10 +71,10 @@ class QrCodeScreen extends StatelessWidget {
                             ),
                             const SizedBox(height: 2),
                             Text(controller.myUser?.fullname ?? '',
-                                style: TextStyleCustom.outFitRegular400(color: textLightGrey(context), fontSize: 16)),
+                                style: TextStyleCustom.outFitRegular400(color: ColorRes.textLightGrey, fontSize: 16)),
                             const SizedBox(height: 15),
                             Text(controller.myUser?.bio ?? '',
-                                style: TextStyleCustom.outFitLight300(color: textLightGrey(context), fontSize: 15),
+                                style: TextStyleCustom.outFitLight300(color: ColorRes.textLightGrey, fontSize: 15),
                                 textAlign: TextAlign.center),
                           ],
                         ),
@@ -96,7 +96,7 @@ class QrCodeScreen extends StatelessWidget {
                               iconSize: 30),
                           Text(
                             LKey.save.tr,
-                            style: TextStyleCustom.outFitLight300(color: textLightGrey(context), fontSize: 15),
+                            style: TextStyleCustom.outFitLight300(color: ColorRes.textLightGrey, fontSize: 15),
                           )
                         ],
                       ),
@@ -110,7 +110,7 @@ class QrCodeScreen extends StatelessWidget {
                               iconSize: 30),
                           Text(
                             LKey.share.tr,
-                            style: TextStyleCustom.outFitLight300(color: textLightGrey(context), fontSize: 15),
+                            style: TextStyleCustom.outFitLight300(color: ColorRes.textLightGrey, fontSize: 15),
                           )
                         ],
                       ),

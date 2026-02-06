@@ -10,7 +10,7 @@ import 'package:stakBread/screen/music_sheet/widget/music_list.dart';
 import 'package:stakBread/screen/selected_music_sheet/selected_music_sheet_controller.dart';
 import 'package:stakBread/utilities/style_res.dart';
 import 'package:stakBread/utilities/text_style_custom.dart';
-import 'package:stakBread/utilities/theme_res.dart';
+import 'package:stakBread/utilities/color_res.dart';
 
 class MusicCategoryGrid extends StatelessWidget {
   final RxList<MusicCategory> musicCategories;
@@ -44,7 +44,7 @@ class MusicCategoryGrid extends StatelessWidget {
             },
             child: Container(
               decoration: ShapeDecoration(
-                color: bgMediumGrey(context),
+                color: ColorRes.bgMediumGrey,
                 shape: SmoothRectangleBorder(
                   borderRadius: SmoothBorderRadius(
                     cornerRadius: 7,
@@ -66,7 +66,7 @@ class MusicCategoryGrid extends StatelessWidget {
                   Text(
                     '${musicCategory.musicsCount ?? 0} ${LKey.music.tr}',
                     style: TextStyleCustom.outFitRegular400(
-                        fontSize: 13, color: textLightGrey(context)),
+                        fontSize: 13, color: ColorRes.textLightGrey),
                   )
                 ],
               ),
@@ -90,7 +90,7 @@ class CategoryMusicSheet extends StatelessWidget {
     return Container(
       margin: EdgeInsets.only(top: AppBar().preferredSize.height * 2),
       decoration: ShapeDecoration(
-          color: whitePure(context),
+          color: ColorRes.whitePure,
           shape: const SmoothRectangleBorder(
               borderRadius: SmoothBorderRadius.vertical(
                   top: SmoothRadius(cornerRadius: 30, cornerSmoothing: 1)))),

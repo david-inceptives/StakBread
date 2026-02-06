@@ -2,7 +2,7 @@ import 'package:figma_squircle_updated/figma_squircle.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:stakBread/utilities/text_style_custom.dart';
-import 'package:stakBread/utilities/theme_res.dart';
+import 'package:stakBread/utilities/color_res.dart';
 
 class TextButtonCustom extends StatelessWidget {
   final String title;
@@ -52,12 +52,12 @@ class TextButtonCustom extends StatelessWidget {
                   borderRadius: SmoothBorderRadius(
                       cornerRadius: radius ?? 10, cornerSmoothing: 1),
                   side: borderSide ?? BorderSide.none),
-              color: backgroundColor ?? whitePure(context)),
+              color: backgroundColor ?? ColorRes.whitePure),
           child: child ??
               Text(
                 title.capitalize ?? '',
             style: TextStyleCustom.outFitRegular400(
-                color: titleColor ?? textDarkGrey(context),
+                color: titleColor ?? ColorRes.textDarkGrey,
                 fontSize: fontSize ?? 17),
           ),
         ),

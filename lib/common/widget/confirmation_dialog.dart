@@ -4,7 +4,7 @@ import 'package:get/get.dart';
 import 'package:stakBread/common/widget/text_button_custom.dart';
 import 'package:stakBread/languages/languages_keys.dart';
 import 'package:stakBread/utilities/text_style_custom.dart';
-import 'package:stakBread/utilities/theme_res.dart';
+import 'package:stakBread/utilities/color_res.dart';
 
 class ConfirmationSheet extends StatelessWidget {
   final String title;
@@ -36,7 +36,7 @@ class ConfirmationSheet extends StatelessWidget {
               shape: const SmoothRectangleBorder(
                   borderRadius: SmoothBorderRadius.vertical(
                       top: SmoothRadius(cornerRadius: 40, cornerSmoothing: 1))),
-              color: whitePure(context)),
+              color: ColorRes.whitePure),
           child: SafeArea(
             top: false,
             child: Padding(
@@ -48,7 +48,7 @@ class ConfirmationSheet extends StatelessWidget {
                     child: Container(
                         height: 1,
                         width: 100,
-                        color: bgGrey(context),
+                        color: ColorRes.bgGrey,
                         margin: const EdgeInsets.only(top: 10)),
                   ),
                   const SizedBox(height: 20),
@@ -58,7 +58,7 @@ class ConfirmationSheet extends StatelessWidget {
                       Expanded(
                         child: Text(title,
                             style: TextStyleCustom.unboundedMedium500(
-                                color: textDarkGrey(context), fontSize: 15)),
+                                color: ColorRes.textDarkGrey, fontSize: 15)),
                       ),
                       if (isDismissible)
                         InkWell(
@@ -67,7 +67,7 @@ class ConfirmationSheet extends StatelessWidget {
                                 Get.back();
                               },
                           child: Icon(Icons.close_rounded,
-                              color: textDarkGrey(context), size: 25),
+                              color: ColorRes.textDarkGrey, size: 25),
                         )
                     ],
                   ),
@@ -75,7 +75,7 @@ class ConfirmationSheet extends StatelessWidget {
                   Text(
                     '$description\n\n${description2 ?? LKey.proceedConfirmation.tr}',
                     style: TextStyleCustom.outFitLight300(
-                        fontSize: 16, color: textLightGrey(context)),
+                        fontSize: 16, color: ColorRes.textLightGrey),
                   ),
                   const SizedBox(height: 50),
                   TextButtonCustom(
@@ -84,9 +84,9 @@ class ConfirmationSheet extends StatelessWidget {
                       onTap();
                     },
                     title: positiveText ?? LKey.continueText.tr,
-                    backgroundColor: textDarkGrey(context),
+                    backgroundColor: ColorRes.textDarkGrey,
                     margin: EdgeInsets.zero,
-                    titleColor: whitePure(context),
+                    titleColor: ColorRes.whitePure,
                   ),
                   const SizedBox(height: 20),
                 ],

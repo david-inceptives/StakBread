@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:stakBread/utilities/asset_res.dart';
-import 'package:stakBread/utilities/theme_res.dart';
+import 'package:stakBread/utilities/color_res.dart';
 
 class CustomBackButton extends StatelessWidget {
   final String? image;
@@ -32,7 +32,7 @@ class CustomBackButton extends StatelessWidget {
           image ?? AssetRes.icBackArrow,
           height: height,
           width: width,
-          color: color ?? textDarkGrey(context),
+          color: color ?? ColorRes.textDarkGrey,
           alignment: alignment ?? Alignment.center,
         ),
       ),

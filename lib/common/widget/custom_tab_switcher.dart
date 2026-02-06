@@ -2,7 +2,7 @@ import 'package:figma_squircle_updated/figma_squircle.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:stakBread/utilities/text_style_custom.dart';
-import 'package:stakBread/utilities/theme_res.dart';
+import 'package:stakBread/utilities/color_res.dart';
 
 class CustomTabSwitcher extends StatelessWidget {
   final List<String> items;
@@ -33,11 +33,11 @@ class CustomTabSwitcher extends StatelessWidget {
         width: double.infinity,
         margin: margin ?? const EdgeInsets.symmetric(vertical: 10),
         decoration: ShapeDecoration(
-          color: backgroundColor ?? bgMediumGrey(context),
+          color: backgroundColor ?? ColorRes.bgMediumGrey,
           shape: SmoothRectangleBorder(
               borderRadius:
                   SmoothBorderRadius(cornerRadius: 10, cornerSmoothing: 1),
-              side: BorderSide(color: bgGrey(context))),
+              side: BorderSide(color: ColorRes.bgGrey)),
         ),
         padding: const EdgeInsets.all(4),
         child: Stack(
@@ -60,7 +60,7 @@ class CustomTabSwitcher extends StatelessWidget {
                         borderRadius: SmoothBorderRadius(
                             cornerRadius: 10 - 2, cornerSmoothing: 1),
                       ),
-                      color: whitePure(context),
+                      color: ColorRes.whitePure,
                     ),
                   ),
                 );
@@ -82,9 +82,9 @@ class CustomTabSwitcher extends StatelessWidget {
                             items[index].tr,
                             style: TextStyleCustom.outFitRegular400(
                                 color: !isSelected
-                                    ? textLightGrey(context)
+                                    ? ColorRes.textLightGrey
                                     : (selectedFontColor ??
-                                        textDarkGrey(context)),
+                                        ColorRes.textDarkGrey),
                                 fontSize: 15),
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,

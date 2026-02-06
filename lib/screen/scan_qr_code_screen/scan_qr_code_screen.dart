@@ -18,7 +18,7 @@ import 'package:stakBread/languages/languages_keys.dart';
 import 'package:stakBread/model/user_model/user_model.dart';
 import 'package:stakBread/utilities/asset_res.dart';
 import 'package:stakBread/utilities/text_style_custom.dart';
-import 'package:stakBread/utilities/theme_res.dart';
+import 'package:stakBread/utilities/color_res.dart';
 
 class ScanQrCodeScreen extends StatefulWidget {
   const ScanQrCodeScreen({super.key});
@@ -42,7 +42,7 @@ class _ScanQrCodeScreenState extends State<ScanQrCodeScreen> {
               padding: const EdgeInsets.only(bottom: 10.0),
               child: Text(LKey.scanQrProfileSearch.tr,
                   style: TextStyleCustom.outFitLight300(
-                      color: textLightGrey(context), fontSize: 14)),
+                      color: ColorRes.textLightGrey, fontSize: 14)),
             ),
           ),
           Expanded(
@@ -68,7 +68,7 @@ class _ScanQrCodeScreenState extends State<ScanQrCodeScreen> {
                   child: Container(
                     height: 200,
                     width: double.infinity,
-                    color: whitePure(context),
+                    color: ColorRes.whitePure,
                     alignment: Alignment.center,
                     child: InkWell(
                       onTap: onUploadFromGallery,
@@ -79,7 +79,7 @@ class _ScanQrCodeScreenState extends State<ScanQrCodeScreen> {
                           shape: SmoothRectangleBorder(
                               borderRadius: SmoothBorderRadius(
                                   cornerRadius: 10, cornerSmoothing: 1)),
-                          color: bgMediumGrey(context),
+                          color: ColorRes.bgMediumGrey,
                         ),
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
@@ -90,7 +90,7 @@ class _ScanQrCodeScreenState extends State<ScanQrCodeScreen> {
                             Text(
                               LKey.uploadFromGallery.tr,
                               style: TextStyleCustom.outFitMedium500(
-                                  color: textLightGrey(context), fontSize: 16),
+                                  color: ColorRes.textLightGrey, fontSize: 16),
                             )
                           ],
                         ),

@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:stakBread/common/widget/custom_back_button.dart';
 import 'package:stakBread/utilities/text_style_custom.dart';
-import 'package:stakBread/utilities/theme_res.dart';
+import 'package:stakBread/utilities/color_res.dart';
 
 class CustomAppBar extends StatelessWidget {
   final String title;
@@ -28,7 +28,7 @@ class CustomAppBar extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      color: bgColor ?? bgLightGrey(context),
+      color: bgColor ?? ColorRes.bgLightGrey,
       child: SafeArea(
         bottom: false,
         child: Column(
@@ -49,19 +49,19 @@ class CustomAppBar extends StatelessWidget {
                     children: [
                       Text(
                         title,
-                        style: titleStyle ?? TextStyleCustom.unboundedMedium500(color: textDarkGrey(context)),
+                        style: titleStyle ?? TextStyleCustom.unboundedMedium500(color: ColorRes.textDarkGrey),
                         overflow: TextOverflow.ellipsis,
                       ),
                       if (isLoading)
                         CupertinoActivityIndicator(
-                          color: textLightGrey(context),
+                          color: ColorRes.textLightGrey,
                           radius: 8,
                         )
                       else if (subTitle != null)
                         Text(
                           subTitle ?? '',
                           style: TextStyleCustom.outFitLight300(
-                            color: textLightGrey(context),
+                            color: ColorRes.textLightGrey,
                           ),
                           overflow: TextOverflow.ellipsis,
                         ),

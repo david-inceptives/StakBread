@@ -13,7 +13,7 @@ import 'package:stakBread/screen/comment_sheet/helper/comment_helper.dart';
 import 'package:stakBread/screen/comment_sheet/widget/comment_bottom_text_field_view.dart';
 import 'package:stakBread/screen/comment_sheet/widget/comments_view.dart';
 import 'package:stakBread/screen/comment_sheet/widget/hashtag_and_mention_view.dart';
-import 'package:stakBread/utilities/theme_res.dart';
+import 'package:stakBread/utilities/color_res.dart';
 
 class CommentSheet extends StatelessWidget {
   final Post? post;
@@ -42,7 +42,7 @@ class CommentSheet extends StatelessWidget {
           shape: const SmoothRectangleBorder(
               borderRadius: SmoothBorderRadius.vertical(
                   top: SmoothRadius(cornerRadius: 40, cornerSmoothing: 1))),
-          color: scaffoldBackgroundColor(context)),
+          color: ColorRes.whitePure),
       child: Column(
         children: [
           if (isFromBottomSheet)

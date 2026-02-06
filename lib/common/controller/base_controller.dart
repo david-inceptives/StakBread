@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:stakBread/common/widget/loader_widget.dart';
 import 'package:stakBread/utilities/text_style_custom.dart';
-import 'package:stakBread/utilities/theme_res.dart';
+import 'package:stakBread/utilities/color_res.dart';
 
 class BaseController extends FullLifeCycleController {
   RxBool isLoading = false.obs;
@@ -31,7 +31,7 @@ class BaseController extends FullLifeCycleController {
     }
 
     Get.rawSnackbar(
-      backgroundColor: blackPure(Get.context!),
+      backgroundColor: ColorRes.blackPure,
       margin: const EdgeInsets.symmetric(horizontal: 10),
       padding: const EdgeInsets.all(15),
       borderRadius: 10,
@@ -40,7 +40,7 @@ class BaseController extends FullLifeCycleController {
       snackPosition: SnackPosition.TOP,
       messageText: Text(title?.capitalizeFirst?.tr ?? '',
           style: TextStyleCustom.outFitRegular400(
-              color: whitePure(Get.context!), fontSize: 17)),
+              color: ColorRes.whitePure, fontSize: 17)),
     );
   }
 

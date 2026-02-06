@@ -3,7 +3,7 @@ import 'dart:ui';
 import 'package:figma_squircle_updated/figma_squircle.dart';
 import 'package:flutter/material.dart';
 import 'package:stakBread/utilities/text_style_custom.dart';
-import 'package:stakBread/utilities/theme_res.dart';
+import 'package:stakBread/utilities/color_res.dart';
 
 class CustomBlurButton extends StatelessWidget {
   final String title;
@@ -24,10 +24,10 @@ class CustomBlurButton extends StatelessWidget {
             decoration: BoxDecoration(
                 borderRadius: SmoothBorderRadius(cornerRadius: 20),
                 border: Border.all(
-                    color: whitePure(context).withValues(alpha: .2))),
+                    color: ColorRes.whitePure.withValues(alpha: .2))),
             child: Text(title,
                 style:
-                    TextStyleCustom.outFitLight300(color: whitePure(context))),
+                    TextStyleCustom.outFitLight300(color: ColorRes.whitePure)),
           ),
         ),
       ),

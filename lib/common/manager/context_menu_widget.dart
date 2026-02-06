@@ -1,7 +1,7 @@
 import 'package:figma_squircle_updated/figma_squircle.dart';
 import 'package:flutter/material.dart';
 import 'package:stakBread/utilities/text_style_custom.dart';
-import 'package:stakBread/utilities/theme_res.dart';
+import 'package:stakBread/utilities/color_res.dart';
 
 class Menu {
   final List<MenuAction> children;
@@ -40,7 +40,7 @@ class ContextMenuWidget extends StatelessWidget {
         Rect.fromPoints(globalPosition, globalPosition),
         Offset.zero & overlay.size,
       ),
-      color: bgLightGrey(context),
+      color: ColorRes.bgLightGrey,
       shape: SmoothRectangleBorder(borderRadius: SmoothBorderRadius(cornerRadius: 10, cornerSmoothing: 1)),
       items: menu.children
           .asMap()
@@ -51,7 +51,7 @@ class ContextMenuWidget extends StatelessWidget {
               height: 30,
               child: Text(
                 entry.value.title,
-                style: TextStyleCustom.outFitRegular400(color: textDarkGrey(context)),
+                style: TextStyleCustom.outFitRegular400(color: ColorRes.textDarkGrey),
               ),
             ),
           )

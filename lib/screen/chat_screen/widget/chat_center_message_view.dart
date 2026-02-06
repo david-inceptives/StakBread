@@ -16,7 +16,7 @@ import 'package:stakBread/screen/chat_screen/message_type_widget/chat_post_messa
 import 'package:stakBread/screen/chat_screen/message_type_widget/chat_story_reply_message.dart';
 import 'package:stakBread/screen/chat_screen/message_type_widget/chat_text_message.dart';
 import 'package:stakBread/utilities/text_style_custom.dart';
-import 'package:stakBread/utilities/theme_res.dart';
+import 'package:stakBread/utilities/color_res.dart';
 
 class ChatMessageView extends StatelessWidget {
   final ChatScreenController controller;
@@ -65,7 +65,7 @@ class ChatMessageView extends StatelessWidget {
                       },
                       child: Container(
                         decoration: ShapeDecoration(
-                            color: scaffoldBackgroundColor(context),
+                            color: ColorRes.whitePure,
                             shape: SmoothRectangleBorder(
                               borderRadius: SmoothBorderRadius(
                                   cornerRadius: 15, cornerSmoothing: 1),
@@ -120,7 +120,7 @@ class ChatDateView extends StatelessWidget {
       child: Text(
         '${message.id ?? 0}'.chatTimeFormat,
         style: TextStyleCustom.outFitLight300(
-            fontSize: 12, color: textLightGrey(context)),
+            fontSize: 12, color: ColorRes.textLightGrey),
       ),
     );
   }

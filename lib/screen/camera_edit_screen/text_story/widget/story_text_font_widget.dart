@@ -5,7 +5,7 @@ import 'package:stakBread/languages/languages_keys.dart';
 import 'package:stakBread/screen/camera_edit_screen/text_story/story_text_view_controller.dart';
 import 'package:stakBread/screen/edit_profile_screen/widget/base_select_sheet.dart';
 import 'package:stakBread/utilities/asset_res.dart';
-import 'package:stakBread/utilities/theme_res.dart';
+import 'package:stakBread/utilities/color_res.dart';
 
 class StoryTextFontWidget extends StatelessWidget {
   const StoryTextFontWidget({super.key});
@@ -25,12 +25,12 @@ class StoryTextFontWidget extends StatelessWidget {
               width: 30,
               margin: const EdgeInsets.symmetric(horizontal: 10),
               decoration: BoxDecoration(
-                  color: whitePure(context).withValues(alpha: .3), shape: BoxShape.circle),
+                  color: ColorRes.whitePure.withValues(alpha: .3), shape: BoxShape.circle),
               alignment: Alignment.center,
               child: RotatedBox(
                   quarterTurns: 2,
                   child: Image.asset(AssetRes.icDownArrow_1,
-                      color: whitePure(context), width: 20, height: 20)),
+                      color: ColorRes.whitePure, width: 20, height: 20)),
             ),
           ),
           Expanded(
@@ -57,14 +57,14 @@ class StoryTextFontWidget extends StatelessWidget {
                                     SmoothBorderRadius(cornerRadius: 5, cornerSmoothing: 1),
                               ),
                               color: isSelected
-                                  ? whitePure(context)
-                                  : blackPure(context).withValues(alpha: .2)),
+                                  ? ColorRes.whitePure
+                                  : ColorRes.blackPure.withValues(alpha: .2)),
                           child: Text(
                             fontFamily.fontName,
                             style: fontFamily.style.copyWith(
                                 color: isSelected
-                                    ? blackPure(context)
-                                    : whitePure(context),
+                                    ? ColorRes.blackPure
+                                    : ColorRes.whitePure,
                                 fontSize: 16),
                           ),
                         );

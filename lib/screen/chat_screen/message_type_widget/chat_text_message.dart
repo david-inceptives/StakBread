@@ -4,7 +4,7 @@ import 'package:get/get.dart';
 import 'package:stakBread/model/chat/message_data.dart';
 import 'package:stakBread/utilities/style_res.dart';
 import 'package:stakBread/utilities/text_style_custom.dart';
-import 'package:stakBread/utilities/theme_res.dart';
+import 'package:stakBread/utilities/color_res.dart';
 
 class ChatTextMessage extends StatelessWidget {
   final bool isMe;
@@ -22,13 +22,13 @@ class ChatTextMessage extends StatelessWidget {
               borderRadius: SmoothBorderRadius(cornerRadius: 10, cornerSmoothing: 1),
               side: isMe
                   ? BorderSide.none
-                  : BorderSide(color: bgGrey(context), strokeAlign: BorderSide.strokeAlignInside)),
-          color: isMe ? null : bgLightGrey(context),
+                  : BorderSide(color: ColorRes.bgGrey, strokeAlign: BorderSide.strokeAlignInside)),
+          color: isMe ? null : ColorRes.bgLightGrey,
           gradient: isMe ? StyleRes.themeGradient : null),
       child: Text(
         message.textMessage ?? '',
         style: TextStyleCustom.outFitRegular400(
-            color: isMe ? whitePure(context) : textDarkGrey(context), fontSize: 16),
+            color: isMe ? ColorRes.whitePure : ColorRes.textDarkGrey, fontSize: 16),
       ),
     );
   }

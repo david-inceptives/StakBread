@@ -11,7 +11,7 @@ import 'package:stakBread/screen/camera_screen/widget/camera_bottom_view.dart';
 import 'package:stakBread/screen/camera_screen/widget/camera_top_view.dart';
 import 'package:stakBread/screen/selected_music_sheet/selected_music_sheet_controller.dart';
 import 'package:stakBread/utilities/asset_res.dart';
-import 'package:stakBread/utilities/theme_res.dart';
+import 'package:stakBread/utilities/color_res.dart';
 
 enum CameraScreenType { post, story }
 
@@ -29,7 +29,7 @@ class CameraScreen extends StatelessWidget {
     return PopScope(
       canPop: false,
       child: Scaffold(
-        backgroundColor: blackPure(context),
+        backgroundColor: ColorRes.blackPure,
         resizeToAvoidBottomInset: false,
         body: Stack(
           alignment: Alignment.center,

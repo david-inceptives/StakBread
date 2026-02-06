@@ -20,6 +20,7 @@ import 'package:stakBread/screen/dashboard_screen/dashboard_screen.dart';
 import 'package:stakBread/screen/on_boarding_screen/on_boarding_screen.dart';
 import 'package:stakBread/screen/select_language_screen/select_language_screen.dart';
 import 'package:stakBread/utilities/app_res.dart';
+import 'package:stakBread/utilities/const_res.dart';
 
 class SplashScreenController extends BaseController {
   late StreamSubscription _subscription;
@@ -51,26 +52,35 @@ class SplashScreenController extends BaseController {
     await Future.delayed(const Duration(milliseconds: 1000));
     bool showNavigate = await CommonService.instance.fetchGlobalSettings();
     if (showNavigate) {
-      final translations = Get.find<DynamicTranslations>();
-      var setting = SessionManager.instance.getSettings();
-      var languages = setting?.languages ?? [];
-      List<Language> downloadLanguages = languages.where((element) => element.status == 1).toList();
-      if (downloadLanguages.isEmpty) {
-        showSnackBar(AppRes.languageAdd, second: 5);
-        return;
+      if (kTranslationFeatureEnabled) {
+        final translations = Get.find<DynamicTranslations>();
+        var setting = SessionManager.instance.getSettings();
+        var languages = setting?.languages ?? [];
+        List<Language> downloadLanguages = languages.where((element) => element.status == 1).toList();
+        if (downloadLanguages.isEmpty) {
+          showSnackBar(AppRes.languageAdd, second: 5);
+          return;
+        }
+
+        var downloadedFiles = await downloadAndParseLanguages(downloadLanguages);
+
+        translations.addTranslations(downloadedFiles);
+
+        var defaultLang = languages.firstWhereOrNull((element) => element.isDefault == 1);
+
+        if (defaultLang != null) {
+          SessionManager.instance.setFallbackLang(defaultLang.code ?? 'en');
+        }
+
+        RestartWidget.restartApp(Get.context!);
+      }
+      // When translation disabled: use default 'en', skip language screen
+      if (!kTranslationFeatureEnabled) {
+        SessionManager.instance.setFallbackLang('en');
+        SessionManager.instance.setLang('en');
+        SessionManager.instance.setBool(SessionKeys.isLanguageScreenSelect, true);
       }
 
-      var downloadedFiles = await downloadAndParseLanguages(downloadLanguages);
-
-      translations.addTranslations(downloadedFiles);
-
-      var defaultLang = languages.firstWhereOrNull((element) => element.isDefault == 1);
-
-      if (defaultLang != null) {
-        SessionManager.instance.setFallbackLang(defaultLang.code ?? 'en');
-      }
-
-      RestartWidget.restartApp(Get.context!);
       if (SessionManager.instance.isLogin()) {
         UserService.instance.fetchUserDetails(userId: SessionManager.instance.getUserID()).then((value) {
           if (value != null) {
@@ -82,9 +92,9 @@ class SplashScreenController extends BaseController {
       } else {
         bool isLanguageSelect = SessionManager.instance.getBool(SessionKeys.isLanguageScreenSelect);
         bool onBoardingShow = SessionManager.instance.getBool(SessionKeys.isOnBoardingScreenSelect);
-        if (isLanguageSelect == false) {
+        if (kTranslationFeatureEnabled && isLanguageSelect == false) {
           Get.off(() => const SelectLanguageScreen(languageNavigationType: LanguageNavigationType.fromStart));
-        } else if (onBoardingShow == false && (setting?.onBoarding ?? []).isNotEmpty) {
+        } else if (onBoardingShow == false && (SessionManager.instance.getSettings()?.onBoarding ?? []).isNotEmpty) {
           Get.off(() => const OnBoardingScreen());
         } else {
           Get.off(() => const LoginScreen());

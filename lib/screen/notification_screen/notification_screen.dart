@@ -12,7 +12,7 @@ import 'package:stakBread/screen/notification_screen/notification_screen_control
 import 'package:stakBread/screen/notification_screen/widget/activity_notification_page.dart';
 import 'package:stakBread/screen/notification_screen/widget/system_notification_page.dart';
 import 'package:stakBread/utilities/text_style_custom.dart';
-import 'package:stakBread/utilities/theme_res.dart';
+import 'package:stakBread/utilities/color_res.dart';
 
 class NotificationScreen extends StatelessWidget {
   const NotificationScreen({super.key});
@@ -26,7 +26,7 @@ class NotificationScreen extends StatelessWidget {
           CustomAppBar(
               title: LKey.notifications.tr,
               titleStyle: TextStyleCustom.unboundedSemiBold600(
-                  fontSize: 15, color: textDarkGrey(context)),
+                  fontSize: 15, color: ColorRes.textDarkGrey),
               widget: CustomTabSwitcher(
                   items: [(LKey.activity.tr), (LKey.system.tr)],
                   selectedIndex: controller.selectedTabIndex,

@@ -11,7 +11,7 @@ import 'package:stakBread/screen/comment_sheet/helper/comment_helper.dart';
 import 'package:stakBread/screen/create_feed_screen/create_feed_screen_controller.dart';
 import 'package:stakBread/utilities/app_res.dart';
 import 'package:stakBread/utilities/asset_res.dart';
-import 'package:stakBread/utilities/theme_res.dart';
+import 'package:stakBread/utilities/color_res.dart';
 
 class HashTagAndMentionUserView extends StatelessWidget {
   final CommentHelper helper;
@@ -57,7 +57,7 @@ class HashTagAndMentionUserView extends StatelessWidget {
             helper.isLoading.value
                 ? Container(
                     decoration: ShapeDecoration(
-                        color: !helper.isLoading.value && items.isEmpty ? null : whitePure(context),
+                        color: !helper.isLoading.value && items.isEmpty ? null : ColorRes.whitePure,
                         shape: SmoothRectangleBorder(
                             borderRadius:
                                 SmoothBorderRadius(cornerRadius: 10, cornerSmoothing: 1))),
@@ -77,7 +77,7 @@ class HashTagAndMentionUserView extends StatelessWidget {
                         decoration: ShapeDecoration(
                             color: !helper.isLoading.value && items.isEmpty
                                 ? null
-                                : whitePure(context),
+                                : ColorRes.whitePure,
                             shape: SmoothRectangleBorder(
                                 borderRadius:
                                     SmoothBorderRadius(cornerRadius: 10, cornerSmoothing: 1))),

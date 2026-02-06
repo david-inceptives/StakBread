@@ -6,7 +6,7 @@ import 'package:stakBread/model/post_story/post_model.dart';
 import 'package:stakBread/screen/comment_sheet/helper/comment_helper.dart';
 import 'package:stakBread/screen/reels_screen/reels_screen_controller.dart';
 import 'package:stakBread/utilities/text_style_custom.dart';
-import 'package:stakBread/utilities/theme_res.dart';
+import 'package:stakBread/utilities/color_res.dart';
 
 class ReelsTextField extends StatelessWidget {
   final ReelsScreenController controller;
@@ -34,13 +34,13 @@ class ReelsTextField extends StatelessWidget {
               margin: const EdgeInsets.symmetric(horizontal: 10),
               decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(30),
-                  border: Border.all(color: textDarkGrey(context))),
+                  border: Border.all(color: ColorRes.textDarkGrey)),
               child: DetectableTextField(
                   enabled: reel.canComment == 1,
                   controller: helper.detectableTextController,
                   focusNode: helper.detectableTextFocusNode,
                   style: TextStyleCustom.outFitRegular400(
-                      color: bgLightGrey(context), fontSize: 16),
+                      color: ColorRes.bgLightGrey, fontSize: 16),
                   onChanged: helper.onChanged,
                   decoration: InputDecoration(
                       border: InputBorder.none,
@@ -55,12 +55,12 @@ class ReelsTextField extends StatelessWidget {
                               onUpdateComment: controller.onUpdateComment),
                           child: Text(LKey.post.tr,
                               style: TextStyleCustom.unboundedMedium500(
-                                  fontSize: 15, color: textLightGrey(context))),
+                                  fontSize: 15, color: ColorRes.textLightGrey)),
                         ),
                       ),
                       hintText: '${LKey.writeHere.tr}..',
-                      hintStyle: TextStyle(color: textLightGrey(context))),
-                  cursorColor: bgLightGrey(context)),
+                      hintStyle: TextStyle(color: ColorRes.textLightGrey)),
+                  cursorColor: ColorRes.bgLightGrey),
             ),
           ),
         );

@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:stakBread/languages/languages_keys.dart';
 import 'package:stakBread/utilities/text_style_custom.dart';
-import 'package:stakBread/utilities/theme_res.dart';
+import 'package:stakBread/utilities/color_res.dart';
 
 class CustomSearchTextField extends StatelessWidget {
   final BorderSide? borderSide;
@@ -38,8 +38,8 @@ class CustomSearchTextField extends StatelessWidget {
         shape: SmoothRectangleBorder(
             borderRadius:
                 SmoothBorderRadius(cornerRadius: 7, cornerSmoothing: 1),
-            side: borderSide ?? BorderSide(color: bgGrey(context))),
-        color: backgroundColor ?? bgLightGrey(context),
+            side: borderSide ?? BorderSide(color: ColorRes.bgGrey)),
+        color: backgroundColor ?? ColorRes.bgLightGrey,
       ),
       child: TextField(
         onTap: onTap,
@@ -52,13 +52,13 @@ class CustomSearchTextField extends StatelessWidget {
                 const EdgeInsets.only(left: 15, right: 15, bottom: 13),
             hintText: hintText ?? LKey.searchHere.tr,
             hintStyle: TextStyleCustom.outFitLight300(
-                fontSize: 15, color: textLightGrey(context)),
+                fontSize: 15, color: ColorRes.textLightGrey),
             hintFadeDuration: const Duration(milliseconds: 200),
             suffixIconConstraints: const BoxConstraints(),
             suffixIcon: suffixIcon),
         cursorHeight: 15,
         style: TextStyleCustom.outFitLight300(
-            fontSize: 15, color: textLightGrey(context)),
+            fontSize: 15, color: ColorRes.textLightGrey),
         onTapOutside: (event) {
           onTapOutside?.call(event);
           FocusManager.instance.primaryFocus?.unfocus();

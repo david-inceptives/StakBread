@@ -11,7 +11,7 @@ import 'package:stakBread/model/livestream/livestream_user_state.dart';
 import 'package:stakBread/screen/live_stream/livestream_screen/widget/live_stream_background_blur_image.dart';
 import 'package:stakBread/utilities/style_res.dart';
 import 'package:stakBread/utilities/text_style_custom.dart';
-import 'package:stakBread/utilities/theme_res.dart';
+import 'package:stakBread/utilities/color_res.dart';
 
 class LiveStreamSummary extends StatelessWidget {
   final LivestreamUserState? userState;
@@ -41,31 +41,31 @@ class LiveStreamSummary extends StatelessWidget {
                       size: const Size(137, 137),
                       image: userState?.user?.profile?.addBaseURL(),
                       fullName: userState?.user?.fullname,
-                      strokeColor: whitePure(context),
+                      strokeColor: ColorRes.whitePure,
                       strokeWidth: 6),
                   const SizedBox(height: 11),
                   FullNameWithBlueTick(
                     username: userState?.user?.username,
                     fontSize: 14,
-                    fontColor: whitePure(context),
+                    fontColor: ColorRes.whitePure,
                     isVerify: userState?.user?.isVerify,
                     iconSize: 18,
                   ),
                   Text(userState?.user?.fullname ?? '',
                       style: TextStyleCustom.outFitRegular400(
-                          fontSize: 16, color: textLightGrey(context))),
+                          fontSize: 16, color: ColorRes.textLightGrey)),
                   Padding(
                     padding: const EdgeInsets.only(top: 30.0, bottom: 5),
                     child: Text(
                       isHost ? LKey.streamEnded.tr : LKey.yourStreamEnded.tr,
                       style: TextStyleCustom.unboundedRegular400(
-                          fontSize: 20, color: whitePure(context)),
+                          fontSize: 20, color: ColorRes.whitePure),
                     ),
                   ),
                   Text(
                     LKey.belowIsTheSummaryOfYourStream.tr,
                     style: TextStyleCustom.outFitThin100(
-                        fontSize: 17, color: textLightGrey(context)),
+                        fontSize: 17, color: ColorRes.textLightGrey),
                   ),
                 ],
               ),
@@ -93,7 +93,7 @@ class LiveStreamSummary extends StatelessWidget {
                         Text(
                           '${LKey.fromBattle.tr} : ${userState?.totalBattleCoin ?? 0} + ${LKey.live.tr} : ${userState?.liveCoin ?? 0}',
                           style: TextStyleCustom.outFitThin100(
-                              color: whitePure(context).withValues(
+                              color: ColorRes.whitePure.withValues(
                             alpha: .7,
                           )),
                         ),
@@ -113,7 +113,7 @@ class LiveStreamSummary extends StatelessWidget {
                           borderRadius: SmoothBorderRadius(
                               cornerRadius: 10, cornerSmoothing: 1),
                           side: BorderSide.none),
-                      color: whitePure(context)),
+                      color: ColorRes.whitePure),
                   child: GradientText(
                     isHost ? LKey.goHome.tr : LKey.getBack.tr,
                     gradient: StyleRes.themeGradient,
@@ -143,7 +143,7 @@ class BuildTextAndValueTiles extends StatelessWidget {
       width: double.infinity,
       margin: const EdgeInsets.symmetric(vertical: .5),
       padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 18),
-      color: whitePure(context).withValues(alpha: .1),
+      color: ColorRes.whitePure.withValues(alpha: .1),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -153,13 +153,13 @@ class BuildTextAndValueTiles extends StatelessWidget {
               Text(
                 title,
                 style: TextStyleCustom.outFitLight300(
-                    color: whitePure(context).withValues(alpha: .7),
+                    color: ColorRes.whitePure.withValues(alpha: .7),
                     fontSize: 16),
               ),
               Text(
                 value,
                 style: TextStyleCustom.outFitMedium500(
-                    color: whitePure(context).withValues(alpha: .7),
+                    color: ColorRes.whitePure.withValues(alpha: .7),
                     fontSize: 18),
               ),
             ],

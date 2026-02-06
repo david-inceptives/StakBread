@@ -21,6 +21,7 @@ import 'package:stakBread/screen/camera_screen/camera_screen.dart';
 import 'package:stakBread/screen/feed_screen/feed_screen_controller.dart';
 import 'package:stakBread/screen/gif_sheet/gif_sheet_controller.dart';
 import 'package:stakBread/utilities/asset_res.dart';
+import 'package:stakBread/utilities/const_res.dart';
 import 'package:stakBread/utilities/firebase_const.dart';
 import 'package:zego_express_engine/zego_express_engine.dart';
 
@@ -28,7 +29,6 @@ class DashboardScreenController extends BaseController with GetSingleTickerProvi
   List<String> bottomIconList = [
     AssetRes.icReel,
     AssetRes.icPost,
-    AssetRes.icLiveStream,
     AssetRes.icSearch,
     AssetRes.icChat,
     AssetRes.icProfile
@@ -76,7 +76,7 @@ class DashboardScreenController extends BaseController with GetSingleTickerProvi
 
     // Run below in parallel
     _createZegoEngine();
-    _fetchLanguageFromUser();
+    if (kTranslationFeatureEnabled) _fetchLanguageFromUser();
     _fetchUnReadCount();
     startCacheCleanupScheduler();
     _subscribeFollowUserIds();

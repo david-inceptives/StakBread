@@ -9,7 +9,7 @@ import 'package:stakBread/screen/comment_sheet/comment_sheet_controller.dart';
 import 'package:stakBread/screen/comment_sheet/widget/comment_card.dart';
 import 'package:stakBread/screen/comment_sheet/widget/reply_comments.dart';
 import 'package:stakBread/utilities/text_style_custom.dart';
-import 'package:stakBread/utilities/theme_res.dart';
+import 'package:stakBread/utilities/color_res.dart';
 
 class CommentsView extends StatelessWidget {
   final CommentSheetController controller;
@@ -44,7 +44,7 @@ class CommentsView extends StatelessWidget {
               return HighlightWrapper(
                 highlight: isNotify,
                 highlightColor:
-                    themeAccentSolid(context).withValues(alpha: 0.3),
+                    ColorRes.themeAccentSolid.withValues(alpha: 0.3),
                 child: CommentItems(controller: controller, comment: comment),
               );
             },
@@ -132,7 +132,7 @@ class ReplyCommentSectionWidget extends StatelessWidget {
                               Container(
                                   height: 1,
                                   width: 30,
-                                  color: textLightGrey(context)),
+                                  color: ColorRes.textLightGrey),
                               const SizedBox(width: 5),
                               Text(
                                 (count) <= 0
@@ -140,7 +140,7 @@ class ReplyCommentSectionWidget extends StatelessWidget {
                                     : '${LKey.view.tr} $count ${LKey.replies.tr}',
                                 style: TextStyleCustom.outFitRegular400(
                                   fontSize: 13,
-                                  color: textLightGrey(context),
+                                  color: ColorRes.textLightGrey,
                                 ),
                               )
                               // Text(
@@ -149,7 +149,7 @@ class ReplyCommentSectionWidget extends StatelessWidget {
                               //       : '${LKey.view.tr} ${comment.repliesCount ?? 0} ${LKey.replies.tr}',
                               //   style: TextStyleCustom.outFitRegular400(
                               //     fontSize: 13,
-                              //     color: textLightGrey(context),
+                              //     color: ColorRes.textLightGrey,
                               //   ),
                               // )
                             ],

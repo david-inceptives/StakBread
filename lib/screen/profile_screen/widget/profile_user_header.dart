@@ -8,8 +8,6 @@ import 'package:stakBread/common/manager/session_manager.dart';
 import 'package:stakBread/common/manager/share_manager.dart';
 import 'package:stakBread/common/widget/custom_image.dart';
 import 'package:stakBread/common/widget/custom_popup_menu_button.dart';
-import 'package:stakBread/common/widget/full_name_with_blue_tick.dart';
-import 'package:stakBread/common/widget/gradient_border.dart';
 import 'package:stakBread/common/widget/text_button_custom.dart';
 import 'package:stakBread/languages/languages_keys.dart';
 import 'package:stakBread/model/user_model/user_model.dart';
@@ -22,7 +20,7 @@ import 'package:stakBread/screen/settings_screen/settings_screen.dart';
 import 'package:stakBread/utilities/asset_res.dart';
 import 'package:stakBread/utilities/style_res.dart';
 import 'package:stakBread/utilities/text_style_custom.dart';
-import 'package:stakBread/utilities/theme_res.dart';
+import 'package:stakBread/utilities/color_res.dart';
 
 class ProfileUserHeader extends StatelessWidget {
   final ProfileScreenController controller;
@@ -37,10 +35,9 @@ class ProfileUserHeader extends StatelessWidget {
         bool isUserNotFound = controller.isUserNotFound.value;
 
         return Padding(
-          padding: const EdgeInsets.only(left: 15.0, right: 15.0, top: 15),
+          padding: const EdgeInsets.only(left: 16, right: 16, top: 20),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
-            spacing: 5,
             children: [
               ProfileStatsRow(
                 userNotFound: isUserNotFound,
@@ -73,10 +70,14 @@ class ProfileUserHeader extends StatelessWidget {
                   }
                 },
               ),
-              if (!isUserNotFound) UserNameView(user: user),
-              if (!isUserNotFound) UserLinkView(user: user),
-              if (!isUserNotFound) UserBioView(user: user),
-              isUserNotFound ? const NoUserFoundButton() : UserButtonView(user: user, controller: controller)
+              if (!isUserNotFound) ...[
+                const SizedBox(height: 16),
+                UserNameView(user: user),
+                const SizedBox(height: 8),
+                UserLinkView(user: user),
+                UserBioView(user: user),
+              ],
+              isUserNotFound ? const NoUserFoundButton() : UserButtonView(user: user, controller: controller),
             ],
           ),
         );
@@ -85,7 +86,7 @@ class ProfileUserHeader extends StatelessWidget {
   }
 }
 
-class ProfileStatsRow extends StatelessWidget {
+class ProfileStatsRow extends StatefulWidget {
   final User? user;
   final List<StatItem> stats;
   final Function(int value) onTap;
@@ -102,28 +103,43 @@ class ProfileStatsRow extends StatelessWidget {
   });
 
   @override
+  State<ProfileStatsRow> createState() => _ProfileStatsRowState();
+}
+
+class _ProfileStatsRowState extends State<ProfileStatsRow> {
+  bool _heroEnable = false;
+
+  @override
   Widget build(BuildContext context) {
+    final user = widget.user;
+    final controller = widget.controller;
+    final userNotFound = widget.userNotFound;
+    final stats = widget.stats;
+    final onTap = widget.onTap;
+
     bool isStoryAvailable = (user?.stories ?? []).isNotEmpty;
-    GlobalKey previewKey = GlobalKey();
     bool isWatch = isStoryAvailable && (user?.stories ?? []).every((element) => element.isWatchedByMe());
-    RxBool isHeroEnable = false.obs;
+    bool isMe = user?.id?.toInt() == SessionManager.instance.getUserID();
+    const double profileSize = 96;
     return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         // Profile Picture
         if (userNotFound)
-          Image.asset(AssetRes.icUserPlaceholder, width: 80, height: 80, fit: BoxFit.cover)
+          Image.asset(AssetRes.icUserPlaceholder, width: profileSize, height: profileSize, fit: BoxFit.cover)
         else
           GestureDetector(
-            onTap: () => controller.onStoryTap(isStoryAvailable),
-            onLongPressStart: (details) {
-              isHeroEnable.value = true;
+            onTap: () {
+              if (isMe) {
+                Get.to(() => SettingsScreen(onUpdateUser: controller.onUpdateUser));
+                return;
+              }
+              controller.onStoryTap(isStoryAvailable);
             },
-            onLongPressEnd: (details) {
-              isHeroEnable.value = false;
-            },
+            onLongPressStart: (_) => setState(() => _heroEnable = true),
+            onLongPressEnd: (_) => setState(() => _heroEnable = false),
             onLongPress: () {
               user?.checkIsBlocked(() {
-                // _showProfilePreview(context, previewKey, user);
                 Navigator.push(
                   context,
                   PageRouteBuilder(
@@ -134,60 +150,97 @@ class ProfileStatsRow extends StatelessWidget {
                 );
               });
             },
-            child: Container(
-              key: previewKey,
-              width: 80,
-              height: 80,
-              alignment: Alignment.center,
-              decoration: ShapeDecoration(
-                shape: SmoothRectangleBorder(
-                  borderRadius: SmoothBorderRadius(cornerRadius: 90),
-                ),
-                gradient: isStoryAvailable
-                    ? (isWatch ? StyleRes.disabledGreyGradient(opacity: .5) : StyleRes.themeGradient)
-                    : null,
-              ),
-              child: Container(
-                padding: const EdgeInsets.all(2.5),
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: whitePure(context),
-                ),
-                child: Obx(
-                  () => HeroMode(
-                    enabled: isHeroEnable.value,
-                    child: Hero(
-                      tag: 'profile-${user?.id}',
-                      // must match the original tag
-                      child: CustomImage(
-                        size: !isStoryAvailable ? const Size(80, 80) : const Size(70, 70),
-                        // 80 - 10 (padding accounted)
-                        image: user?.isBlock == true ? '' : user?.profilePhoto?.addBaseURL(),
-                        // if user is block then don't show the image
-                        fullName: user?.fullname,
+            child: Stack(
+              clipBehavior: Clip.none,
+              children: [
+                Container(
+                  width: profileSize,
+                  height: profileSize,
+                  alignment: Alignment.center,
+                  decoration: ShapeDecoration(
+                    shape: SmoothRectangleBorder(
+                      borderRadius: SmoothBorderRadius(cornerRadius: profileSize / 2),
+                    ),
+                    gradient: isStoryAvailable
+                        ? (isWatch ? StyleRes.disabledGreyGradient(opacity: .5) : StyleRes.themeGradient)
+                        : null,
+                  ),
+                  child: Container(
+                    padding: const EdgeInsets.all(2.5),
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: ColorRes.whitePure,
+                    ),
+                    child: HeroMode(
+                      enabled: _heroEnable,
+                      child: Hero(
+                        tag: 'profile-${user?.id}',
+                        child: CustomImage(
+                          size: !isStoryAvailable ? const Size(96, 96) : const Size(86, 86),
+                          image: user?.isBlock == true ? '' : user?.profilePhoto?.addBaseURL(),
+                          fullName: user?.fullname,
+                        ),
                       ),
                     ),
                   ),
                 ),
-              ),
+                if (isMe)
+                  Positioned(
+                    right: -2,
+                    bottom: -2,
+                    child: GestureDetector(
+                      onTap: () => Get.to(() => SettingsScreen(onUpdateUser: controller.onUpdateUser)),
+                      child: Container(
+                        width: 28,
+                        height: 28,
+                        decoration: BoxDecoration(
+                          color: ColorRes.themeAccentSolid,
+                          shape: BoxShape.circle,
+                          border: Border.all(color: ColorRes.whitePure, width: 2),
+                        ),
+                        child: Icon(Icons.edit_rounded, size: 14, color: ColorRes.whitePure),
+                      ),
+                    ),
+                  ),
+              ],
             ),
           ),
+        SizedBox(width: userNotFound ? 16 : 20),
         // Stats Columns
         Expanded(
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: List.generate(
-              stats.length,
-              (index) => Expanded(
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    InkWell(
-                      onTap: () => onTap(index),
-                      child: StatColumn(value: stats[index].value, label: stats[index].label),
-                    ),
-                    if (index != stats.length - 1) Container(height: 20, width: .5, color: textLightGrey(context)),
-                  ],
+          child: Padding(
+            padding: const EdgeInsets.only(top: 8),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: List.generate(
+                stats.length,
+                (index) => Expanded(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      InkWell(
+                        onTap: () => onTap(index),
+                        child: StatColumn(
+                          value: stats[index].value,
+                          label: stats[index].label,
+                          valueStyle: TextStyleCustom.unboundedSemiBold600(
+                            color: ColorRes.textDarkGrey,
+                            fontSize: 18,
+                          ),
+                          labelStyle: TextStyleCustom.outFitRegular400(
+                            color: ColorRes.textLightGrey,
+                            fontSize: 13,
+                          ),
+                        ),
+                      ),
+                      if (index != stats.length - 1)
+                        Container(
+                          height: 32,
+                          width: 1,
+                          color: ColorRes.borderLight,
+                        ),
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -215,14 +268,14 @@ class StatColumn extends StatelessWidget {
           value.toInt().numberFormat,
           style: valueStyle ??
               TextStyleCustom.unboundedMedium500(
-                color: textDarkGrey(context),
+                color: ColorRes.textDarkGrey,
                 fontSize: 15,
               ),
         ),
         Text(label.capitalize ?? '',
             style: labelStyle ??
                 TextStyleCustom.outFitLight300(
-                  color: textLightGrey(context),
+                  color: ColorRes.textLightGrey,
                   fontSize: 15,
                 )),
       ],
@@ -240,47 +293,75 @@ class UserNameView extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        FullNameWithBlueTick(
-          username: user?.username,
-          style: TextStyleCustom.unboundedSemiBold600(color: textDarkGrey(context), fontSize: 17),
-          isVerify: user?.isVerify,
-          iconSize: 22,
-          child: user?.getLevel.id == null
-              ? const SizedBox()
-              : GradientBorder(
-                  onPressed: () {
-                    Get.to(() => LevelScreen(userLevels: user?.getLevel));
-                  },
-                  strokeWidth: 1.5,
-                  radius: 30,
-                  gradient: StyleRes.themeGradient,
-                  child: Container(
-                    height: 27,
-                    padding: const EdgeInsets.symmetric(horizontal: 15),
-                    decoration: BoxDecoration(
-                        borderRadius: SmoothBorderRadius(cornerRadius: 30),
-                        color: themeAccentSolid(context).withValues(alpha: .1)),
-                    alignment: Alignment.center,
-                    child: ShaderMask(
-                      blendMode: BlendMode.srcIn,
-                      shaderCallback: (bounds) =>
-                          StyleRes.themeGradient.createShader(Rect.fromLTWH(0, 0, bounds.width, bounds.height)),
-                      child: RichText(
-                        text: TextSpan(
-                          text: LKey.lvl.tr,
-                          style: TextStyleCustom.outFitLight300(fontSize: 15),
-                          children: [
-                            TextSpan(
-                                text: ' ${user?.getLevel.level ?? 0}',
-                                style: TextStyleCustom.outFitBold700(fontSize: 15))
-                          ],
-                        ),
+        Row(
+          children: [
+            Flexible(
+              child: Text(
+                user?.fullname ?? '',
+                style: TextStyleCustom.unboundedSemiBold600(
+                  color: ColorRes.textDarkGrey,
+                  fontSize: 18,
+                ),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+            if (user?.isVerify == 1) ...[
+              const SizedBox(width: 8),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                decoration: BoxDecoration(
+                  color: ColorRes.themeAccentSolid,
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(Icons.check_rounded, size: 14, color: ColorRes.whitePure),
+                    const SizedBox(width: 4),
+                    Text(
+                      LKey.verify.tr,
+                      style: TextStyleCustom.outFitSemiBold600(
+                        color: ColorRes.whitePure,
+                        fontSize: 12,
                       ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+            if (user?.getLevel.id != null) ...[
+              const SizedBox(width: 8),
+              InkWell(
+                onTap: () => Get.to(() => LevelScreen(userLevels: user?.getLevel)),
+                child: Container(
+                  height: 26,
+                  padding: const EdgeInsets.symmetric(horizontal: 10),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(20),
+                    color: ColorRes.themeAccentSolid.withValues(alpha: 0.15),
+                  ),
+                  alignment: Alignment.center,
+                  child: Text(
+                    '${LKey.lvl.tr} ${user?.getLevel.level ?? 0}',
+                    style: TextStyleCustom.outFitSemiBold600(
+                      color: ColorRes.themeAccentSolid,
+                      fontSize: 12,
                     ),
                   ),
                 ),
+              ),
+            ],
+          ],
         ),
-        Text(user?.fullname ?? '', style: TextStyleCustom.outFitLight300(color: textLightGrey(context), fontSize: 16))
+        const SizedBox(height: 4),
+        Text(
+          '@${user?.username ?? ''}',
+          style: TextStyleCustom.outFitRegular400(
+            color: ColorRes.textLightGrey,
+            fontSize: 15,
+          ),
+        ),
       ],
     );
   }
@@ -300,7 +381,7 @@ class UserLinkView extends StatelessWidget {
           user?.checkIsBlocked(() {
             if (links.length > 1) {
               Get.bottomSheet(UserLinkSheet(links: links),
-                  isScrollControlled: true, barrierColor: blackPure(context).withValues(alpha: .7));
+                  isScrollControlled: true, barrierColor: ColorRes.blackPure.withValues(alpha: .7));
             } else {
               (links.first.url ?? '').lunchUrlWithHttps;
             }
@@ -310,11 +391,11 @@ class UserLinkView extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
           children: [
-            Image.asset(AssetRes.icLink, height: 20, width: 20, color: themeAccentSolid(context)),
+            Image.asset(AssetRes.icLink, height: 20, width: 20, color: ColorRes.themeAccentSolid),
             const SizedBox(width: 3),
             Expanded(
               child: Text(shortUrl,
-                  style: TextStyleCustom.outFitRegular400(fontSize: 15, color: themeAccentSolid(context))),
+                  style: TextStyleCustom.outFitRegular400(fontSize: 15, color: ColorRes.themeAccentSolid)),
             )
           ],
         ),
@@ -349,9 +430,15 @@ class UserBioView extends StatelessWidget {
     if ((user?.bio ?? '').isEmpty) {
       return const SizedBox();
     }
-    return Text(
-      user?.bio ?? '',
-      style: TextStyleCustom.outFitLight300(color: textLightGrey(context), fontSize: 16),
+    return Padding(
+      padding: const EdgeInsets.only(top: 6),
+      child: Text(
+        user?.bio ?? '',
+        style: TextStyleCustom.outFitRegular400(
+          color: ColorRes.textLightGrey,
+          fontSize: 15,
+        ),
+      ),
     );
   }
 }
@@ -389,7 +476,7 @@ class UserButtonView extends StatelessWidget {
                   decoration: ShapeDecoration(
                     shape:
                         SmoothRectangleBorder(borderRadius: SmoothBorderRadius(cornerRadius: 10, cornerSmoothing: 1)),
-                    color: bgGrey(context),
+                    color: ColorRes.bgGrey,
                   ),
                   child: Image.asset(isMe ? AssetRes.icShare1 : AssetRes.icMore, height: 21, width: 21)),
             )
@@ -411,7 +498,7 @@ class UserButtonView extends StatelessWidget {
                     decoration: ShapeDecoration(
                       shape:
                           SmoothRectangleBorder(borderRadius: SmoothBorderRadius(cornerRadius: 10, cornerSmoothing: 1)),
-                      color: bgGrey(context),
+                      color: ColorRes.bgGrey,
                     ),
                     child: Image.asset(AssetRes.icMore, height: 21, width: 21),
                   )),
@@ -431,10 +518,10 @@ class NoUserFoundButton extends StatelessWidget {
       onTap: () {},
       title: LKey.userNotFound.tr,
       btnHeight: 40,
-      backgroundColor: bgMediumGrey(context),
+      backgroundColor: ColorRes.bgMediumGrey,
       fontSize: 15,
       radius: 8,
-      titleColor: textLightGrey(context),
+      titleColor: ColorRes.textLightGrey,
       margin: const EdgeInsets.only(bottom: 10, left: 40, right: 40, top: 20),
     );
   }
@@ -451,8 +538,8 @@ class UnblockButton extends StatelessWidget {
       onTap: onTap,
       title: LKey.unBlock.tr,
       fontSize: 16,
-      backgroundColor: blueFollow(context),
-      titleColor: whitePure(context),
+      backgroundColor: ColorRes.blueFollow,
+      titleColor: ColorRes.whitePure,
       horizontalMargin: 0,
       btnHeight: 45,
     );
@@ -473,52 +560,89 @@ class RowButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      children: [
-        Expanded(
-          child: Obx(
-            () {
-              bool isFollowProgress = controller.isFollowUnFollowInProcess.value;
-              Color textColor = user?.isFollowing == true ? textLightGrey(context) : whitePure(context);
-              return TextButtonCustom(
-                onTap: () async {
-                  if (isMe) {
-                    Get.to(() => SettingsScreen(onUpdateUser: controller.onUpdateUser));
-                  } else {
-                    if (!isFollowProgress) {
-                      controller.followUnFollowUser();
-                    }
-                  }
-                },
-                title: isMe ? LKey.settings.tr : (user?.isFollowing == true ? LKey.unFollow.tr : LKey.follow.tr),
-                fontSize: 16,
-                backgroundColor:
-                    isMe ? bgGrey(context) : (user?.isFollowing == true ? bgGrey(context) : blueFollow(context)),
-                titleColor: isMe ? textLightGrey(context) : textColor,
+    if (isMe) {
+      return Padding(
+        padding: const EdgeInsets.only(top: 14, bottom: 20),
+        child: Row(
+          children: [
+            Expanded(
+              child: TextButtonCustom(
+                onTap: () => Get.to(() => SettingsScreen(onUpdateUser: controller.onUpdateUser)),
+                title: LKey.settings.tr,
+                fontSize: 15,
+                backgroundColor: ColorRes.themeAccentSolid,
+                titleColor: ColorRes.whitePure,
                 horizontalMargin: 0,
-                btnHeight: 45,
-                child: isMe
-                    ? null
-                    : isFollowProgress
-                        ? CupertinoActivityIndicator(radius: 10, color: textColor)
-                        : null,
-              );
-            },
-          ),
+                btnHeight: 46,
+                radius: 12,
+              ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: InkWell(
+                onTap: () => controller.handlePublishOrMessageBtn(true),
+                child: Container(
+                  height: 46,
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                    color: ColorRes.themeAccentSolid.withValues(alpha: 0.15),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Text(
+                    LKey.uploadResume.tr,
+                    style: TextStyleCustom.outFitSemiBold600(
+                      color: ColorRes.themeAccentSolid,
+                      fontSize: 15,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ],
         ),
-        const SizedBox(width: 8),
-        if (isMe || user?.receiveMessage == 1)
+      );
+    }
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 20.0, top: 10),
+      child: Row(
+        children: [
           Expanded(
-            child: TextButtonCustom(
-                onTap: () => controller.handlePublishOrMessageBtn(isMe),
-                title: isMe ? LKey.publish.tr : LKey.message.tr,
-                fontSize: 16,
-                backgroundColor: bgGrey(context),
-                titleColor: textLightGrey(context),
-                horizontalMargin: 0,
-                btnHeight: 45),
+            child: Obx(
+              () {
+                bool isFollowProgress = controller.isFollowUnFollowInProcess.value;
+                Color textColor = user?.isFollowing == true ? ColorRes.textLightGrey : ColorRes.whitePure;
+                return TextButtonCustom(
+                  onTap: () async {
+                    if (!isFollowProgress) controller.followUnFollowUser();
+                  },
+                  title: user?.isFollowing == true ? LKey.unFollow.tr : LKey.follow.tr,
+                  fontSize: 16,
+                  backgroundColor:
+                      user?.isFollowing == true ? ColorRes.bgGrey : ColorRes.blueFollow,
+                  titleColor: textColor,
+                  horizontalMargin: 0,
+                  btnHeight: 45,
+                  child: isFollowProgress
+                      ? CupertinoActivityIndicator(radius: 10, color: textColor)
+                      : null,
+                );
+              },
+            ),
           ),
-      ],
+          const SizedBox(width: 8),
+          if (user?.receiveMessage == 1)
+            Expanded(
+              child: TextButtonCustom(
+                  onTap: () => controller.handlePublishOrMessageBtn(false),
+                  title: LKey.message.tr,
+                  fontSize: 16,
+                  backgroundColor: ColorRes.bgGrey,
+                  titleColor: ColorRes.textLightGrey,
+                  horizontalMargin: 0,
+                  btnHeight: 45),
+            ),
+        ],
+      ),
     );
   }
 }

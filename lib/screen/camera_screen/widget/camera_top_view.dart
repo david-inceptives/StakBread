@@ -11,7 +11,7 @@ import 'package:stakBread/screen/live_stream/livestream_screen/widget/members_sh
 import 'package:stakBread/screen/selected_music_sheet/selected_music_sheet_controller.dart';
 import 'package:stakBread/utilities/asset_res.dart';
 import 'package:stakBread/utilities/text_style_custom.dart';
-import 'package:stakBread/utilities/theme_res.dart';
+import 'package:stakBread/utilities/color_res.dart';
 
 class CameraTopView extends StatelessWidget {
   final CameraScreenType cameraType;
@@ -160,8 +160,8 @@ class SelectedMusicView extends StatelessWidget {
               left: -3,
               child: BorderRoundedButton(
                   image: AssetRes.icClose,
-                  color: textDarkGrey(context),
-                  bgColor: whitePure(context),
+                  color: ColorRes.textDarkGrey,
+                  bgColor: ColorRes.whitePure,
                   height: 15,
                   width: 15),
             ),
@@ -182,7 +182,7 @@ class SelectedMusicView extends StatelessWidget {
               selectedMusic.value?.music?.title ?? '',
               style: TextStyleCustom.outFitMedium500(
                 fontSize: 15,
-                color: whitePure(context),
+                color: ColorRes.whitePure,
               ),
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
@@ -190,7 +190,7 @@ class SelectedMusicView extends StatelessWidget {
             Text(
               selectedMusic.value?.music?.artist ?? '',
               style: TextStyleCustom.outFitLight300(
-                color: whitePure(context),
+                color: ColorRes.whitePure,
               ),
               overflow: TextOverflow.ellipsis,
               maxLines: 1,

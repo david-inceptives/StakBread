@@ -12,7 +12,7 @@ import 'package:stakBread/screen/search_screen/search_screen_controller.dart';
 import 'package:stakBread/utilities/app_res.dart';
 import 'package:stakBread/utilities/asset_res.dart';
 import 'package:stakBread/utilities/text_style_custom.dart';
-import 'package:stakBread/utilities/theme_res.dart';
+import 'package:stakBread/utilities/color_res.dart';
 
 class SearchScreen extends StatelessWidget {
   const SearchScreen({super.key});
@@ -24,7 +24,7 @@ class SearchScreen extends StatelessWidget {
       body: Column(
         children: [
           Container(
-            color: bgLightGrey(context),
+            color: ColorRes.bgLightGrey,
             padding: const EdgeInsets.symmetric(vertical: 10),
             child: Column(
               children: [
@@ -53,7 +53,7 @@ class SearchScreen extends StatelessWidget {
                                         child: Image.asset(AssetRes.icClose,
                                             width: 20,
                                             height: 20,
-                                            color: textLightGrey(context)),
+                                            color: ColorRes.textLightGrey),
                                       ),
                               ),
                             ))
@@ -85,10 +85,10 @@ class SearchScreen extends StatelessWidget {
                               style: isSelected
                                   ? TextStyleCustom.outFitRegular400(
                                       fontSize: 15,
-                                      color: textDarkGrey(context))
+                                      color: ColorRes.textDarkGrey)
                                   : TextStyleCustom.outFitLight300(
                                       fontSize: 15,
-                                      color: textLightGrey(context)),
+                                      color: ColorRes.textLightGrey),
                             );
                           },
                         ),

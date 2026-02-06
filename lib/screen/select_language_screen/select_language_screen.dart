@@ -12,7 +12,7 @@ import 'package:stakBread/screen/on_boarding_screen/on_boarding_screen.dart';
 import 'package:stakBread/screen/select_language_screen/select_language_screen_controller.dart';
 import 'package:stakBread/utilities/asset_res.dart';
 import 'package:stakBread/utilities/text_style_custom.dart';
-import 'package:stakBread/utilities/theme_res.dart';
+import 'package:stakBread/utilities/color_res.dart';
 
 enum LanguageNavigationType { fromStart, fromSetting }
 
@@ -48,7 +48,7 @@ class SelectLanguageScreen extends StatelessWidget {
                               padding: const EdgeInsets.all(15),
                               decoration: ShapeDecoration(
                                   color:
-                                      whitePure(context).withValues(alpha: .1),
+                                      ColorRes.whitePure.withValues(alpha: .1),
                                   shape: SmoothRectangleBorder(
                                     borderRadius:
                                         SmoothBorderRadius(cornerRadius: 15),
@@ -63,7 +63,7 @@ class SelectLanguageScreen extends StatelessWidget {
                                 Text(
                                   LKey.select.tr.toUpperCase(),
                                   style: TextStyleCustom.unboundedBlack900(
-                                      fontSize: 25, color: whitePure(context)),
+                                      fontSize: 25, color: ColorRes.whitePure),
                                   overflow: TextOverflow.ellipsis,
                                   maxLines: 1,
                                 ),
@@ -71,7 +71,7 @@ class SelectLanguageScreen extends StatelessWidget {
                                   LKey.language.tr.toUpperCase(),
                                   style: TextStyleCustom.unboundedBlack900(
                                       fontSize: 25,
-                                      color: whitePure(context),
+                                      color: ColorRes.whitePure,
                                       opacity: .5),
                                   overflow: TextOverflow.ellipsis,
                                   maxLines: 1,
@@ -85,9 +85,9 @@ class SelectLanguageScreen extends StatelessWidget {
                   LanguageNavigationType.fromSetting => CustomAppBar(
                       title: LKey.languages.tr,
                       titleStyle: TextStyleCustom.unboundedSemiBold600(
-                          fontSize: 15, color: whitePure(context)),
+                          fontSize: 15, color: ColorRes.whitePure),
                       bgColor: Colors.transparent,
-                      iconColor: whitePure(context)),
+                      iconColor: ColorRes.whitePure),
                 },
                 Expanded(
                   child: ListView.builder(
@@ -111,15 +111,15 @@ class SelectLanguageScreen extends StatelessWidget {
                                   shape: SmoothRectangleBorder(
                                     borderRadius: SmoothBorderRadius(cornerRadius: 10, cornerSmoothing: 1),
                                     side: isSelected
-                                        ? BorderSide(color: whitePure(context))
+                                        ? BorderSide(color: ColorRes.whitePure)
                                         : const BorderSide(color: Colors.transparent),
                                   ),
-                                  color: whitePure(context).withValues(alpha: isSelected ? .3 : .1),
+                                  color: ColorRes.whitePure.withValues(alpha: isSelected ? .3 : .1),
                                 ),
                                 child: RadioListTile<Language?>(
                                     value: language,
-                                    activeColor: whitePure(context),
-                                    fillColor: WidgetStatePropertyAll(whitePure(context)),
+                                    activeColor: ColorRes.whitePure,
+                                    fillColor: WidgetStatePropertyAll(ColorRes.whitePure),
                                     splashRadius: 0,
                                     materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                                     dense: true,
@@ -130,11 +130,11 @@ class SelectLanguageScreen extends StatelessWidget {
                                     contentPadding: EdgeInsets.zero,
                                     title: Text(
                                       language.localizedTitle ?? '',
-                                      style: TextStyleCustom.outFitLight300(fontSize: 15, color: whitePure(context)),
+                                      style: TextStyleCustom.outFitLight300(fontSize: 15, color: ColorRes.whitePure),
                                     ),
                                     subtitle: Text(
                                       language.title ?? '',
-                                      style: TextStyleCustom.outFitMedium500(fontSize: 17, color: whitePure(context)),
+                                      style: TextStyleCustom.outFitMedium500(fontSize: 17, color: ColorRes.whitePure),
                                     )),
                               ),
                             )*/Container();

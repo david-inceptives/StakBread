@@ -12,7 +12,7 @@ import 'package:stakBread/screen/selected_music_sheet/selected_music_sheet_contr
 import 'package:stakBread/screen/selected_music_sheet/widget/wave_slider.dart';
 import 'package:stakBread/utilities/asset_res.dart';
 import 'package:stakBread/utilities/text_style_custom.dart';
-import 'package:stakBread/utilities/theme_res.dart';
+import 'package:stakBread/utilities/color_res.dart';
 
 class SelectedMusicSheet extends StatelessWidget {
   final SelectedMusic selectedMusic;
@@ -28,7 +28,7 @@ class SelectedMusicSheet extends StatelessWidget {
     return Container(
         margin: EdgeInsets.only(top: AppBar().preferredSize.height * 2),
         decoration: ShapeDecoration(
-            color: whitePure(context),
+            color: ColorRes.whitePure,
             shape: const SmoothRectangleBorder(
                 borderRadius: SmoothBorderRadius.vertical(
                     top: SmoothRadius(cornerRadius: 30, cornerSmoothing: 1)))),
@@ -49,11 +49,11 @@ class SelectedMusicSheet extends StatelessWidget {
                   const SizedBox(height: 12),
                   Text(selectedMusic.music?.title ?? '',
                       style: TextStyleCustom.outFitMedium500(
-                          color: textDarkGrey(context), fontSize: 15)),
+                          color: ColorRes.textDarkGrey, fontSize: 15)),
                   Text(
                     '${selectedMusic.music?.artist} • ${selectedMusic.music?.duration}',
                     style: TextStyleCustom.outFitLight300(
-                        color: textLightGrey(context)),
+                        color: ColorRes.textLightGrey),
                   ),
                   Obx(
                     () => AnimatedOpacity(
@@ -65,7 +65,7 @@ class SelectedMusicSheet extends StatelessWidget {
                           margin: const EdgeInsets.only(top: 22, bottom: 12),
                           padding: const EdgeInsets.symmetric(horizontal: 22),
                           decoration: ShapeDecoration(
-                            color: bgGrey(context),
+                            color: ColorRes.bgGrey,
                             shape: SmoothRectangleBorder(
                                 borderRadius:
                                     SmoothBorderRadius(cornerRadius: 30)),
@@ -78,7 +78,7 @@ class SelectedMusicSheet extends StatelessWidget {
                                           controller.audioStartInMilliSec.value)
                                   .printDuration,
                               style: TextStyleCustom.outFitRegular400(
-                                  color: textDarkGrey(context)),
+                                  color: ColorRes.textDarkGrey),
                             ),
                           ),
                         ),
@@ -111,14 +111,14 @@ class SelectedMusicSheet extends StatelessWidget {
                       height: 57,
                       width: 57,
                       decoration: BoxDecoration(
-                          shape: BoxShape.circle, color: bgGrey(context)),
+                          shape: BoxShape.circle, color: ColorRes.bgGrey),
                       alignment: const Alignment(0.1, 0),
                       child: Obx(
                         () => Image.asset(
                           controller.isPlaying.value
                               ? AssetRes.icPause
                               : AssetRes.icPlay,
-                          color: textDarkGrey(context),
+                          color: ColorRes.textDarkGrey,
                           width: 35,
                           height: 35,
                         ),
@@ -129,8 +129,8 @@ class SelectedMusicSheet extends StatelessWidget {
                   TextButtonCustom(
                       onTap: controller.onContinueTap,
                       title: LKey.continueText.tr,
-                      backgroundColor: textDarkGrey(context),
-                      titleColor: whitePure(context))
+                      backgroundColor: ColorRes.textDarkGrey,
+                      titleColor: ColorRes.whitePure)
                 ],
               ),
             ))

@@ -23,7 +23,7 @@ import 'package:stakBread/screen/profile_screen/widget/profile_user_header.dart'
 import 'package:stakBread/utilities/asset_res.dart';
 import 'package:stakBread/utilities/color_res.dart';
 import 'package:stakBread/utilities/text_style_custom.dart';
-import 'package:stakBread/utilities/theme_res.dart';
+import 'package:stakBread/utilities/color_res.dart';
 
 class LiveStreamUserInfoSheet extends StatefulWidget {
   final bool isAudience;
@@ -112,7 +112,7 @@ class _LiveStreamUserInfoSheetState extends State<LiveStreamUserInfoSheet> {
               borderRadius: SmoothBorderRadius.vertical(
                   top: SmoothRadius(cornerRadius: 40, cornerSmoothing: 1)),
             ),
-            color: scaffoldBackgroundColor(context),
+            color: ColorRes.whitePure,
           ),
           child: SafeArea(
             top: false,
@@ -154,7 +154,7 @@ class _LiveStreamUserInfoSheetState extends State<LiveStreamUserInfoSheet> {
                                 user?.fullname ?? '',
                                 style: TextStyleCustom.outFitRegular400(
                                     fontSize: 16,
-                                    color: textLightGrey(context)),
+                                    color: ColorRes.textLightGrey),
                               ),
                               if ((user?.bio ?? '').isNotEmpty)
                                 const SizedBox(height: 18),
@@ -163,7 +163,7 @@ class _LiveStreamUserInfoSheetState extends State<LiveStreamUserInfoSheet> {
                                   user?.bio ?? '',
                                   style: TextStyleCustom.outFitLight300(
                                       fontSize: 15,
-                                      color: textLightGrey(context)),
+                                      color: ColorRes.textLightGrey),
                                   textAlign: TextAlign.center,
                                 ),
                               Padding(
@@ -181,12 +181,12 @@ class _LiveStreamUserInfoSheetState extends State<LiveStreamUserInfoSheet> {
                                         label: item.label,
                                         valueStyle: TextStyleCustom
                                             .unboundedSemiBold600(
-                                          color: textDarkGrey(context),
+                                          color: ColorRes.textDarkGrey,
                                           fontSize: 16,
                                         ),
                                         labelStyle:
                                             TextStyleCustom.outFitRegular400(
-                                                color: textLightGrey(context),
+                                                color: ColorRes.textLightGrey,
                                                 fontSize: 15),
                                       ),
                                     );
@@ -216,9 +216,9 @@ class _LiveStreamUserInfoSheetState extends State<LiveStreamUserInfoSheet> {
                                                 }));
                                           },
                                           title: LKey.checkProfile.tr,
-                                          titleColor: textLightGrey(context),
+                                          titleColor: ColorRes.textLightGrey,
                                           backgroundColor:
-                                              bgMediumGrey(context),
+                                              ColorRes.bgMediumGrey,
                                           horizontalMargin: 0,
                                         ),
                                       ),
@@ -231,11 +231,11 @@ class _LiveStreamUserInfoSheetState extends State<LiveStreamUserInfoSheet> {
                                                   ? LKey.unFollow.tr
                                                   : LKey.follow.tr,
                                               titleColor: isFollow
-                                                  ? textLightGrey(context)
-                                                  : whitePure(context),
+                                                  ? ColorRes.textLightGrey
+                                                  : ColorRes.whitePure,
                                               backgroundColor: isFollow
-                                                  ? bgGrey(context)
-                                                  : blueFollow(context),
+                                                  ? ColorRes.bgGrey
+                                                  : ColorRes.blueFollow,
                                               horizontalMargin: 0),
                                     ),
                                   ],
@@ -261,8 +261,8 @@ class _LiveStreamUserInfoSheetState extends State<LiveStreamUserInfoSheet> {
                                                 VideoAudioStatus.on
                                             ? AssetRes.icMicOff
                                             : AssetRes.icMicrophone,
-                                        iconColor: textLightGrey(context),
-                                        borderColor: bgGrey(context),
+                                        iconColor: ColorRes.textLightGrey,
+                                        borderColor: ColorRes.bgGrey,
                                         size: const Size(40, 40),
                                         onTap: () => widget.controller
                                             .coHostAudioToggle(state),
@@ -272,8 +272,8 @@ class _LiveStreamUserInfoSheetState extends State<LiveStreamUserInfoSheet> {
                                                 VideoAudioStatus.on
                                             ? AssetRes.icVideoOff
                                             : AssetRes.icVideoCamera,
-                                        iconColor: textLightGrey(context),
-                                        borderColor: bgGrey(context),
+                                        iconColor: ColorRes.textLightGrey,
+                                        borderColor: ColorRes.bgGrey,
                                         size: const Size(40, 40),
                                         onTap: () => widget.controller
                                             .coHostVideoToggle(state),

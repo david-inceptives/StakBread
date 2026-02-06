@@ -17,7 +17,7 @@ import 'package:stakBread/screen/live_stream/livestream_screen/view/livestream_v
 import 'package:stakBread/utilities/asset_res.dart';
 import 'package:stakBread/utilities/color_res.dart';
 import 'package:stakBread/utilities/text_style_custom.dart';
-import 'package:stakBread/utilities/theme_res.dart';
+import 'package:stakBread/utilities/color_res.dart';
 
 class BattleView extends StatefulWidget {
   final bool isAudience;
@@ -194,7 +194,7 @@ class BuildProgressBar extends StatelessWidget {
                 width: 30,
                 margin: const EdgeInsets.symmetric(horizontal: 2),
                 decoration: BoxDecoration(
-                  color: whitePure(context),
+                  color: ColorRes.whitePure,
                   shape: BoxShape.circle,
                 ),
                 alignment: Alignment.center,
@@ -280,7 +280,7 @@ class BuildStates extends StatelessWidget {
       height: 26,
       constraints: const BoxConstraints(minWidth: 90, maxWidth: 150),
       decoration: ShapeDecoration(
-        color: whitePure(context),
+        color: ColorRes.whitePure,
         shape: SmoothRectangleBorder(
           borderRadius: topRight
               ? const SmoothBorderRadius.only(
@@ -302,7 +302,7 @@ class BuildStates extends StatelessWidget {
             coin.numberFormat,
             style: TextStyleCustom.outFitMedium500(
               fontSize: 13,
-              color: textDarkGrey(context),
+              color: ColorRes.textDarkGrey,
             ),
           ),
           if (!topRight) Image.asset(AssetRes.icCoin, height: 18, width: 18),
@@ -358,7 +358,7 @@ class BuildStates extends StatelessWidget {
             if (isLeft)
               CustomImage(
                 size: const Size(30, 30),
-                strokeColor: whitePure(context),
+                strokeColor: ColorRes.whitePure,
                 strokeWidth: 1.5,
                 image: user.profile?.addBaseURL(),
                 fullName: user.fullname,
@@ -367,7 +367,7 @@ class BuildStates extends StatelessWidget {
             Flexible(
               child: Text(user.username ?? '',
                   style: TextStyleCustom.unboundedMedium500(
-                      color: whitePure(context), fontSize: 11),
+                      color: ColorRes.whitePure, fontSize: 11),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis),
             ),
@@ -375,7 +375,7 @@ class BuildStates extends StatelessWidget {
             if (!isLeft)
               CustomImage(
                 size: const Size(30, 30),
-                strokeColor: whitePure(context),
+                strokeColor: ColorRes.whitePure,
                 strokeWidth: 1.5,
                 image: user.profile?.addBaseURL(),
                 fullName: user.fullname,
@@ -438,8 +438,8 @@ class _BuildLastTenSecondViewState extends State<BuildLastTenSecondView>
                 shape: BoxShape.circle,
                 gradient: SweepGradient(
                     colors: <Color>[
-                      whitePure(context).withValues(alpha: 0),
-                      whitePure(context).withValues(alpha: .5)
+                      ColorRes.whitePure.withValues(alpha: 0),
+                      ColorRes.whitePure.withValues(alpha: .5)
                     ],
                     transform:
                         GradientRotation(2 * pi * _animationController.value)),
@@ -451,7 +451,7 @@ class _BuildLastTenSecondViewState extends State<BuildLastTenSecondView>
                 },
                 child: Text('$leftSecond',
                     style: TextStyleCustom.unboundedBlack900(
-                        color: whitePure(context), fontSize: 100),
+                        color: ColorRes.whitePure, fontSize: 100),
                     key: ValueKey<int>(leftSecond)),
               ),
             ),
@@ -501,7 +501,7 @@ class _BattleTimerState extends State<BattleTimer> {
             height: 30,
             padding: const EdgeInsets.symmetric(horizontal: 15),
             decoration: BoxDecoration(
-              color: whitePure(context),
+              color: ColorRes.whitePure,
               borderRadius: BorderRadius.circular(30),
             ),
             alignment: Alignment.center,
@@ -510,7 +510,7 @@ class _BattleTimerState extends State<BattleTimer> {
               style: TextStyleCustom.unboundedMedium500(
                   color: isBattleEnd
                       ? ColorRes.likeRed
-                      : themeAccentSolid(context),
+                      : ColorRes.themeAccentSolid,
                   fontSize: 18),
             ),
           ),

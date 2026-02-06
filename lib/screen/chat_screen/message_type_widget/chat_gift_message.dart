@@ -11,7 +11,7 @@ import 'package:stakBread/model/chat/message_data.dart';
 import 'package:stakBread/screen/chat_screen/widget/chat_center_message_view.dart';
 import 'package:stakBread/utilities/style_res.dart';
 import 'package:stakBread/utilities/text_style_custom.dart';
-import 'package:stakBread/utilities/theme_res.dart';
+import 'package:stakBread/utilities/color_res.dart';
 
 class ChatGiftMessage extends StatelessWidget {
   final MessageData message;
@@ -33,7 +33,7 @@ class ChatGiftMessage extends StatelessWidget {
             shape: SmoothRectangleBorder(
                 borderRadius:
                     SmoothBorderRadius(cornerRadius: 15, cornerSmoothing: 1)),
-            color: scaffoldBackgroundColor(context),
+            color: ColorRes.whitePure,
             shadows: messageBubbleShadow,
           ),
           child: Column(
@@ -55,7 +55,7 @@ class ChatGiftMessage extends StatelessWidget {
                 child: Text(
                     isMe ? LKey.youSentAGift.tr : LKey.youReceivedAGift.tr,
                     style: TextStyleCustom.outFitRegular400(
-                        color: textDarkGrey(context), fontSize: 14)),
+                        color: ColorRes.textDarkGrey, fontSize: 14)),
               )
             ],
           ),

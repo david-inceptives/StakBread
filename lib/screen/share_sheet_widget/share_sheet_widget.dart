@@ -18,7 +18,7 @@ import 'package:stakBread/screen/share_sheet_widget/share_sheet_widget_controlle
 import 'package:stakBread/utilities/app_res.dart';
 import 'package:stakBread/utilities/asset_res.dart';
 import 'package:stakBread/utilities/text_style_custom.dart';
-import 'package:stakBread/utilities/theme_res.dart';
+import 'package:stakBread/utilities/color_res.dart';
 
 class ShareSheetWidget extends StatelessWidget {
   final VoidCallback onMoreTap;
@@ -57,7 +57,7 @@ class ShareSheetWidget extends StatelessWidget {
                   ),
                   Text(
                     '@${post?.user?.username ?? AppRes.appName}',
-                    style: TextStyleCustom.unboundedBold700(color: whitePure(context), fontSize: 15)
+                    style: TextStyleCustom.unboundedBold700(color: ColorRes.whitePure, fontSize: 15)
                         .copyWith(shadows: [const Shadow(color: Colors.black, blurRadius: 20)]),
                   ),
                 ],
@@ -69,7 +69,7 @@ class ShareSheetWidget extends StatelessWidget {
                   shape: const SmoothRectangleBorder(
                       borderRadius:
                           SmoothBorderRadius.vertical(top: SmoothRadius(cornerRadius: 40, cornerSmoothing: 1))),
-                  color: scaffoldBackgroundColor(context)),
+                  color: ColorRes.whitePure),
               child: Column(
                 children: [
                   BottomSheetTopView(
@@ -81,7 +81,7 @@ class ShareSheetWidget extends StatelessWidget {
                       children: [
                         Expanded(
                             child: Text(link,
-                                style: TextStyleCustom.outFitRegular400(color: textDarkGrey(context), fontSize: 16))),
+                                style: TextStyleCustom.outFitRegular400(color: ColorRes.textDarkGrey, fontSize: 16))),
                         const SizedBox(width: 20),
                         CustomAssetWithBgButton(
                             image: AssetRes.icCopy,
@@ -128,10 +128,10 @@ class ShareSheetWidget extends StatelessWidget {
                                             child: Container(
                                               height: 62,
                                               width: 75,
-                                              decoration: BoxDecoration(color: bgGrey(context), shape: BoxShape.circle),
+                                              decoration: BoxDecoration(color: ColorRes.bgGrey, shape: BoxShape.circle),
                                               alignment: const Alignment(.05, 0),
                                               child:
-                                                  Icon(Icons.arrow_forward_ios_rounded, color: textDarkGrey(context)),
+                                                  Icon(Icons.arrow_forward_ios_rounded, color: ColorRes.textDarkGrey),
                                             ));
                                       }
                                       return Obx(() {
@@ -163,12 +163,12 @@ class ShareSheetWidget extends StatelessWidget {
                                                             width: 21,
                                                             decoration: BoxDecoration(
                                                                 shape: BoxShape.circle,
-                                                                color: whitePure(context),
+                                                                color: ColorRes.whitePure,
                                                                 border:
-                                                                    Border.all(color: whitePure(context), width: 1)),
+                                                                    Border.all(color: ColorRes.whitePure, width: 1)),
                                                             alignment: Alignment.center,
                                                             child: Image.asset(AssetRes.icCheckCircle,
-                                                                color: themeAccentSolid(context)),
+                                                                color: ColorRes.themeAccentSolid),
                                                           ),
                                                         ),
                                                       ),
@@ -177,7 +177,7 @@ class ShareSheetWidget extends StatelessWidget {
                                                 Expanded(
                                                   child: Text(chatUser?.username ?? '',
                                                       style: TextStyleCustom.outFitRegular400(
-                                                          color: textDarkGrey(context), fontSize: 14),
+                                                          color: ColorRes.textDarkGrey, fontSize: 14),
                                                       overflow: TextOverflow.ellipsis,
                                                       maxLines: 1),
                                                 )
@@ -193,8 +193,8 @@ class ShareSheetWidget extends StatelessWidget {
                           TextButtonCustom(
                             onTap: isSelectedListEmpty ? () {} : () => controller.onSendChat(post),
                             title: LKey.send.tr,
-                            backgroundColor: textDarkGrey(context).withValues(alpha: isSelectedListEmpty ? .4 : 1),
-                            titleColor: whitePure(context),
+                            backgroundColor: ColorRes.textDarkGrey.withValues(alpha: isSelectedListEmpty ? .4 : 1),
+                            titleColor: ColorRes.whitePure,
                             margin: const EdgeInsets.symmetric(horizontal: 20),
                           )
                         ],
@@ -269,9 +269,9 @@ class CustomAssetWithBgButton extends StatelessWidget {
         width: boxSize,
         alignment: Alignment.center,
         decoration: ShapeDecoration(
-            color: bgGrey(context),
+            color: ColorRes.bgGrey,
             shape: SmoothRectangleBorder(borderRadius: SmoothBorderRadius(cornerRadius: 10, cornerSmoothing: 1))),
-        child: Image.asset(image, height: iconSize, width: iconSize, color: textDarkGrey(context)),
+        child: Image.asset(image, height: iconSize, width: iconSize, color: ColorRes.textDarkGrey),
       ),
     );
   }

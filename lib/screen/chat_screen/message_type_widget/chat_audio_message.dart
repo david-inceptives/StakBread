@@ -10,7 +10,7 @@ import 'package:stakBread/screen/chat_screen/chat_screen_controller.dart';
 import 'package:stakBread/screen/chat_screen/widget/chat_center_message_view.dart';
 import 'package:stakBread/utilities/asset_res.dart';
 import 'package:stakBread/utilities/style_res.dart';
-import 'package:stakBread/utilities/theme_res.dart';
+import 'package:stakBread/utilities/color_res.dart';
 
 class ChatAudioMessage extends StatelessWidget {
   final MessageData message;
@@ -33,7 +33,7 @@ class ChatAudioMessage extends StatelessWidget {
                 SmoothBorderRadius(cornerRadius: 15, cornerSmoothing: 1),
           ),
           shadows: messageBubbleShadow,
-          color: textDarkGrey(context)),
+          color: ColorRes.textDarkGrey),
       padding: EdgeInsets.symmetric(horizontal: cardMargin),
       child: Obx(() {
         PlayerValue playerValue = controller.playerValue.value;
@@ -48,7 +48,7 @@ class ChatAudioMessage extends StatelessWidget {
                   height: buttonSize,
                   width: buttonSize,
                   decoration: BoxDecoration(
-                      shape: BoxShape.circle, color: whitePure(context)),
+                      shape: BoxShape.circle, color: ColorRes.whitePure),
                   alignment: const Alignment(.1, 0),
                   child: GradientIcon(
                       child: Image.asset(
@@ -65,7 +65,7 @@ class ChatAudioMessage extends StatelessWidget {
                       playerController: controller.playerController,
                       waveformType: WaveformType.fitWidth,
                       playerWaveStyle: PlayerWaveStyle(
-                        fixedWaveColor: bgGrey(context),
+                        fixedWaveColor: ColorRes.bgGrey,
                         liveWaveGradient: StyleRes.wavesGradient,
                         spacing: 3,
                         waveThickness: 1.5,
@@ -79,7 +79,7 @@ class ChatAudioMessage extends StatelessWidget {
                             shape: SmoothRectangleBorder(
                                 borderRadius: SmoothBorderRadius(
                                     cornerRadius: 15, cornerSmoothing: 0)),
-                            color: bgGrey(context),
+                            color: ColorRes.bgGrey,
                           ),
                           margin: const EdgeInsets.all(1),
                           height: max(2, height),

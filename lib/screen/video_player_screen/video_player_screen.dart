@@ -13,7 +13,7 @@ import 'package:stakBread/model/post_story/post_model.dart';
 import 'package:stakBread/screen/post_screen/widget/post_view_center.dart';
 import 'package:stakBread/utilities/asset_res.dart';
 import 'package:stakBread/utilities/text_style_custom.dart';
-import 'package:stakBread/utilities/theme_res.dart';
+import 'package:stakBread/utilities/color_res.dart';
 import 'package:video_player/video_player.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 
@@ -62,7 +62,7 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: blackPure(context),
+      backgroundColor: ColorRes.blackPure,
       body: Center(
         child: Obx(
           () {
@@ -130,7 +130,7 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
                                     bottom: false,
                                     child: CustomBackButton(
                                         padding: const EdgeInsets.all(10),
-                                        color: whitePure(context)),
+                                        color: ColorRes.whitePure),
                                   ),
                                   Stack(
                                     alignment: Alignment.bottomCenter,
@@ -184,7 +184,7 @@ class PlayerActionView extends StatelessWidget {
       height: 50,
       width: double.infinity,
       decoration: ShapeDecoration(
-          color: blackPure(context).withValues(alpha: .6),
+          color: ColorRes.blackPure.withValues(alpha: .6),
           shape: SmoothRectangleBorder(
               borderRadius: SmoothBorderRadius(cornerRadius: 8, cornerSmoothing: 1))),
       padding: const EdgeInsets.symmetric(horizontal: 10),
@@ -200,14 +200,14 @@ class PlayerActionView extends StatelessWidget {
             },
             child: Image.asset(
               value.isPlaying ? AssetRes.icPause : AssetRes.icPlay,
-              color: whitePure(context),
+              color: ColorRes.whitePure,
               height: 30,
             ),
           ),
           const SizedBox(width: 5),
           Text(
             value.position.printDuration,
-            style: TextStyleCustom.outFitMedium500(color: whitePure(context), fontSize: 15),
+            style: TextStyleCustom.outFitMedium500(color: ColorRes.whitePure, fontSize: 15),
           ),
           Expanded(
             child: Container(
@@ -216,9 +216,9 @@ class PlayerActionView extends StatelessWidget {
                 value: value.position.inMicroseconds.toDouble(),
                 min: 0,
                 max: value.duration.inMicroseconds.toDouble(),
-                thumbColor: themeAccentSolid(context),
-                activeColor: whitePure(context),
-                inactiveColor: whitePure(context).withValues(alpha: .3),
+                thumbColor: ColorRes.themeAccentSolid,
+                activeColor: ColorRes.whitePure,
+                inactiveColor: ColorRes.whitePure.withValues(alpha: .3),
                 onChangeStart: (value) {
                   videoPlayerController.value?.pause();
                 },
@@ -233,7 +233,7 @@ class PlayerActionView extends StatelessWidget {
           ),
           Text(
             value.duration.printDuration,
-            style: TextStyleCustom.outFitMedium500(color: whitePure(context), fontSize: 15),
+            style: TextStyleCustom.outFitMedium500(color: ColorRes.whitePure, fontSize: 15),
           ),
         ],
       ),
@@ -267,7 +267,7 @@ class UserInfoData extends StatelessWidget {
                 FullNameWithBlueTick(
                   username: post?.user?.username,
                   isVerify: post?.user?.isVerify,
-                  fontColor: whitePure(context),
+                  fontColor: ColorRes.whitePure,
                   fontSize: 14,
                   onTap: onNavigateUser,
                 ),
@@ -275,7 +275,7 @@ class UserInfoData extends StatelessWidget {
                   onTap: onNavigateUser,
                   child: Text(post?.user?.fullname ?? '',
                       style:
-                          TextStyleCustom.outFitLight300(color: whitePure(context), fontSize: 16)),
+                          TextStyleCustom.outFitLight300(color: ColorRes.whitePure, fontSize: 16)),
                 )
               ],
             ),
@@ -288,9 +288,9 @@ class UserInfoData extends StatelessWidget {
             child: PostTextView(
               description: post?.descriptionWithUserName,
               mentionUsers: post?.mentionedUsers ?? [],
-              basicTextColor: whitePure(context),
-              mentionTextColor: whitePure(context),
-              hashtagTextColor: whitePure(context),
+              basicTextColor: ColorRes.whitePure,
+              mentionTextColor: ColorRes.whitePure,
+              hashtagTextColor: ColorRes.whitePure,
               basicTextOpacity: .7,
             ),
           ),

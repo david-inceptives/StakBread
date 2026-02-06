@@ -6,7 +6,7 @@ import 'package:stakBread/languages/languages_keys.dart';
 import 'package:stakBread/screen/coin_wallet_screen/coin_wallet_screen_controller.dart';
 import 'package:stakBread/utilities/asset_res.dart';
 import 'package:stakBread/utilities/text_style_custom.dart';
-import 'package:stakBread/utilities/theme_res.dart';
+import 'package:stakBread/utilities/color_res.dart';
 
 class CoinWalletList extends StatelessWidget {
   final CoinWalletScreenController controller;
@@ -33,9 +33,9 @@ class CoinWalletList extends StatelessWidget {
                     shape: SmoothRectangleBorder(
                         borderRadius: SmoothBorderRadius(cornerRadius: 10, cornerSmoothing: 1),
                         side: BorderSide(
-                          color: textLightGrey(context).withValues(alpha: .2),
+                          color: ColorRes.textLightGrey.withValues(alpha: .2),
                         )),
-                    color: bgLightGrey(context)),
+                    color: ColorRes.bgLightGrey),
                 child: Row(
                   children: [
                     Image.asset(AssetRes.icCoin, width: 34, height: 34),
@@ -47,18 +47,18 @@ class CoinWalletList extends StatelessWidget {
                       children: [
                         Text('${data.coin} ${LKey.coins.tr}',
                             style: TextStyleCustom.unboundedMedium500(
-                                color: textDarkGrey(context), fontSize: 15)),
+                                color: ColorRes.textDarkGrey, fontSize: 15)),
                         Text('${data.priceString} ${LKey.only.tr}',
-                            style: TextStyleCustom.outFitRegular400(color: textLightGrey(context))),
+                            style: TextStyleCustom.outFitRegular400(color: ColorRes.textLightGrey)),
                       ],
                     )),
                     TextButtonCustom(
                         onTap: () => controller.onPurchase(data),
                         title: LKey.purchase.tr,
-                        backgroundColor: themeAccentSolid(context),
+                        backgroundColor: ColorRes.themeAccentSolid,
                         btnHeight: 40,
                         fontSize: 15,
-                        titleColor: whitePure(context),
+                        titleColor: ColorRes.whitePure,
                         padding: const EdgeInsets.symmetric(horizontal: 18),
                         horizontalMargin: 0)
                   ],

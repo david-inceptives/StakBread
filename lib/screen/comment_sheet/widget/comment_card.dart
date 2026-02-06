@@ -16,7 +16,7 @@ import 'package:stakBread/utilities/app_res.dart';
 import 'package:stakBread/utilities/asset_res.dart';
 import 'package:stakBread/utilities/color_res.dart';
 import 'package:stakBread/utilities/text_style_custom.dart';
-import 'package:stakBread/utilities/theme_res.dart';
+import 'package:stakBread/utilities/color_res.dart';
 
 class CommentCard extends StatelessWidget {
   final Comment? comment;
@@ -39,7 +39,7 @@ class CommentCard extends StatelessWidget {
     }
     return ContextMenuWidget(
       child: Container(
-        color: whitePure(context),
+        color: ColorRes.whitePure,
         padding: const EdgeInsets.all(10),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -68,7 +68,7 @@ class CommentCard extends StatelessWidget {
                       child: Text(
                           '${comment?.createdAt?.timeAgo ?? ''}${comment?.isPinned == 1 ? AppRes.postPinIcon : ''}',
                           style: TextStyleCustom.outFitLight300(
-                              color: textLightGrey(context)))),
+                              color: ColorRes.textLightGrey))),
                   const SizedBox(height: 3),
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -101,7 +101,7 @@ class CommentCard extends StatelessWidget {
                                 child: Text(
                                   LKey.reply.tr,
                                   style: TextStyleCustom.outFitRegular400(
-                                      color: textLightGrey(context)),
+                                      color: ColorRes.textLightGrey),
                                 ),
                               ),
                           ],
@@ -128,7 +128,7 @@ class CommentCard extends StatelessWidget {
                                       : AssetRes.icHeart,
                                   color: isLike
                                       ? ColorRes.likeRed
-                                      : textDarkGrey(context),
+                                      : ColorRes.textDarkGrey,
                                   width: 19,
                                   height: 19,
                                 ),
@@ -138,7 +138,7 @@ class CommentCard extends StatelessWidget {
                                     (comment?.likes ?? 0).toInt().numberFormat,
                                     style: TextStyleCustom.outFitRegular400(
                                         fontSize: 13,
-                                        color: textLightGrey(context)),
+                                        color: ColorRes.textLightGrey),
                                   ),
                                 )
                               ],

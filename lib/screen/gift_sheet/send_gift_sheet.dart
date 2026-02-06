@@ -15,7 +15,7 @@ import 'package:stakBread/utilities/asset_res.dart';
 import 'package:stakBread/utilities/color_res.dart';
 import 'package:stakBread/utilities/style_res.dart';
 import 'package:stakBread/utilities/text_style_custom.dart';
-import 'package:stakBread/utilities/theme_res.dart';
+import 'package:stakBread/utilities/color_res.dart';
 
 class SendGiftSheet extends StatelessWidget {
   final GiftType giftType;
@@ -44,7 +44,7 @@ class SendGiftSheet extends StatelessWidget {
             top: SmoothRadius(cornerRadius: 40, cornerSmoothing: 1),
           ),
         ),
-        color: scaffoldBackgroundColor(context),
+        color: ColorRes.whitePure,
       ),
       child: SafeArea(
         top: false,
@@ -71,13 +71,13 @@ class SendGiftSheet extends StatelessWidget {
                               size: const Size(30, 30),
                               image: streamUsers.first.profile?.addBaseURL(),
                               fullName: streamUsers.first.fullname,
-                              strokeColor: whitePure(context),
+                              strokeColor: ColorRes.whitePure,
                               strokeWidth: 1.2),
                           const SizedBox(width: 5),
                           Flexible(
                               child: FullNameWithBlueTick(
                                   username: streamUsers.first.username,
-                                  fontColor: whitePure(context),
+                                  fontColor: ColorRes.whitePure,
                                   isVerify: streamUsers.first.isVerify))
                         ],
                       ),
@@ -86,7 +86,7 @@ class SendGiftSheet extends StatelessWidget {
                         LKey.youAreSendingCoinsTo
                             .trParams({'color': battleViewType.value}),
                         style: TextStyleCustom.outFitLight300(
-                            color: whitePure(context), fontSize: 12),
+                            color: ColorRes.whitePure, fontSize: 12),
                       )
                     ],
                   ),
@@ -99,7 +99,7 @@ class SendGiftSheet extends StatelessWidget {
                 style: TextStyleCustom.unboundedSemiBold600(fontSize: 21))),
             Text(LKey.coinsYouHave.tr,
                 style: TextStyleCustom.outFitRegular400(
-                    fontSize: 15, color: textLightGrey(context))),
+                    fontSize: 15, color: ColorRes.textLightGrey)),
             const SizedBox(height: 10),
             Expanded(child: Obx(
               () {
@@ -122,7 +122,7 @@ class SendGiftSheet extends StatelessWidget {
                             borderRadius: SmoothBorderRadius(
                                 cornerRadius: 5, cornerSmoothing: 1),
                           ),
-                          color: bgLightGrey(context),
+                          color: ColorRes.bgLightGrey,
                         ),
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -135,7 +135,7 @@ class SendGiftSheet extends StatelessWidget {
                                 '${(gift.coinPrice ?? 0).numberFormat} ${LKey.coins.tr}',
                                 style: TextStyleCustom.outFitMedium500(
                                     fontSize: 13,
-                                    color: textLightGrey(context))),
+                                    color: ColorRes.textLightGrey)),
                             GradientText(LKey.send.tr,
                                 gradient: StyleRes.themeGradient,
                                 style: TextStyleCustom.unboundedMedium500(
@@ -174,7 +174,7 @@ class GiftForLiveStream extends StatelessWidget {
           }
           return streamUsers.length <= 1
               ? Container(
-                  color: bgLightGrey(context),
+                  color: ColorRes.bgLightGrey,
                   child: _PopupMenuItemCustom(streamUser: giftUser))
               : PopupMenuButton<AppUser>(
                   initialValue: giftUser,
@@ -208,7 +208,7 @@ class GiftForLiveStream extends StatelessWidget {
         Text(
           LKey.sendingCoinsMessage.tr,
           style: TextStyleCustom.outFitLight300(
-              color: textLightGrey(context), fontSize: 13),
+              color: ColorRes.textLightGrey, fontSize: 13),
         )
       ],
     );
@@ -225,7 +225,7 @@ class _PopupMenuItemCustom extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: isPopupChild ? bgLightGrey(context) : null,
+      color: isPopupChild ? ColorRes.bgLightGrey : null,
       height: 45,
       width: MediaQuery.of(context).size.width - 20,
       child: Row(
@@ -235,7 +235,7 @@ class _PopupMenuItemCustom extends StatelessWidget {
             size: const Size(30, 30),
             image: streamUser.profile?.addBaseURL(),
             fullName: streamUser.fullname ?? '',
-            strokeColor: whitePure(context),
+            strokeColor: ColorRes.whitePure,
             strokeWidth: 1,
           ),
           const SizedBox(width: 5),

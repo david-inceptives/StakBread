@@ -10,7 +10,7 @@ import 'package:stakBread/screen/music_sheet/music_sheet_controller.dart';
 import 'package:stakBread/screen/music_sheet/widget/music_category_grid_view.dart';
 import 'package:stakBread/screen/music_sheet/widget/music_list.dart';
 import 'package:stakBread/utilities/text_style_custom.dart';
-import 'package:stakBread/utilities/theme_res.dart';
+import 'package:stakBread/utilities/color_res.dart';
 
 class MusicSheet extends StatelessWidget {
   final int videoDurationInSecond;
@@ -23,7 +23,7 @@ class MusicSheet extends StatelessWidget {
     return Container(
       margin: EdgeInsets.only(top: AppBar().preferredSize.height * 2),
       decoration: ShapeDecoration(
-        color: whitePure(context),
+        color: ColorRes.whitePure,
         shape: const SmoothRectangleBorder(
           borderRadius: SmoothBorderRadius.vertical(
             top: SmoothRadius(cornerRadius: 30, cornerSmoothing: 1),
@@ -59,7 +59,7 @@ class MusicSheet extends StatelessWidget {
                             child: Text(LKey.cancel.tr,
                                 style: TextStyleCustom.outFitRegular400(
                                     fontSize: 15,
-                                    color: textLightGrey(context)))),
+                                    color: ColorRes.textLightGrey))),
                       )
                     : const SizedBox(),
               )

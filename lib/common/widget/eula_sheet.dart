@@ -5,7 +5,7 @@ import 'package:stakBread/common/manager/session_manager.dart';
 import 'package:stakBread/common/widget/eula_policy_for_apple.dart';
 import 'package:stakBread/common/widget/text_button_custom.dart';
 import 'package:stakBread/languages/languages_keys.dart';
-import 'package:stakBread/utilities/theme_res.dart';
+import 'package:stakBread/utilities/color_res.dart';
 
 class EulaSheet extends StatelessWidget {
   const EulaSheet({super.key});
@@ -15,7 +15,7 @@ class EulaSheet extends StatelessWidget {
     return Container(
       margin: EdgeInsets.only(top: AppBar().preferredSize.height * 2),
       decoration: ShapeDecoration(
-          color: scaffoldBackgroundColor(context),
+          color: ColorRes.whitePure,
           shape: const SmoothRectangleBorder(
               borderRadius: SmoothBorderRadius.vertical(
                   top: SmoothRadius(cornerRadius: 30, cornerSmoothing: 1)))),
@@ -34,8 +34,8 @@ class EulaSheet extends StatelessWidget {
                 Get.back();
               },
               title: LKey.accept.tr,
-              titleColor: whitePure(context),
-              backgroundColor: themeColor(context),
+              titleColor: ColorRes.whitePure,
+              backgroundColor: ColorRes.themeColor,
             ),
           )
         ],

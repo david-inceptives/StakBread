@@ -4,7 +4,7 @@ import 'package:get/get.dart';
 import 'package:stakBread/languages/languages_keys.dart';
 import 'package:stakBread/screen/term_and_privacy_screen/term_and_privacy_screen.dart';
 import 'package:stakBread/utilities/text_style_custom.dart';
-import 'package:stakBread/utilities/theme_res.dart';
+import 'package:stakBread/utilities/color_res.dart';
 
 class PrivacyPolicyText extends StatelessWidget {
   final Color? regularTextColor;
@@ -21,12 +21,12 @@ class PrivacyPolicyText extends StatelessWidget {
         text: TextSpan(
             text: LKey.agreeToPolicy.tr,
             style: TextStyleCustom.outFitRegular400(
-                color: regularTextColor ?? textLightGrey(context)),
+                color: regularTextColor ?? ColorRes.textLightGrey),
             children: [
               TextSpan(
                   text: '\n${LKey.privacyPolicy.tr}',
                   style: TextStyleCustom.outFitSemiBold600(
-                      color: boldTextColor ?? textLightGrey(context)),
+                      color: boldTextColor ?? ColorRes.textLightGrey),
                   recognizer: TapGestureRecognizer()
                     ..onTap = () {
                       Get.to(() => const TermAndPrivacyScreen(
@@ -35,11 +35,11 @@ class PrivacyPolicyText extends StatelessWidget {
               TextSpan(
                   text: ' ${LKey.andText.tr} ',
                   style: TextStyleCustom.outFitRegular400(
-                      color: regularTextColor ?? textLightGrey(context))),
+                      color: regularTextColor ?? ColorRes.textLightGrey)),
               TextSpan(
                   text: LKey.termsOfUse.tr,
                   style: TextStyleCustom.outFitSemiBold600(
-                      color: boldTextColor ?? textLightGrey(context)),
+                      color: boldTextColor ?? ColorRes.textLightGrey),
                   recognizer: TapGestureRecognizer()
                     ..onTap = () {
                       Get.to(() => const TermAndPrivacyScreen(

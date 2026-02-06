@@ -7,7 +7,6 @@ import 'package:stakBread/screen/edit_profile_screen/widget/phone_codes_screen_c
 import 'package:stakBread/utilities/asset_res.dart';
 import 'package:stakBread/utilities/color_res.dart';
 import 'package:stakBread/utilities/text_style_custom.dart';
-import 'package:stakBread/utilities/theme_res.dart';
 
 class TextFieldCustom extends StatefulWidget {
   final bool isPrefixIconShow;
@@ -69,7 +68,7 @@ class _TextFieldCustomState extends State<TextFieldCustom> {
           padding: const EdgeInsets.symmetric(horizontal: 20.0),
           child: Text(widget.title,
               style: TextStyleCustom.outFitRegular400(
-                  color: textDarkGrey(context), fontSize: 17)),
+                  color: ColorRes.textDarkGrey, fontSize: 17)),
         ),
         Container(
           height: widget.height,
@@ -77,7 +76,7 @@ class _TextFieldCustomState extends State<TextFieldCustom> {
           decoration: BoxDecoration(
               color: widget.isError
                   ? ColorRes.likeRed.withValues(alpha: .1)
-                  : bgLightGrey(context),
+                  : ColorRes.bgLightGrey,
               border: Border.symmetric(
                 horizontal: BorderSide(
                     color: widget.isError
@@ -97,12 +96,12 @@ class _TextFieldCustomState extends State<TextFieldCustom> {
             minLines: isExpand ? null : 1,
             // Ensure minLines is null when expands is true
             style: TextStyleCustom.outFitLight300(
-                color: textLightGrey(context), fontSize: 17),
+                color: ColorRes.textLightGrey, fontSize: 17),
             decoration: InputDecoration(
                 border: InputBorder.none,
                 hintText: widget.hintText ?? LKey.enterHere.tr,
                 hintStyle: TextStyleCustom.outFitLight300(
-                    color: textLightGrey(context), fontSize: 17),
+                    color: ColorRes.textLightGrey, fontSize: 17),
                 contentPadding: EdgeInsets.only(
                     left: 20,
                     right: 20,
@@ -121,7 +120,7 @@ class _TextFieldCustomState extends State<TextFieldCustom> {
                                 !isHide ? AssetRes.icHideEye : AssetRes.icEye,
                                 height: 24,
                                 width: 35,
-                                color: textLightGrey(context),
+                                color: ColorRes.textLightGrey,
                                 key: UniqueKey())),
                       )
                     : null,
@@ -140,7 +139,7 @@ class _TextFieldCustomState extends State<TextFieldCustom> {
                           child: (widget.prefixIcon ??
                               Container(
                                 height: 49,
-                                color: textDarkGrey(context),
+                                color: ColorRes.textDarkGrey,
                                 alignment: Alignment.center,
                                 margin: EdgeInsets.only(
                                     right: TextDirection.ltr ==
@@ -158,9 +157,9 @@ class _TextFieldCustomState extends State<TextFieldCustom> {
                                         '${controller.selectedCode.value?.countryCode ?? ''} ${controller.selectedCode.value?.phoneCode ?? ''}',
                                         style: TextStyleCustom.outFitLight300(
                                             fontSize: 17,
-                                            color: whitePure(context)))),
+                                            color: ColorRes.whitePure))),
                                     Icon(Icons.arrow_drop_down,
-                                        color: whitePure(context), size: 30)
+                                        color: ColorRes.whitePure, size: 30)
                                   ],
                                 ),
                               )),
@@ -171,7 +170,7 @@ class _TextFieldCustomState extends State<TextFieldCustom> {
             inputFormatters: widget.inputFormatters,
             textAlignVertical:
                 widget.isPrefixIconShow ? TextAlignVertical.center : null,
-            cursorColor: textLightGrey(context),
+            cursorColor: ColorRes.textLightGrey,
           ),
         )
       ],

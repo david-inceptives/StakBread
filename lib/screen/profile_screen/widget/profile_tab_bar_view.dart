@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:stakBread/languages/languages_keys.dart';
 import 'package:stakBread/screen/profile_screen/profile_screen_controller.dart';
-import 'package:stakBread/utilities/asset_res.dart';
-import 'package:stakBread/utilities/theme_res.dart';
+import 'package:stakBread/utilities/text_style_custom.dart';
+import 'package:stakBread/utilities/color_res.dart';
 
 class ProfileTabs extends StatelessWidget {
   final ProfileScreenController controller;
@@ -13,44 +14,85 @@ class ProfileTabs extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Obx(
-          () => Stack(
-            children: [
-              Container(height: .5, color: textLightGrey(context)),
-              AnimatedAlign(
-                alignment: controller.selectedTabIndex.value == 1
-                    ? AlignmentDirectional.centerEnd
-                    : AlignmentDirectional.centerStart,
-                duration: const Duration(milliseconds: 300),
-                child: Container(
-                  height: 1,
-                  width: Get.width / 2 - 80,
-                  color: themeAccentSolid(context),
-                  margin: const EdgeInsets.symmetric(horizontal: 40),
+        Row(
+          children: [
+            Expanded(
+              child: InkWell(
+                onTap: () {
+                  controller.userData.value?.checkIsBlocked(() {
+                    controller.onTabChanged(0);
+                    controller.pageController.animateToPage(
+                      0,
+                      duration: const Duration(milliseconds: 300),
+                      curve: Curves.linear,
+                    );
+                  });
+                },
+                child: Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                      child: Obx(() {
+                        final selected = controller.selectedTabIndex.value == 0;
+                        return Text(
+                          LKey.posts.tr,
+                          style: TextStyleCustom.unboundedSemiBold600(
+                            fontSize: 15,
+                            color: selected
+                                ? ColorRes.textDarkGrey
+                                : ColorRes.textLightGrey,
+                          ),
+                        );
+                      }),
+                    ),
+                    Obx(() => Container(
+                          height: controller.selectedTabIndex.value == 0 ? 3 : 0,
+                          color: ColorRes.textDarkGrey,
+                        )),
+                  ],
                 ),
               ),
-            ],
-          ),
+            ),
+            Expanded(
+              child: InkWell(
+                onTap: () {
+                  controller.userData.value?.checkIsBlocked(() {
+                    controller.onTabChanged(1);
+                    controller.pageController.animateToPage(
+                      1,
+                      duration: const Duration(milliseconds: 300),
+                      curve: Curves.linear,
+                    );
+                  });
+                },
+                child: Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                      child: Obx(() {
+                        final selected = controller.selectedTabIndex.value == 1;
+                        return Text(
+                          LKey.reels.tr,
+                          style: TextStyleCustom.unboundedSemiBold600(
+                            fontSize: 15,
+                            color: selected
+                                ? ColorRes.textDarkGrey
+                                : ColorRes.textLightGrey,
+                          ),
+                        );
+                      }),
+                    ),
+                    Obx(() => Container(
+                          height: controller.selectedTabIndex.value == 1 ? 3 : 0,
+                          color: ColorRes.textDarkGrey,
+                        )),
+                  ],
+                ),
+              ),
+            ),
+          ],
         ),
-        TabBar(
-            onTap: (value) {
-              controller.userData.value?.checkIsBlocked(() {
-                controller.onTabChanged(value);
-              controller.pageController.animateToPage(value,
-                  duration: const Duration(milliseconds: 300), curve: Curves.linear);
-              });
-            },
-            indicatorColor: Colors.transparent,
-            tabs: List.generate(2, (index) {
-              final icon = index == 0 ? AssetRes.icReel : AssetRes.icPost;
-              return Obx(() {
-                final color = controller.selectedTabIndex.value == index
-                    ? themeAccentSolid(context)
-                    : disableGrey(context);
-                return Image.asset(icon, height: 50, width: 35, color: color);
-              });
-            })),
-        Container(height: .5, color: textLightGrey(context)),
+        Container(height: 1, color: ColorRes.borderLight),
       ],
     );
   }

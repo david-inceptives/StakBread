@@ -13,7 +13,7 @@ import 'package:stakBread/screen/live_stream/livestream_screen/livestream_screen
 import 'package:stakBread/utilities/asset_res.dart';
 import 'package:stakBread/utilities/color_res.dart';
 import 'package:stakBread/utilities/text_style_custom.dart';
-import 'package:stakBread/utilities/theme_res.dart';
+import 'package:stakBread/utilities/color_res.dart';
 
 class LiveStreamCommentView extends StatelessWidget {
   final LivestreamScreenController controller;
@@ -25,9 +25,9 @@ class LiveStreamCommentView extends StatelessWidget {
     return ShaderMask(
       shaderCallback: (Rect bounds) {
         return LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter, colors: [
-          blackPure(context),
-          blackPure(context).withValues(alpha: .6),
-          blackPure(context).withValues(alpha: .1),
+          ColorRes.blackPure,
+          ColorRes.blackPure.withValues(alpha: .6),
+          ColorRes.blackPure.withValues(alpha: .1),
         ], stops: const [
           .0,
           .3,
@@ -58,7 +58,7 @@ class LiveStreamCommentView extends StatelessWidget {
                       image: senderUser?.profile?.addBaseURL(),
                       fullName: senderUser?.fullname,
                       strokeWidth: 2,
-                      strokeColor: whitePure(context).withValues(alpha: .5),
+                      strokeColor: ColorRes.whitePure.withValues(alpha: .5),
                       isStokeOutSide: true,
                     ),
                     const SizedBox(width: 5),
@@ -70,7 +70,7 @@ class LiveStreamCommentView extends StatelessWidget {
                           FullNameWithBlueTick(
                             username: senderUser?.username,
                             isVerify: senderUser?.isVerify,
-                            fontColor: whitePure(context),
+                            fontColor: ColorRes.whitePure,
                             opacity: 0.7,
                             fontSize: 12,
                             iconSize: 18,
@@ -99,7 +99,7 @@ class LiveStreamCommentView extends StatelessWidget {
           children: [
             Text(
               LKey.requestingToJoinTheStream.tr,
-              style: TextStyleCustom.outFitRegular400(color: whitePure(context).withValues(alpha: .80)),
+              style: TextStyleCustom.outFitRegular400(color: ColorRes.whitePure.withValues(alpha: .80)),
             ),
             const SizedBox(height: 5),
             Obx(() {
@@ -114,10 +114,10 @@ class LiveStreamCommentView extends StatelessWidget {
                       height: 26,
                       padding: const EdgeInsets.symmetric(horizontal: 10),
                       decoration: BoxDecoration(
-                          color: whitePure(context).withValues(alpha: .2), borderRadius: BorderRadius.circular(30)),
+                          color: ColorRes.whitePure.withValues(alpha: .2), borderRadius: BorderRadius.circular(30)),
                       alignment: Alignment.center,
                       child: Text(LKey.refuse.tr,
-                          style: TextStyleCustom.outFitRegular400(fontSize: 13, color: bgGrey(context))),
+                          style: TextStyleCustom.outFitRegular400(fontSize: 13, color: ColorRes.bgGrey)),
                     ),
                   ),
                   const SizedBox(width: 5),
@@ -130,11 +130,11 @@ class LiveStreamCommentView extends StatelessWidget {
                       padding: const EdgeInsets.symmetric(horizontal: 10),
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(30),
-                        color: whitePure(context),
+                        color: ColorRes.whitePure,
                       ),
                       alignment: Alignment.center,
                       child: Text(LKey.accept.tr,
-                          style: TextStyleCustom.outFitRegular400(fontSize: 13, color: textDarkGrey(context))),
+                          style: TextStyleCustom.outFitRegular400(fontSize: 13, color: ColorRes.textDarkGrey)),
                     ),
                   ),
                 ],
@@ -144,7 +144,7 @@ class LiveStreamCommentView extends StatelessWidget {
         );
       case LivestreamCommentType.text:
         return Text(comment.comment?.tr ?? '',
-            style: TextStyleCustom.outFitRegular400(color: whitePure(context).withValues(alpha: .80)));
+            style: TextStyleCustom.outFitRegular400(color: ColorRes.whitePure.withValues(alpha: .80)));
       case LivestreamCommentType.gift:
         if (comment.gift == null) {
           return const SizedBox();
@@ -155,7 +155,7 @@ class LiveStreamCommentView extends StatelessWidget {
           bool isHost = comment.receiverId == stream.hostId;
           Color bgColor = isBattleView
               ? (isHost ? Colors.red : ColorRes.battleProgressColor)
-              : themeColor(context).withValues(alpha: .5);
+              : ColorRes.themeColor.withValues(alpha: .5);
           return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             spacing: 3,
@@ -184,7 +184,7 @@ class LiveStreamCommentView extends StatelessWidget {
                       children: [
                         Image.asset(AssetRes.icCoin, height: 18, width: 18),
                         Text((comment.gift?.coinPrice ?? 0).numberFormat,
-                            style: TextStyleCustom.outFitRegular400(color: whitePure(context)))
+                            style: TextStyleCustom.outFitRegular400(color: ColorRes.whitePure))
                       ],
                     ),
                   )
@@ -198,10 +198,10 @@ class LiveStreamCommentView extends StatelessWidget {
         });
       case LivestreamCommentType.joined:
         return Text(LKey.joinedTheStream.tr,
-            style: TextStyleCustom.outFitRegular400(color: whitePure(context).withValues(alpha: .80)));
+            style: TextStyleCustom.outFitRegular400(color: ColorRes.whitePure.withValues(alpha: .80)));
       case LivestreamCommentType.joinedCoHost:
         return Text(LKey.joinedAsACoHost.tr,
-            style: TextStyleCustom.outFitRegular400(color: whitePure(context).withValues(alpha: .80)));
+            style: TextStyleCustom.outFitRegular400(color: ColorRes.whitePure.withValues(alpha: .80)));
     }
   }
 }

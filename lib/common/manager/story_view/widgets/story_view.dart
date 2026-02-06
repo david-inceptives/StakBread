@@ -24,7 +24,7 @@ import 'package:stakBread/utilities/app_res.dart';
 import 'package:stakBread/utilities/asset_res.dart';
 import 'package:stakBread/utilities/style_res.dart';
 import 'package:stakBread/utilities/text_style_custom.dart';
-import 'package:stakBread/utilities/theme_res.dart';
+import 'package:stakBread/utilities/color_res.dart';
 
 import '../controller/story_controller.dart';
 import '../utils.dart';
@@ -1071,7 +1071,7 @@ class StoryBottomVIew extends StatelessWidget {
                   ),
                   alignment: Alignment.center,
                   child: Image.asset(AssetRes.icGift,
-                      height: 20, width: 20, color: whitePure(context)),
+                      height: 20, width: 20, color: ColorRes.whitePure),
                 ),
               )
             ],

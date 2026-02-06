@@ -10,7 +10,7 @@ import 'package:stakBread/screen/message_screen/message_screen_controller.dart';
 import 'package:stakBread/screen/message_screen/widget/chat_conversation_user_card.dart';
 import 'package:stakBread/utilities/color_res.dart';
 import 'package:stakBread/utilities/text_style_custom.dart';
-import 'package:stakBread/utilities/theme_res.dart';
+import 'package:stakBread/utilities/color_res.dart';
 
 class MessageScreen extends StatelessWidget {
   const MessageScreen({super.key});
@@ -21,7 +21,7 @@ class MessageScreen extends StatelessWidget {
     return Column(
       children: [
         Container(
-          color: scaffoldBackgroundColor(context),
+          color: ColorRes.whitePure,
           child: SafeArea(
             minimum: const EdgeInsets.only(top: 15),
             child: Column(
@@ -30,7 +30,7 @@ class MessageScreen extends StatelessWidget {
                   padding: const EdgeInsets.symmetric(vertical: 10.0),
                   child: Text(LKey.messages.tr,
                       style: TextStyleCustom.unboundedMedium500(
-                          fontSize: 15, color: textDarkGrey(context))),
+                          fontSize: 15, color: ColorRes.textDarkGrey)),
                 ),
                 CustomTabSwitcher(
                   items: controller.chatCategories,
@@ -56,7 +56,7 @@ class MessageScreen extends StatelessWidget {
                       child: Text(
                         '$length',
                         style: TextStyleCustom.outFitRegular400(
-                            fontSize: 12, color: whitePure(context)),
+                            fontSize: 12, color: ColorRes.whitePure),
                       ),
                     );
                   }),

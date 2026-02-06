@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:stakBread/common/manager/haptic_manager.dart';
 import 'package:stakBread/screen/color_filter_screen/widget/color_filtered.dart';
 import 'package:stakBread/utilities/asset_res.dart';
-import 'package:stakBread/utilities/theme_res.dart';
+import 'package:stakBread/utilities/color_res.dart';
 
 class ColorFiltersView extends StatefulWidget {
   final Function(List<double> filter) onPageChanged;
@@ -77,7 +77,7 @@ class _ColorFiltersViewState extends State<ColorFiltersView> {
                           border: Border.all(
                             color: isSelected
                                 ? Colors.transparent
-                                : whitePure(context).withValues(alpha: 0.3),
+                                : ColorRes.whitePure.withValues(alpha: 0.3),
                             width: 3,
                             strokeAlign: BorderSide.strokeAlignOutside,
                           ),
@@ -139,7 +139,7 @@ class _ColorFiltersViewState extends State<ColorFiltersView> {
               alignment: Alignment.center,
               decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  border: Border.all(color: whitePure(context), width: 3)),
+                  border: Border.all(color: ColorRes.whitePure, width: 3)),
             ),
           ),
         ],

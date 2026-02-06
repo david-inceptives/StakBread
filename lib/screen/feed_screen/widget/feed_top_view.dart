@@ -7,7 +7,7 @@ import 'package:stakBread/screen/feed_screen/feed_screen_controller.dart';
 import 'package:stakBread/screen/notification_screen/notification_screen.dart';
 import 'package:stakBread/utilities/asset_res.dart';
 import 'package:stakBread/utilities/text_style_custom.dart';
-import 'package:stakBread/utilities/theme_res.dart';
+import 'package:stakBread/utilities/color_res.dart';
 
 class FeedTopView extends StatelessWidget {
   final FeedScreenController controller;
@@ -17,7 +17,7 @@ class FeedTopView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: scaffoldBackgroundColor(context),
+      color: ColorRes.whitePure,
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
       child: SafeArea(
         bottom: false,
@@ -42,10 +42,10 @@ class FeedTopView extends StatelessWidget {
                           controller.selectedPostCategory.value.title
                               .toUpperCase(),
                           style: TextStyleCustom.unboundedBold700(
-                              color: textDarkGrey(context), fontSize: 15)),
+                              color: ColorRes.textDarkGrey, fontSize: 15)),
                       const SizedBox(width: 3),
                       Image.asset(AssetRes.icDownArrow,
-                          color: textDarkGrey(context), height: 8, width: 8),
+                          color: ColorRes.textDarkGrey, height: 8, width: 8),
                     ],
                   ),
                 )),
@@ -76,12 +76,12 @@ class FeedTopView extends StatelessWidget {
                           width: 19,
                           alignment: Alignment.center,
                           decoration: BoxDecoration(
-                              color: themeAccentSolid(context),
+                              color: ColorRes.themeAccentSolid,
                               shape: BoxShape.circle),
                           child: Text(
                             '$notifyCount',
                             style: TextStyleCustom.outFitRegular400(
-                                color: whitePure(context), fontSize: 12),
+                                color: ColorRes.whitePure, fontSize: 12),
                           ),
                         ),
                       );

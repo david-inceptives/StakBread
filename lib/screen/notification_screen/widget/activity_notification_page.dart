@@ -12,7 +12,7 @@ import 'package:stakBread/screen/comment_sheet/helper/comment_helper.dart';
 import 'package:stakBread/screen/notification_screen/notification_screen_controller.dart';
 import 'package:stakBread/utilities/asset_res.dart';
 import 'package:stakBread/utilities/text_style_custom.dart';
-import 'package:stakBread/utilities/theme_res.dart';
+import 'package:stakBread/utilities/color_res.dart';
 
 class ActivityNotificationPage extends StatelessWidget {
   final ActivityNotification data;
@@ -57,7 +57,7 @@ class ActivityNotificationPage extends StatelessWidget {
                           _getNotificationText(),
                           style: TextStyleCustom.outFitRegular400(
                             fontSize: 15,
-                            color: textLightGrey(context),
+                            color: ColorRes.textLightGrey,
                           ),
                         ),
                       )),
@@ -155,7 +155,7 @@ class NotificationGiftIcon extends StatelessWidget {
         height: 35,
         padding: const EdgeInsets.symmetric(horizontal: 10),
         decoration: BoxDecoration(
-          color: textDarkGrey(context),
+          color: ColorRes.textDarkGrey,
           borderRadius: BorderRadius.circular(30),
         ),
         child: Row(
@@ -171,7 +171,7 @@ class NotificationGiftIcon extends StatelessWidget {
               (gift?.coinPrice ?? 0).numberFormat,
               // Consider using `gift?.amount.toString()` if dynamic
               style: TextStyleCustom.outFitRegular400(
-                color: whitePure(context),
+                color: ColorRes.whitePure,
                 fontSize: 14,
               ),
             ),

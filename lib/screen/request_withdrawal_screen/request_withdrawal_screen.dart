@@ -12,7 +12,7 @@ import 'package:stakBread/screen/request_withdrawal_screen/request_withdrawal_sc
 import 'package:stakBread/utilities/app_res.dart';
 import 'package:stakBread/utilities/asset_res.dart';
 import 'package:stakBread/utilities/text_style_custom.dart';
-import 'package:stakBread/utilities/theme_res.dart';
+import 'package:stakBread/utilities/color_res.dart';
 
 class RequestWithdrawalScreen extends StatelessWidget {
   const RequestWithdrawalScreen({super.key});
@@ -34,7 +34,7 @@ class RequestWithdrawalScreen extends StatelessWidget {
                 child: Column(
                   children: [
                     Container(
-                      decoration: BoxDecoration(color: bgLightGrey(context)),
+                      decoration: BoxDecoration(color: ColorRes.bgLightGrey),
                       padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 10),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -45,17 +45,17 @@ class RequestWithdrawalScreen extends StatelessWidget {
                                 () => Text(
                                   (controller.myUser.value?.coinWallet ?? 0).numberFormat,
                                   style: TextStyleCustom.outFitExtraBold800(
-                                      color: textDarkGrey(context), fontSize: 28),
+                                      color: ColorRes.textDarkGrey, fontSize: 28),
                                 ),
                               ),
                               Text(LKey.coinBalance.tr,
                                   style: TextStyleCustom.outFitLight300(
-                                      color: textLightGrey(context))),
+                                      color: ColorRes.textLightGrey)),
                             ],
                           ),
                           Text(AppRes.equal,
                               style: TextStyleCustom.outFitSemiBold600(
-                                  color: textDarkGrey(context), fontSize: 26)),
+                                  color: ColorRes.textDarkGrey, fontSize: 26)),
                           Column(
                             children: [
                               Text(
@@ -65,12 +65,12 @@ class RequestWithdrawalScreen extends StatelessWidget {
                                         .currencyFormat ??
                                     '',
                                 style: TextStyleCustom.outFitExtraBold800(
-                                    color: textDarkGrey(context), fontSize: 28),
+                                    color: ColorRes.textDarkGrey, fontSize: 28),
                               ),
                               Text(
                                 LKey.estimatedValue.tr,
                                 style: TextStyleCustom.outFitLight300(
-                                  color: textLightGrey(context),
+                                  color: ColorRes.textLightGrey,
                                 ),
                               ),
                             ],
@@ -79,7 +79,7 @@ class RequestWithdrawalScreen extends StatelessWidget {
                       ),
                     ),
                     Container(
-                      color: bgGrey(context),
+                      color: ColorRes.bgGrey,
                       height: 29,
                       alignment: Alignment.center,
                       child: Obx(
@@ -87,7 +87,7 @@ class RequestWithdrawalScreen extends StatelessWidget {
                           '${LKey.currentValue.tr} : ${(controller.settings.value?.coinValue ?? 0).currencyFormat}'
                           ' ${AppRes.slash} ${LKey.coin.tr} ',
                           style: TextStyleCustom.outFitLight300(
-                              color: textLightGrey(context), fontSize: 13),
+                              color: ColorRes.textLightGrey, fontSize: 13),
                         ),
                       ),
                     )
@@ -112,7 +112,7 @@ class RequestWithdrawalScreen extends StatelessWidget {
                 prefixIcon: Container(
                     height: 49,
                     width: 49,
-                    color: textDarkGrey(context),
+                    color: ColorRes.textDarkGrey,
                     alignment: Alignment.center,
                     margin: EdgeInsets.only(
                         right: TextDirection.ltr == Directionality.of(context) ? 13 : 0,
@@ -129,7 +129,7 @@ class RequestWithdrawalScreen extends StatelessWidget {
                   prefixIcon: Container(
                       height: 49,
                       width: 49,
-                      color: textDarkGrey(context),
+                      color: ColorRes.textDarkGrey,
                       alignment: Alignment.center,
                       margin: EdgeInsets.only(
                           right: TextDirection.ltr == Directionality.of(context) ? 13 : 0,
@@ -137,7 +137,7 @@ class RequestWithdrawalScreen extends StatelessWidget {
                       child: Text(
                         controller.settings.value?.currency ?? AppRes.currency,
                         style:
-                            TextStyleCustom.outFitLight300(fontSize: 20, color: whitePure(context)),
+                            TextStyleCustom.outFitLight300(fontSize: 20, color: ColorRes.whitePure),
                       )),
                 ),
               ),
@@ -145,7 +145,7 @@ class RequestWithdrawalScreen extends StatelessWidget {
                 padding: const EdgeInsets.only(left: 20.0, bottom: 5, right: 20),
                 child: Text(LKey.selectGateway.tr,
                     style: TextStyleCustom.outFitRegular400(
-                        color: textDarkGrey(context), fontSize: 17)),
+                        color: ColorRes.textDarkGrey, fontSize: 17)),
               ),
               Obx(() {
                 var listFromApi = (controller.settings.value?.redeemGateways ?? [])
@@ -165,12 +165,12 @@ class RequestWithdrawalScreen extends StatelessWidget {
                     onChanged: (value) {
                       controller.selectedGateway.value = value ?? '';
                     },
-                    bgColor: bgLightGrey(context),
+                    bgColor: ColorRes.bgLightGrey,
                     padding: const EdgeInsets.symmetric(horizontal: 20),
                     isExpanded: true,
                     height: 48,
                     style: TextStyleCustom.outFitLight300(
-                        color: textLightGrey(context), fontSize: 17));
+                        color: ColorRes.textLightGrey, fontSize: 17));
               }),
               const SizedBox(height: 10),
               TextFieldCustom(
@@ -184,8 +184,8 @@ class RequestWithdrawalScreen extends StatelessWidget {
                 onTap: controller.onSubmit,
                 title: LKey.submit.tr,
                 horizontalMargin: 15,
-                backgroundColor: textDarkGrey(context),
-                titleColor: whitePure(context),
+                backgroundColor: ColorRes.textDarkGrey,
+                titleColor: ColorRes.whitePure,
               ),
               Container(
                   margin: const EdgeInsets.symmetric(vertical: 40),

@@ -8,7 +8,7 @@ import 'package:stakBread/screen/edit_profile_screen/edit_profile_screen_control
 import 'package:stakBread/screen/edit_profile_screen/widget/add_edit_link_sheet.dart';
 import 'package:stakBread/utilities/asset_res.dart';
 import 'package:stakBread/utilities/text_style_custom.dart';
-import 'package:stakBread/utilities/theme_res.dart';
+import 'package:stakBread/utilities/color_res.dart';
 
 class BuildLinkView extends StatelessWidget {
   final EditProfileScreenController controller;
@@ -26,12 +26,12 @@ class BuildLinkView extends StatelessWidget {
             children: [
               Text(LKey.links.tr,
                   style: TextStyleCustom.outFitRegular400(
-                      color: textDarkGrey(context), fontSize: 17)),
+                      color: ColorRes.textDarkGrey, fontSize: 17)),
               const SizedBox(width: 5),
               InkWell(
                   onTap: controller.openAddEditLinkSheet,
                   child: Icon(CupertinoIcons.plus_circle_fill,
-                      color: textDarkGrey(context), size: 22))
+                      color: ColorRes.textDarkGrey, size: 22))
             ],
           ),
         ),
@@ -43,7 +43,7 @@ class BuildLinkView extends StatelessWidget {
               (index) {
                 Link link = controller.links[index];
                 return Container(
-                  color: bgLightGrey(context),
+                  color: ColorRes.bgLightGrey,
                   padding:
                       const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
                   margin: const EdgeInsets.symmetric(vertical: 2),
@@ -56,13 +56,13 @@ class BuildLinkView extends StatelessWidget {
                             Text(
                               link.title ?? '',
                               style: TextStyleCustom.unboundedMedium500(
-                                  color: textDarkGrey(context), fontSize: 15),
+                                  color: ColorRes.textDarkGrey, fontSize: 15),
                             ),
                             const SizedBox(height: 5),
                             Text(
                               link.url ?? '',
                               style: TextStyleCustom.outFitLight300(
-                                  color: textLightGrey(context)),
+                                  color: ColorRes.textLightGrey),
                             )
                           ],
                         ),
@@ -84,7 +84,7 @@ class BuildLinkView extends StatelessWidget {
                               child: Text(
                                 entry.value,
                                 style: TextStyleCustom.outFitRegular400(
-                                    color: textLightGrey(context),
+                                    color: ColorRes.textLightGrey,
                                     fontSize: 16),
                               ),
                             );
@@ -100,7 +100,7 @@ class BuildLinkView extends StatelessWidget {
                           height: 36,
                           width: 36,
                           decoration: BoxDecoration(
-                              shape: BoxShape.circle, color: bgGrey(context)),
+                              shape: BoxShape.circle, color: ColorRes.bgGrey),
                           alignment: Alignment.center,
                           child: Image.asset(AssetRes.icMore,
                               height: 22, width: 22),

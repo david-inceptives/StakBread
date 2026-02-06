@@ -11,7 +11,7 @@ import 'package:stakBread/model/general/settings_model.dart';
 import 'package:stakBread/utilities/asset_res.dart';
 import 'package:stakBread/utilities/style_res.dart';
 import 'package:stakBread/utilities/text_style_custom.dart';
-import 'package:stakBread/utilities/theme_res.dart';
+import 'package:stakBread/utilities/color_res.dart';
 
 class LevelScreen extends StatelessWidget {
   final UserLevel? userLevels;
@@ -40,7 +40,7 @@ class LevelScreen extends StatelessWidget {
                         },
                         child: Padding(
                           padding: const EdgeInsets.only(left: 20.0, right: 20.0, top: 10),
-                          child: Icon(Icons.arrow_back, color: whitePure(context)),
+                          child: Icon(Icons.arrow_back, color: ColorRes.whitePure),
                         ),
                       ),
                     ),
@@ -51,13 +51,13 @@ class LevelScreen extends StatelessWidget {
                           Text(
                             LKey.levels.tr.toUpperCase(),
                             style: TextStyleCustom.unboundedExtraBold800(
-                                fontSize: 44, color: whitePure(context)),
+                                fontSize: 44, color: ColorRes.whitePure),
                           ),
                           const SizedBox(height: 14),
                           Text(
                             LKey.gatherMoreCoins.tr,
                             style: TextStyleCustom.outFitRegular400(
-                                fontSize: 18, color: whitePure(context)),
+                                fontSize: 18, color: ColorRes.whitePure),
                             textAlign: TextAlign.center,
                           )
                         ],
@@ -73,10 +73,10 @@ class LevelScreen extends StatelessWidget {
               children: [
                 Text(LKey.level.tr,
                     style: TextStyleCustom.outFitRegular400(
-                        color: textLightGrey(context), fontSize: 15)),
+                        color: ColorRes.textLightGrey, fontSize: 15)),
                 Text(LKey.collection.tr,
                     style: TextStyleCustom.outFitRegular400(
-                        color: textLightGrey(context), fontSize: 15)),
+                        color: ColorRes.textLightGrey, fontSize: 15)),
               ],
             ),
           ),
@@ -107,9 +107,9 @@ class LevelScreen extends StatelessWidget {
                                   cornerRadius: 10, cornerSmoothing: 1),
                               side: BorderSide(
                                 color:
-                                    textLightGrey(context).withValues(alpha: 0),
+                                    ColorRes.textLightGrey.withValues(alpha: 0),
                               )),
-                          color: bgLightGrey(context)),
+                          color: ColorRes.bgLightGrey),
                       padding: const EdgeInsets.symmetric(
                           horizontal: 9, vertical: 3),
                       margin: const EdgeInsets.all(2),
@@ -124,7 +124,7 @@ class LevelScreen extends StatelessWidget {
                                   ? StyleRes.themeGradient
                                   : StyleRes.textLightGreyGradient(),
                               style: TextStyleCustom.outFitBlack900(
-                                  color: textLightGrey(context), fontSize: 35),
+                                  color: ColorRes.textLightGrey, fontSize: 35),
                             ),
                           ),
                           SizedBox(
@@ -142,13 +142,13 @@ class LevelScreen extends StatelessWidget {
                                   text: TextSpan(
                                 text: LKey.level.tr,
                                 style: TextStyleCustom.outFitRegular400(
-                                    color: textLightGrey(context),
+                                    color: ColorRes.textLightGrey,
                                     fontSize: 17),
                                 children: [
                                   TextSpan(
                                       text: '  ${level.level}',
                                       style: TextStyleCustom.outFitBold700(
-                                          color: textLightGrey(context),
+                                          color: ColorRes.textLightGrey,
                                           fontSize: 17))
                                 ],
                               )),
@@ -171,7 +171,7 @@ class LevelScreen extends StatelessWidget {
                                 : Text(
                                     LKey.you.tr,
                                     style: TextStyleCustom.outFitSemiBold600(
-                                        color: whitePure(context),
+                                        color: ColorRes.whitePure,
                                         fontSize: 15),
                                   ),
                           ),
@@ -185,7 +185,7 @@ class LevelScreen extends StatelessWidget {
                                 Text(level.coinsCollection.numberFormat,
                                     style: TextStyleCustom.outFitRegular400(
                                         fontSize: 20,
-                                        color: textLightGrey(context))),
+                                        color: ColorRes.textLightGrey)),
                               ],
                             ),
                           )

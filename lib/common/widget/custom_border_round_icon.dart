@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:stakBread/common/manager/haptic_manager.dart';
-import 'package:stakBread/utilities/theme_res.dart';
+import 'package:stakBread/utilities/color_res.dart';
 
 class CustomBorderRoundIcon extends StatelessWidget {
   final String? image;
@@ -20,14 +20,14 @@ class CustomBorderRoundIcon extends StatelessWidget {
         height: 37,
         width: 37,
         decoration: BoxDecoration(
-            color: whitePure(context).withValues(alpha: .20),
+            color: ColorRes.whitePure.withValues(alpha: .20),
             shape: BoxShape.circle,
             border:
-                Border.all(color: whitePure(context).withValues(alpha: .25))),
+                Border.all(color: ColorRes.whitePure.withValues(alpha: .25))),
         child: widget ??
             Center(
               child: Image.asset(image!,
-                  color: whitePure(context), width: 23, height: 23),
+                  color: ColorRes.whitePure, width: 23, height: 23),
             ),
       ),
     );

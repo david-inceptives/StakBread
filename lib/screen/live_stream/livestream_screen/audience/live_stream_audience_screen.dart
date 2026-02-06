@@ -10,7 +10,7 @@ import 'package:stakBread/screen/live_stream/livestream_screen/view/live_video_p
 import 'package:stakBread/screen/live_stream/livestream_screen/view/livestream_view.dart';
 import 'package:stakBread/screen/live_stream/livestream_screen/widget/battle_start_countdown_overlay.dart';
 import 'package:stakBread/screen/live_stream/livestream_screen/widget/live_stream_background_blur_image.dart';
-import 'package:stakBread/utilities/theme_res.dart';
+import 'package:stakBread/utilities/color_res.dart';
 
 class LiveStreamAudienceScreen extends StatelessWidget {
   final Livestream livestream;
@@ -25,7 +25,7 @@ class LiveStreamAudienceScreen extends StatelessWidget {
         Get.put(LivestreamScreenController(livestream.obs, isHost));
 
     return Scaffold(
-      backgroundColor: blackPure(context),
+      backgroundColor: ColorRes.blackPure,
       resizeToAvoidBottomInset: false,
       body: PopScope(
         canPop: false,

@@ -13,7 +13,7 @@ import 'package:stakBread/model/user_model/user_model.dart';
 import 'package:stakBread/screen/chat_screen/chat_screen_controller.dart';
 import 'package:stakBread/utilities/asset_res.dart';
 import 'package:stakBread/utilities/text_style_custom.dart';
-import 'package:stakBread/utilities/theme_res.dart';
+import 'package:stakBread/utilities/color_res.dart';
 
 class ChatTopProfileView extends StatelessWidget {
   final ChatScreenController controller;
@@ -23,7 +23,7 @@ class ChatTopProfileView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: bgLightGrey(context),
+      color: ColorRes.bgLightGrey,
       padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
       child: SafeArea(
         bottom: false,
@@ -78,7 +78,7 @@ class ChatTopProfileView extends StatelessWidget {
                                 isVerify: chatUser?.isVerify),
                             Text(chatUser?.fullname ?? '',
                                 style: TextStyleCustom.outFitLight300(
-                                    color: textLightGrey(context),
+                                    color: ColorRes.textLightGrey,
                                     fontSize: 15))
                           ],
                         ),
@@ -106,7 +106,7 @@ class ChatTopProfileView extends StatelessWidget {
                       height: 36,
                       width: 36,
                       decoration: BoxDecoration(
-                          color: bgMediumGrey(context), shape: BoxShape.circle),
+                          color: ColorRes.bgMediumGrey, shape: BoxShape.circle),
                       alignment: Alignment.center,
                       child:
                           Image.asset(AssetRes.icMore, width: 25, height: 25)))

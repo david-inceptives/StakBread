@@ -9,7 +9,7 @@ import 'package:stakBread/common/widget/text_field_custom.dart';
 import 'package:stakBread/languages/languages_keys.dart';
 import 'package:stakBread/model/user_model/user_model.dart';
 import 'package:stakBread/utilities/app_res.dart';
-import 'package:stakBread/utilities/theme_res.dart';
+import 'package:stakBread/utilities/color_res.dart';
 
 class AddEditLinksSheet extends StatefulWidget {
   final Link? link;
@@ -39,7 +39,7 @@ class _AddEditLinksSheetState extends State<AddEditLinksSheet> {
   Widget build(BuildContext context) {
     return Container(
       decoration: ShapeDecoration(
-          color: whitePure(context),
+          color: ColorRes.whitePure,
           shape: const SmoothRectangleBorder(
               borderRadius: SmoothBorderRadius.vertical(
                   top: SmoothRadius(cornerRadius: 40, cornerSmoothing: 1)))),
@@ -62,8 +62,8 @@ class _AddEditLinksSheetState extends State<AddEditLinksSheet> {
             TextButtonCustom(
                 onTap: _onSave,
                 title: LKey.save.tr,
-                titleColor: whitePure(context),
-                backgroundColor: blackPure(context)),
+                titleColor: ColorRes.whitePure,
+                backgroundColor: ColorRes.blackPure),
             SizedBox(height: AppBar().preferredSize.height),
           ],
         ),

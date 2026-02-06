@@ -10,7 +10,7 @@ import 'package:stakBread/common/widget/reel_list.dart';
 import 'package:stakBread/languages/languages_keys.dart';
 import 'package:stakBread/screen/hashtag_screen/hashtag_screen_controller.dart';
 import 'package:stakBread/utilities/text_style_custom.dart';
-import 'package:stakBread/utilities/theme_res.dart';
+import 'package:stakBread/utilities/color_res.dart';
 
 class HashtagScreen extends StatelessWidget {
   final String hashtag;
@@ -32,7 +32,7 @@ class HashtagScreen extends StatelessWidget {
                 title: hashtag.addHash,
                 isLoading: controller.isLoading.value,
                 subTitle: title <= 0 ? LKey.noPost.tr : '${title.numberFormat} ${LKey.posts.tr}',
-                titleStyle: TextStyleCustom.unboundedSemiBold600(fontSize: 15, color: textDarkGrey(context)),
+                titleStyle: TextStyleCustom.unboundedSemiBold600(fontSize: 15, color: ColorRes.textDarkGrey),
                 widget: CustomTabSwitcher(
                   items: [(LKey.reels.tr), (LKey.feed.tr)],
                   selectedIndex: controller.selectedTabIndex,
@@ -61,7 +61,7 @@ class HashtagScreen extends StatelessWidget {
                           onFetchMoreData: controller.fetchReels,
                           widget: Text(
                             hashtag,
-                            style: TextStyleCustom.unboundedSemiBold600(color: whitePure(context), fontSize: 15),
+                            style: TextStyleCustom.unboundedSemiBold600(color: ColorRes.whitePure, fontSize: 15),
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                           ),

@@ -9,7 +9,7 @@ import 'package:stakBread/screen/create_feed_screen/widget/hash_tag_sheet.dart';
 import 'package:stakBread/screen/create_feed_screen/widget/location_sheet.dart';
 import 'package:stakBread/screen/create_feed_screen/widget/mention_sheet.dart';
 import 'package:stakBread/utilities/text_style_custom.dart';
-import 'package:stakBread/utilities/theme_res.dart';
+import 'package:stakBread/utilities/color_res.dart';
 
 class FeedTextFieldView extends StatelessWidget {
   const FeedTextFieldView({super.key});
@@ -22,7 +22,7 @@ class FeedTextFieldView extends StatelessWidget {
     return Container(
       key: globalKey,
       height: 180,
-      color: bgLightGrey(context),
+      color: ColorRes.bgLightGrey,
       margin: const EdgeInsets.symmetric(vertical: 5),
       child: Column(
         children: [
@@ -47,9 +47,9 @@ class FeedTextFieldView extends StatelessWidget {
                       const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
                   hintText: LKey.writeSomethingHere.tr,
                   hintStyle: TextStyleCustom.outFitLight300(
-                      color: textLightGrey(context), fontSize: 16)),
+                      color: ColorRes.textLightGrey, fontSize: 16)),
               style: TextStyleCustom.outFitRegular400(
-                  color: textDarkGrey(context), fontSize: 16),
+                  color: ColorRes.textDarkGrey, fontSize: 16),
               onChanged: helper.onChanged,
             ),
           ),
@@ -131,7 +131,7 @@ class IconWithText extends StatelessWidget {
           alignment: Alignment.center,
           margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 5),
           decoration: ShapeDecoration(
-            color: bgGrey(context),
+            color: ColorRes.bgGrey,
             shape: SmoothRectangleBorder(
                 borderRadius:
                     SmoothBorderRadius(cornerRadius: 8, cornerSmoothing: 1)),
@@ -140,11 +140,11 @@ class IconWithText extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               Image.asset(icon,
-                  color: textDarkGrey(context), height: 19, width: 19),
+                  color: ColorRes.textDarkGrey, height: 19, width: 19),
               const SizedBox(width: 5),
               Text(text,
                   style: TextStyleCustom.outFitLight300(
-                      color: textDarkGrey(context)))
+                      color: ColorRes.textDarkGrey))
             ],
           ),
         ),

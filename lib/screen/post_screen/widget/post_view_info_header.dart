@@ -15,7 +15,7 @@ import 'package:stakBread/screen/post_screen/post_screen_controller.dart';
 import 'package:stakBread/utilities/app_res.dart';
 import 'package:stakBread/utilities/asset_res.dart';
 import 'package:stakBread/utilities/text_style_custom.dart';
-import 'package:stakBread/utilities/theme_res.dart';
+import 'package:stakBread/utilities/color_res.dart';
 
 class PostViewInfoHeader extends StatelessWidget {
   final Post post;
@@ -56,7 +56,7 @@ class PostViewInfoHeader extends StatelessWidget {
                     '${post.createdAt?.timeAgo ?? ''} '
                     '${(post.isPinned == 1 && shouldShowPinOption && post.userId == SessionManager.instance.getUserID()) ? AppRes.postPinIcon : ''}',
                     style: TextStyleCustom.outFitLight300(
-                        color: textLightGrey(context), fontSize: 12)),
+                        color: ColorRes.textLightGrey, fontSize: 12)),
                 onTap: () {
                   NavigationService.shared.openProfileScreen(user);
                 },
@@ -72,7 +72,7 @@ class PostViewInfoHeader extends StatelessWidget {
                   child: Text(
                     post.placeTitle ?? '',
                     style: TextStyleCustom.outFitLight300(
-                        color: textLightGrey(context), fontSize: 13),
+                        color: ColorRes.textLightGrey, fontSize: 13),
                     overflow: TextOverflow.ellipsis,
                   ),
                 )
@@ -87,7 +87,7 @@ class PostViewInfoHeader extends StatelessWidget {
               AssetRes.icMore1,
               height: 26,
               width: 26,
-              color: textLightGrey(context),
+              color: ColorRes.textLightGrey,
             ),
           );
         })

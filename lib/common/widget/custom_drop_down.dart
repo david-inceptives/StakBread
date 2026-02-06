@@ -2,7 +2,7 @@ import 'package:figma_squircle_updated/figma_squircle.dart';
 import 'package:flutter/material.dart';
 import 'package:stakBread/utilities/asset_res.dart';
 import 'package:stakBread/utilities/text_style_custom.dart';
-import 'package:stakBread/utilities/theme_res.dart';
+import 'package:stakBread/utilities/color_res.dart';
 
 class CustomDropDownBtn<T> extends StatelessWidget {
   final List<T> items;
@@ -39,7 +39,7 @@ class CustomDropDownBtn<T> extends StatelessWidget {
       width: width,
       padding: const EdgeInsets.symmetric(horizontal: 10),
       decoration: ShapeDecoration(
-        color: bgColor ?? bgGrey(context),
+        color: bgColor ?? ColorRes.bgGrey,
         shape: SmoothRectangleBorder(
           borderRadius: SmoothBorderRadius(cornerRadius: 5, cornerSmoothing: 1),
         ),
@@ -53,10 +53,10 @@ class CustomDropDownBtn<T> extends StatelessWidget {
               AssetRes.icDownArrow_1,
               width: 23,
               height: 20,
-              color: textLightGrey(context),
+              color: ColorRes.textLightGrey,
             )),
-        dropdownColor: bgColor ?? bgGrey(context),
-        style: TextStyleCustom.outFitRegular400(color: textLightGrey(context), fontSize: 15),
+        dropdownColor: bgColor ?? ColorRes.bgGrey,
+        style: TextStyleCustom.outFitRegular400(color: ColorRes.textLightGrey, fontSize: 15),
         underline: const SizedBox(),
         isDense: true,
         isExpanded: isExpanded,

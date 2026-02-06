@@ -18,7 +18,7 @@ import 'package:stakBread/screen/live_stream/livestream_screen/livestream_screen
 import 'package:stakBread/utilities/asset_res.dart';
 import 'package:stakBread/utilities/color_res.dart';
 import 'package:stakBread/utilities/text_style_custom.dart';
-import 'package:stakBread/utilities/theme_res.dart';
+import 'package:stakBread/utilities/color_res.dart';
 
 class MembersSheet extends StatefulWidget {
   final bool isHost;
@@ -45,7 +45,7 @@ class _MembersSheetState extends State<MembersSheet> {
     return Container(
       margin: EdgeInsets.only(top: AppBar().preferredSize.height * 2),
       decoration: ShapeDecoration(
-        color: whitePure(context),
+        color: ColorRes.whitePure,
         shape: const SmoothRectangleBorder(
           borderRadius: SmoothBorderRadius.vertical(
               top: SmoothRadius(cornerRadius: 30, cornerSmoothing: 1)),
@@ -67,13 +67,13 @@ class _MembersSheetState extends State<MembersSheet> {
                 onTap: onSelectedTab,
                 selectedIndex: selectedTab,
                 margin: const EdgeInsets.symmetric(horizontal: 10),
-                backgroundColor: bgLightGrey(context),
-                selectedFontColor: themeAccentSolid(context),
+                backgroundColor: ColorRes.bgLightGrey,
+                selectedFontColor: ColorRes.themeAccentSolid,
               ),
             Obx(() => (selectedTab.value == 2 || selectedTab.value == 3)
                 ? const SizedBox()
                 : CustomSearchTextField(
-                    backgroundColor: bgLightGrey(context),
+                    backgroundColor: ColorRes.bgLightGrey,
                     onChanged: (value) {
                       DebounceAction.shared.call(() {
                         List<LivestreamUserState> itemList = [];
@@ -270,14 +270,14 @@ class _MembersSheetState extends State<MembersSheet> {
               state.videoStatus == VideoAudioStatus.on
                   ? AssetRes.icVideoCamera
                   : AssetRes.icVideoOff,
-              textLightGrey(context),
+              ColorRes.textLightGrey,
               () => controller.coHostVideoToggle(state),
             ),
             _buildActionBtn(
               state.audioStatus == VideoAudioStatus.on
                   ? AssetRes.icMicrophone
                   : AssetRes.icMicOff,
-              textLightGrey(context),
+              ColorRes.textLightGrey,
               () => controller.coHostAudioToggle(state),
             ),
             _buildActionBtn(AssetRes.icDelete1, ColorRes.likeRed,
@@ -332,7 +332,7 @@ class MemberProfileCard extends StatelessWidget {
                     ),
                     Text(user?.fullname ?? '',
                         style: TextStyleCustom.outFitLight300(
-                            color: textLightGrey(context)))
+                            color: ColorRes.textLightGrey))
                   ],
                 ),
               ),
@@ -405,12 +405,12 @@ class TextBorderButton extends StatelessWidget {
             shape: SmoothRectangleBorder(
                 borderRadius:
                     SmoothBorderRadius(cornerRadius: 8, cornerSmoothing: 1),
-                side: BorderSide(color: bgGrey(context)))),
+                side: BorderSide(color: ColorRes.bgGrey))),
         alignment: Alignment.center,
         child: Text(
           text,
           style: TextStyleCustom.outFitRegular400(
-              color: textLightGrey(context),
+              color: ColorRes.textLightGrey,
               fontSize: 15,
               opacity: textOpacity),
         ),

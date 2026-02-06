@@ -11,7 +11,7 @@ import 'package:stakBread/languages/languages_keys.dart';
 import 'package:stakBread/model/giphy/giphy_model.dart';
 import 'package:stakBread/screen/gif_sheet/gif_sheet_controller.dart';
 import 'package:stakBread/utilities/app_res.dart';
-import 'package:stakBread/utilities/theme_res.dart';
+import 'package:stakBread/utilities/color_res.dart';
 
 class GifSheet extends StatelessWidget {
   const GifSheet({super.key});
@@ -23,7 +23,7 @@ class GifSheet extends StatelessWidget {
     return Container(
       margin: EdgeInsets.only(top: AppBar().preferredSize.height * 2),
       decoration: ShapeDecoration(
-          color: whitePure(context),
+          color: ColorRes.whitePure,
           shape: const SmoothRectangleBorder(
               borderRadius: SmoothBorderRadius.vertical(
                   top: SmoothRadius(cornerRadius: 30, cornerSmoothing: 1)))),

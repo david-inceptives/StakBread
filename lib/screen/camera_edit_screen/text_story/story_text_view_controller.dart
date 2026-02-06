@@ -10,7 +10,7 @@ import 'package:stakBread/screen/camera_edit_screen/text_story/widget/text_edito
 import 'package:stakBread/utilities/app_res.dart';
 import 'package:stakBread/utilities/asset_res.dart';
 import 'package:stakBread/utilities/text_style_custom.dart';
-import 'package:stakBread/utilities/theme_res.dart';
+import 'package:stakBread/utilities/color_res.dart';
 
 enum BgColorType { color, gradient }
 
@@ -92,8 +92,8 @@ class StoryTextViewController extends BaseController {
       ignoreSafeArea: false,
       enableDrag: false,
       isDismissible: false,
-      backgroundColor: blackPure(Get.context!).withValues(alpha: .2),
-      barrierColor: blackPure(Get.context!).withValues(alpha: .2),
+      backgroundColor: ColorRes.blackPure.withValues(alpha: .2),
+      barrierColor: ColorRes.blackPure.withValues(alpha: .2),
     ).then((value) {
       if (value != null && value.text.isNotEmpty) {
         textWidgets.add(value);

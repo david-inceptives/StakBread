@@ -4,7 +4,7 @@ import 'package:stakBread/common/manager/session_manager.dart';
 import 'package:stakBread/common/widget/custom_back_button.dart';
 import 'package:stakBread/screen/reels_screen/reels_screen_controller.dart';
 import 'package:stakBread/utilities/asset_res.dart';
-import 'package:stakBread/utilities/theme_res.dart';
+import 'package:stakBread/utilities/color_res.dart';
 
 class ReelsTopBar extends StatelessWidget {
   final ReelsScreenController controller;
@@ -50,7 +50,7 @@ class ReelsTopBar extends StatelessWidget {
                     visible: !controller.isHomePage,
                     replacement: const SizedBox(width: 30),
                     child: CustomBackButton(
-                        color: whitePure(context),
+                        color: ColorRes.whitePure,
                         height: 30,
                         width: 30,
                         padding: EdgeInsets.zero,

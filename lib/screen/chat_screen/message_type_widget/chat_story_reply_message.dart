@@ -14,7 +14,7 @@ import 'package:stakBread/screen/chat_screen/message_type_widget/chat_text_messa
 import 'package:stakBread/screen/chat_screen/widget/chat_center_message_view.dart';
 import 'package:stakBread/screen/notification_screen/widget/activity_notification_page.dart';
 import 'package:stakBread/utilities/text_style_custom.dart';
-import 'package:stakBread/utilities/theme_res.dart';
+import 'package:stakBread/utilities/color_res.dart';
 
 class ChatStoryReplyMessage extends StatelessWidget {
   final ChatScreenController controller;
@@ -64,13 +64,13 @@ class ChatStoryReplyMessage extends StatelessWidget {
                                 shape: SmoothRectangleBorder(
                                     borderRadius: SmoothBorderRadius(
                                         cornerRadius: 30, cornerSmoothing: 1)),
-                                color: disableGrey(context)),
+                                color: ColorRes.disabledGrey),
                           );
                         }),
                       isStoryUnAvailable
                           ? Text(LKey.storyUnavailable.tr,
                               style: TextStyleCustom.outFitRegular400(
-                                  fontSize: 16, color: textLightGrey(context)))
+                                  fontSize: 16, color: ColorRes.textLightGrey))
                           : InkWell(
                               onTap: () {
                                 controller.onStoryTap(message, story);
@@ -83,7 +83,7 @@ class ChatStoryReplyMessage extends StatelessWidget {
                                         borderRadius: SmoothBorderRadius(
                                             cornerRadius: 15,
                                             cornerSmoothing: 1)),
-                                    color: textDarkGrey(context),
+                                    color: ColorRes.textDarkGrey,
                                     shadows: messageBubbleShadow),
                                 child: Padding(
                                     padding: const EdgeInsets.all(3.5),
@@ -109,7 +109,7 @@ class ChatStoryReplyMessage extends StatelessWidget {
                               shape: SmoothRectangleBorder(
                                   borderRadius: SmoothBorderRadius(
                                       cornerRadius: 30, cornerSmoothing: 1)),
-                              color: disableGrey(context),
+                              color: ColorRes.disabledGrey,
                             ),
                           );
                         })

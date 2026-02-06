@@ -11,7 +11,7 @@ import 'package:stakBread/screen/withdrawals_screen/withdrawals_screen.dart';
 import 'package:stakBread/utilities/asset_res.dart';
 import 'package:stakBread/utilities/style_res.dart';
 import 'package:stakBread/utilities/text_style_custom.dart';
-import 'package:stakBread/utilities/theme_res.dart';
+import 'package:stakBread/utilities/color_res.dart';
 
 class CoinWalletTopView extends StatelessWidget {
   const CoinWalletTopView({super.key});
@@ -40,11 +40,11 @@ class CoinWalletTopView extends StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             CustomBackButton(
-                                color: whitePure(context), width: 35),
+                                color: ColorRes.whitePure, width: 35),
                             Text(
                               LKey.coinWallet.tr,
                               style: TextStyleCustom.unboundedMedium500(
-                                  color: whitePure(context)),
+                                  color: ColorRes.whitePure),
                             ),
                             Visibility(
                               visible: controller.settings?.isWithdrawalOn == 1,
@@ -66,12 +66,12 @@ class CoinWalletTopView extends StatelessWidget {
                                     height: 35,
                                     width: 35,
                                     decoration: BoxDecoration(
-                                        color: whitePure(context)
+                                        color: ColorRes.whitePure
                                             .withValues(alpha: .2),
                                         shape: BoxShape.circle),
                                     child: Center(
                                         child: Image.asset(AssetRes.icMore,
-                                            color: whitePure(context),
+                                            color: ColorRes.whitePure,
                                             width: 22,
                                             height: 22)),
                                   )),
@@ -87,13 +87,13 @@ class CoinWalletTopView extends StatelessWidget {
                             return Text(
                               (user?.coinWallet?.toInt() ?? 0).numberFormat,
                               style: TextStyleCustom.unboundedExtraBold800(
-                                  color: whitePure(context), fontSize: 40),
+                                  color: ColorRes.whitePure, fontSize: 40),
                             );
                           }),
                           Text(
                             LKey.balance.tr,
                             style: TextStyleCustom.outFitLight300(
-                                color: whitePure(context).withValues(alpha: .8),
+                                color: ColorRes.whitePure.withValues(alpha: .8),
                                 fontSize: 18),
                           ),
                         ],
@@ -114,7 +114,7 @@ class CoinWalletTopView extends StatelessWidget {
                               Container(
                                   height: 20,
                                   width: .5,
-                                  color: whitePure(context)),
+                                  color: ColorRes.whitePure),
                               CoinWalletStatistics(
                                 value: user?.coinGiftedLifetime?.toInt() ?? 0,
                                 title: LKey.gifted.tr,
@@ -122,7 +122,7 @@ class CoinWalletTopView extends StatelessWidget {
                               Container(
                                   height: 20,
                                   width: .5,
-                                  color: whitePure(context)),
+                                  color: ColorRes.whitePure),
                               CoinWalletStatistics(
                                 value:
                                     user?.coinPurchasedLifetime?.toInt() ?? 0,
@@ -142,7 +142,7 @@ class CoinWalletTopView extends StatelessWidget {
                             child: Text(
                               LKey.lifetime.tr,
                               style: TextStyleCustom.outFitLight300(
-                                  fontSize: 13, color: whitePure(context)),
+                                  fontSize: 13, color: ColorRes.whitePure),
                             ),
                           ))
                     ],
@@ -189,10 +189,10 @@ class CoinWalletStatistics extends StatelessWidget {
           children: [
             Text(value.numberFormat,
                 style: TextStyleCustom.unboundedMedium500(
-                    color: whitePure(context), fontSize: 13)),
+                    color: ColorRes.whitePure, fontSize: 13)),
             Text(title,
                 style: TextStyleCustom.outFitLight300(
-                    color: whitePure(context).withValues(alpha: .8),
+                    color: ColorRes.whitePure.withValues(alpha: .8),
                     fontSize: 15))
           ],
         ),

@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:stakBread/common/manager/haptic_manager.dart';
 import 'package:stakBread/utilities/style_res.dart';
-import 'package:stakBread/utilities/theme_res.dart';
+import 'package:stakBread/utilities/color_res.dart';
 
 class CustomToggle extends StatefulWidget {
   final RxBool isOn;
@@ -53,7 +53,7 @@ class _CustomToggleState extends State<CustomToggle> {
           child: Container(
               width: 20,
               decoration: BoxDecoration(
-                  shape: BoxShape.circle, color: whitePure(context))),
+                  shape: BoxShape.circle, color: ColorRes.whitePure)),
         ),
       ),
     );

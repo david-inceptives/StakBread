@@ -9,7 +9,7 @@ import 'package:stakBread/common/widget/loader_widget.dart';
 import 'package:stakBread/common/widget/no_data_widget.dart';
 import 'package:stakBread/languages/languages_keys.dart';
 import 'package:stakBread/utilities/text_style_custom.dart';
-import 'package:stakBread/utilities/theme_res.dart';
+import 'package:stakBread/utilities/color_res.dart';
 
 class UserList<T> extends StatelessWidget {
   final RxList<T> users;
@@ -105,7 +105,7 @@ class UserCard<T> extends StatelessWidget {
                       Text(
                         fullName ?? '',
                         style: TextStyleCustom.outFitLight300(
-                            color: textLightGrey(context)),
+                            color: ColorRes.textLightGrey),
                       )
                     ],
                   ),

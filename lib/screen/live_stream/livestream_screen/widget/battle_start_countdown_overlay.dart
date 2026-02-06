@@ -10,7 +10,7 @@ import 'package:stakBread/screen/live_stream/livestream_screen/livestream_screen
 import 'package:stakBread/utilities/app_res.dart';
 import 'package:stakBread/utilities/asset_res.dart';
 import 'package:stakBread/utilities/text_style_custom.dart';
-import 'package:stakBread/utilities/theme_res.dart';
+import 'package:stakBread/utilities/color_res.dart';
 
 class BattleStartCountdownOverlay extends StatefulWidget {
   final bool isHost;
@@ -87,7 +87,7 @@ class _BattleStartCountdownOverlayState
     return Container(
       width: MediaQuery.of(context).size.width,
       height: MediaQuery.of(context).size.height,
-      color: blackPure(context).withValues(alpha: .7),
+      color: ColorRes.blackPure.withValues(alpha: .7),
       padding: const EdgeInsets.symmetric(vertical: 50),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -97,7 +97,7 @@ class _BattleStartCountdownOverlayState
             LKey.battleStartingIn.tr.toUpperCase(),
             textAlign: TextAlign.center,
             style: TextStyleCustom.unboundedBlack900(
-                color: whitePure(context), fontSize: 30),
+                color: ColorRes.whitePure, fontSize: 30),
           ),
           Obx(
             () => countDownValue.value <= -1
@@ -112,13 +112,13 @@ class _BattleStartCountdownOverlayState
                             shape: BoxShape.circle,
                             gradient: SweepGradient(
                                 colors: <Color>[
-                                  whitePure(context).withValues(alpha: 0),
-                                  whitePure(context).withValues(alpha: .5)
+                                  ColorRes.whitePure.withValues(alpha: 0),
+                                  ColorRes.whitePure.withValues(alpha: .5)
                                 ],
                                 transform: GradientRotation(
                                     2 * pi * _animationController.value)),
                             border: Border.all(
-                                color: whitePure(context)
+                                color: ColorRes.whitePure
                                     .withAlpha((255 * 0.1).toInt()),
                                 width: 1.5)),
                         alignment: Alignment.center,
@@ -134,7 +134,7 @@ class _BattleStartCountdownOverlayState
                           child: Text(
                             '$countDownValue',
                             style: TextStyleCustom.unboundedExtraBold800(
-                                color: whitePure(context), fontSize: 90),
+                                color: ColorRes.whitePure, fontSize: 90),
                             key: ValueKey<int>(countDownValue.value),
                           ),
                         ),
@@ -157,13 +157,13 @@ class _BattleStartCountdownOverlayState
                     alignment: Alignment.center,
                     decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(30),
-                        color: whitePure(context).withValues(alpha: .2),
+                        color: ColorRes.whitePure.withValues(alpha: .2),
                         border: Border.all(
-                            color: whitePure(context).withValues(alpha: .3))),
+                            color: ColorRes.whitePure.withValues(alpha: .3))),
                     child: Text(
                       LKey.cancel.tr,
                       style: TextStyleCustom.outFitRegular400(
-                          color: whitePure(context)),
+                          color: ColorRes.whitePure),
                     )),
               ),
             )

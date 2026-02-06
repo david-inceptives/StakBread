@@ -11,7 +11,7 @@ import 'package:stakBread/screen/reels_screen/reel/reel_page_controller.dart';
 import 'package:stakBread/utilities/asset_res.dart';
 import 'package:stakBread/utilities/style_res.dart';
 import 'package:stakBread/utilities/text_style_custom.dart';
-import 'package:stakBread/utilities/theme_res.dart';
+import 'package:stakBread/utilities/color_res.dart';
 
 class SideBarList extends StatelessWidget {
   final ReelController controller;
@@ -65,7 +65,7 @@ class SideBarList extends StatelessWidget {
                   ? AssetRes.icFillBookmark1
                   : AssetRes.icBookmark,
               text: isPlaceholder ? '1' : (reel.saves ?? 0).toString(),
-              iconColor: whitePure(context),
+              iconColor: ColorRes.whitePure,
             ),
             IconWithLabel(
               onTap: isPlaceholder ? () {} : controller.onShareTap,
@@ -104,7 +104,7 @@ class IconWithGift extends StatelessWidget {
         margin: const EdgeInsets.symmetric(vertical: 7.5),
         padding: const EdgeInsets.all(7),
         decoration: BoxDecoration(
-          color: whitePure(context),
+          color: ColorRes.whitePure,
           shape: BoxShape.circle,
         ),
         child: GradientIcon(
@@ -130,7 +130,7 @@ class IconWithMusic extends StatelessWidget {
         margin: const EdgeInsets.only(top: 7.5),
         padding: const EdgeInsets.all(3),
         decoration:
-            BoxDecoration(color: whitePure(context), shape: BoxShape.circle),
+            BoxDecoration(color: ColorRes.whitePure, shape: BoxShape.circle),
         child: DottedBorder(
           options: OvalDottedBorderOptions(
               strokeWidth: 1.5, gradient: StyleRes.themeGradient),
@@ -174,13 +174,13 @@ class IconWithLabel extends StatelessWidget {
             Text(
               text,
               style: TextStyleCustom.outFitMedium500(
-                      fontSize: 13, color: whitePure(context))
+                      fontSize: 13, color: ColorRes.whitePure)
                   .copyWith(
                 shadows: <Shadow>[
                   Shadow(
                     offset: const Offset(0.0, 1.0),
                     blurRadius: 3.0,
-                    color: textLightGrey(context),
+                    color: ColorRes.textLightGrey,
                   )
                 ],
               ),

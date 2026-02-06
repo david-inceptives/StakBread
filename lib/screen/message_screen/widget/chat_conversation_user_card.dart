@@ -9,7 +9,7 @@ import 'package:stakBread/model/user_model/user_model.dart';
 import 'package:stakBread/screen/chat_screen/chat_screen.dart';
 import 'package:stakBread/screen/message_screen/message_screen_controller.dart';
 import 'package:stakBread/utilities/text_style_custom.dart';
-import 'package:stakBread/utilities/theme_res.dart';
+import 'package:stakBread/utilities/color_res.dart';
 
 class ChatConversationUserCard extends StatelessWidget {
   final ChatThread chatConversation;
@@ -30,7 +30,7 @@ class ChatConversationUserCard extends StatelessWidget {
       child: Obx(() {
         AppUser? user = chatConversation.chatUserRx.value;
         return Container(
-          color: bgLightGrey(context),
+          color: ColorRes.bgLightGrey,
           padding: const EdgeInsets.all(10),
           margin: const EdgeInsets.symmetric(vertical: 2),
           child: Row(
@@ -49,7 +49,7 @@ class ChatConversationUserCard extends StatelessWidget {
                       isVerify: user?.isVerify,
                     ),
                     Text(chatConversation.lastMsg ?? '',
-                        style: TextStyleCustom.outFitLight300(fontSize: 15, color: textLightGrey(context)),
+                        style: TextStyleCustom.outFitLight300(fontSize: 15, color: ColorRes.textLightGrey),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis)
                   ],
@@ -62,18 +62,18 @@ class ChatConversationUserCard extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(DateTime.fromMillisecondsSinceEpoch(int.parse(chatConversation.id ?? '0')).toString().timeAgo,
-                      style: TextStyleCustom.outFitLight300(fontSize: 13, color: textLightGrey(context))),
+                      style: TextStyleCustom.outFitLight300(fontSize: 13, color: ColorRes.textLightGrey)),
                   Visibility(
                     visible: (chatConversation.msgCount ?? 0) > 0,
                     replacement: const SizedBox(height: 23),
                     child: Container(
                       width: 23,
                       height: 23,
-                      decoration: BoxDecoration(color: themeAccentSolid(context), shape: BoxShape.circle),
+                      decoration: BoxDecoration(color: ColorRes.themeAccentSolid, shape: BoxShape.circle),
                       alignment: Alignment.center,
                       child: Text(
                         '${chatConversation.msgCount ?? 0}',
-                        style: TextStyleCustom.outFitRegular400(fontSize: 12, color: whitePure(context)),
+                        style: TextStyleCustom.outFitRegular400(fontSize: 12, color: ColorRes.whitePure),
                       ),
                     ),
                   ),

@@ -6,7 +6,7 @@ import 'package:stakBread/common/widget/theme_blur_bg.dart';
 import 'package:stakBread/languages/languages_keys.dart';
 import 'package:stakBread/utilities/asset_res.dart';
 import 'package:stakBread/utilities/text_style_custom.dart';
-import 'package:stakBread/utilities/theme_res.dart';
+import 'package:stakBread/utilities/color_res.dart';
 
 class NoInternetSheet extends StatelessWidget {
   const NoInternetSheet({super.key});
@@ -15,7 +15,7 @@ class NoInternetSheet extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        color: scaffoldBackgroundColor(context),
+        color: ColorRes.whitePure,
         child: Stack(
           children: [
             const ThemeBlurBg(),
@@ -39,11 +39,11 @@ class NoInternetSheet extends StatelessWidget {
                           '${LKey.lost.tr}\n${LKey.connection.tr}'
                               .toUpperCase(),
                           style: TextStyleCustom.unboundedBold700(
-                              color: whitePure(context), fontSize: 35)),
+                              color: ColorRes.whitePure, fontSize: 35)),
                       Text(
                         LKey.noInternetDesc.tr,
                         style: TextStyleCustom.outFitMedium500(
-                            color: whitePure(context),
+                            color: ColorRes.whitePure,
                             fontSize: 20,
                             opacity: 0.8),
                       ),
@@ -59,9 +59,9 @@ class NoInternetSheet extends StatelessWidget {
                           });
                         },
                         title: LKey.refresh.tr,
-                        titleColor: whitePure(context),
+                        titleColor: ColorRes.whitePure,
                         backgroundColor:
-                            whitePure(context).withValues(alpha: .3),
+                            ColorRes.whitePure.withValues(alpha: .3),
                         horizontalMargin: 0,
                       ),
                       SizedBox(height: AppBar().preferredSize.height * .5),

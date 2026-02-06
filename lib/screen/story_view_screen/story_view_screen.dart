@@ -12,7 +12,7 @@ import 'package:stakBread/model/user_model/user_model.dart';
 import 'package:stakBread/screen/story_view_screen/story_view_screen_controller.dart';
 import 'package:stakBread/utilities/asset_res.dart';
 import 'package:stakBread/utilities/text_style_custom.dart';
-import 'package:stakBread/utilities/theme_res.dart';
+import 'package:stakBread/utilities/color_res.dart';
 
 class StoryViewSheet extends StatelessWidget {
   final List<User> stories;
@@ -30,7 +30,7 @@ class StoryViewSheet extends StatelessWidget {
     final controller = Get.put(StoryViewScreenController(stories, userIndex,
         PageController(initialPage: userIndex), onUpdateDeleteStory));
     return Container(
-      color: blackPure(context),
+      color: ColorRes.blackPure,
       child: SafeArea(
         child: PageView.builder(
           controller: controller.pageController,
@@ -79,13 +79,13 @@ class StoryViewSheet extends StatelessWidget {
                               FullNameWithBlueTick(
                                 username: user?.fullname,
                                 isVerify: user?.isVerify,
-                                fontColor: whitePure(context),
+                                fontColor: ColorRes.whitePure,
                                 fontSize: 12,
                                 iconSize: 17,
                                 child: Text(
                                   item.story?.date ?? '',
                                   style: TextStyleCustom.outFitLight300(
-                                    color: whitePure(context),
+                                    color: ColorRes.whitePure,
                                     fontSize: 13,
                                   ),
                                 ),
@@ -102,7 +102,7 @@ class StoryViewSheet extends StatelessWidget {
                                         '${item.story?.music?.title != null ? ' • ' : ''}'
                                         '${item.story?.music?.artist ?? ''}',
                                         style: TextStyleCustom.outFitLight300(
-                                          color: whitePure(context),
+                                          color: ColorRes.whitePure,
                                           fontSize: 12,
                                         ),
                                         maxLines: 1,
@@ -146,7 +146,7 @@ class StoryViewSheet extends StatelessWidget {
                                       child: Image.asset(AssetRes.icMore1,
                                           height: 25,
                                           width: 25,
-                                          color: whitePure(context)),
+                                          color: ColorRes.whitePure),
                                     ),
                                   )
                                 : const SizedBox();
@@ -155,7 +155,7 @@ class StoryViewSheet extends StatelessWidget {
                         InkWell(
                           onTap: Get.back,
                           child: Image.asset(AssetRes.icClose1,
-                              width: 28, height: 28, color: whitePure(context)),
+                              width: 28, height: 28, color: ColorRes.whitePure),
                         ),
                       ],
                     ),

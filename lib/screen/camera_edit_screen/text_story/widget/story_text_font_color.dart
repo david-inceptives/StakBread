@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:stakBread/common/functions/generate_color.dart';
 import 'package:stakBread/screen/camera_edit_screen/text_story/story_text_view_controller.dart';
-import 'package:stakBread/utilities/theme_res.dart';
+import 'package:stakBread/utilities/color_res.dart';
 
 class StoryTextFontColor extends StatelessWidget {
   const StoryTextFontColor({super.key});
@@ -31,7 +31,7 @@ class StoryTextFontColor extends StatelessWidget {
                   margin: const EdgeInsets.symmetric(horizontal: 3),
                   alignment: Alignment.center,
                   decoration: BoxDecoration(
-                    color: whitePure(context),
+                    color: ColorRes.whitePure,
                     borderRadius: BorderRadius.circular(5),
                   ),
                   child: AnimatedContainer(

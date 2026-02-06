@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:stakBread/utilities/asset_res.dart';
 import 'package:stakBread/utilities/text_style_custom.dart';
-import 'package:stakBread/utilities/theme_res.dart';
+import 'package:stakBread/utilities/color_res.dart';
 
 class FullNameWithBlueTick extends StatelessWidget {
   final Widget? child;
@@ -46,7 +46,7 @@ class FullNameWithBlueTick extends StatelessWidget {
               username ?? '',
               style: style ??
                   TextStyleCustom.unboundedMedium500(
-                      color: fontColor ?? textDarkGrey(context),
+                      color: fontColor ?? ColorRes.textDarkGrey,
                       fontSize: fontSize ?? 11,
                     opacity: opacity,
                   ).copyWith(height: 2),

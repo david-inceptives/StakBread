@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:stakBread/languages/languages_keys.dart';
 import 'package:stakBread/utilities/text_style_custom.dart';
-import 'package:stakBread/utilities/theme_res.dart';
+import 'package:stakBread/utilities/color_res.dart';
 
 class NoDataView extends StatelessWidget {
   const NoDataView(
@@ -38,13 +38,13 @@ class NoDataView extends StatelessWidget {
                       child: Text(
                         (title ?? LKey.noData).tr,
                         style: TextStyleCustom.unboundedSemiBold600(
-                            color: textLightGrey(context), fontSize: 17),
+                            color: ColorRes.textLightGrey, fontSize: 17),
                         textAlign: TextAlign.center,
                       ),
                     ),
                     Text((description ?? LKey.noContentMessage).tr,
                         style: TextStyleCustom.outFitLight300(
-                          color: textLightGrey(context),
+                          color: ColorRes.textLightGrey,
                         ),
                         textAlign: TextAlign.center),
                   ],

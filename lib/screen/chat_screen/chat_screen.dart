@@ -6,7 +6,7 @@ import 'package:stakBread/screen/chat_screen/chat_screen_controller.dart';
 import 'package:stakBread/screen/chat_screen/widget/chat_bottom_action_view.dart';
 import 'package:stakBread/screen/chat_screen/widget/chat_center_message_view.dart';
 import 'package:stakBread/screen/chat_screen/widget/chat_top_profile_view.dart';
-import 'package:stakBread/utilities/theme_res.dart';
+import 'package:stakBread/utilities/color_res.dart';
 
 class ChatScreen extends StatelessWidget {
   final ChatThread conversationUser;
@@ -19,7 +19,7 @@ class ChatScreen extends StatelessWidget {
     final controller = Get.put(ChatScreenController(conversationUser.obs),
         tag: '${conversationUser.conversationId}');
     return Scaffold(
-      backgroundColor: scaffoldBackgroundColor(context),
+      backgroundColor: ColorRes.whitePure,
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

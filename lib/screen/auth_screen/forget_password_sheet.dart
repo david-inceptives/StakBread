@@ -7,7 +7,7 @@ import 'package:stakBread/common/widget/text_button_custom.dart';
 import 'package:stakBread/common/widget/text_field_custom.dart';
 import 'package:stakBread/languages/languages_keys.dart';
 import 'package:stakBread/screen/auth_screen/auth_screen_controller.dart';
-import 'package:stakBread/utilities/theme_res.dart';
+import 'package:stakBread/utilities/color_res.dart';
 
 class ForgetPasswordSheet extends StatelessWidget {
   const ForgetPasswordSheet({super.key});
@@ -22,7 +22,7 @@ class ForgetPasswordSheet extends StatelessWidget {
           shape: const SmoothRectangleBorder(
               borderRadius: SmoothBorderRadius.vertical(
                   top: SmoothRadius(cornerRadius: 40, cornerSmoothing: 1))),
-          color: scaffoldBackgroundColor(context)),
+          color: ColorRes.whitePure),
       child: SafeArea(
         minimum: const EdgeInsets.only(bottom: 10),
         child: Column(
@@ -42,8 +42,8 @@ class ForgetPasswordSheet extends StatelessWidget {
                     TextButtonCustom(
                         onTap: controller.forgetPassword,
                         title: LKey.forgetPassword.tr,
-                        backgroundColor: textDarkGrey(context),
-                        titleColor: whitePure(context),
+                        backgroundColor: ColorRes.textDarkGrey,
+                        titleColor: ColorRes.whitePure,
                         margin: const EdgeInsets.all(15)),
                     const PrivacyPolicyText(),
                   ],

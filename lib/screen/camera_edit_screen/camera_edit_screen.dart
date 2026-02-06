@@ -14,7 +14,7 @@ import 'package:stakBread/screen/selected_music_sheet/selected_music_sheet_contr
 import 'package:stakBread/utilities/app_res.dart';
 import 'package:stakBread/utilities/asset_res.dart';
 import 'package:stakBread/utilities/text_style_custom.dart';
-import 'package:stakBread/utilities/theme_res.dart';
+import 'package:stakBread/utilities/color_res.dart';
 import 'package:video_player/video_player.dart';
 
 class CameraEditScreen extends StatelessWidget {
@@ -115,7 +115,7 @@ class CameraEditTopViewTools extends StatelessWidget {
                   child: Text(
                       '${AppRes.storyDurations[controller.currentStoryDurationIndex.value]}s',
                       style: TextStyleCustom.unboundedMedium500(
-                          color: whitePure(context)),
+                          color: ColorRes.whitePure),
                       textAlign: TextAlign.center),
                 ),
               ),
@@ -147,7 +147,7 @@ class CameraEditTopViewTools extends StatelessWidget {
                       gradient: isTextStory
                           ? gradient
                           : controller.content.value.bgGradient,
-                      border: Border.all(color: whitePure(context), width: 2)),
+                      border: Border.all(color: ColorRes.whitePure, width: 2)),
                 ),
               );
             }),
@@ -251,7 +251,7 @@ class CustomVideoPlayer extends StatelessWidget {
             ClipSmoothRect(
               radius: SmoothBorderRadius(cornerRadius: 15, cornerSmoothing: 1),
               child: Container(
-                color: blackPure(context),
+                color: ColorRes.blackPure,
                 child: SizedBox.expand(
                   child: FittedBox(
                     fit: fitType,
@@ -272,11 +272,11 @@ class CustomVideoPlayer extends StatelessWidget {
                     height: 60,
                     width: 60,
                     decoration: BoxDecoration(
-                        color: blackPure(context).withValues(alpha: 0.5),
+                        color: ColorRes.blackPure.withValues(alpha: 0.5),
                         shape: BoxShape.circle),
                     alignment: Alignment.center,
                     child: Image.asset(AssetRes.icPause,
-                        width: 35, height: 35, color: bgGrey(context))),
+                        width: 35, height: 35, color: ColorRes.bgGrey)),
               ),
             )
           ],
@@ -304,8 +304,8 @@ class CameraEditActionButtons extends StatelessWidget {
               onTap: controller.onDiscard,
               title: LKey.discard.tr,
               btnHeight: 44,
-              backgroundColor: bgMediumGrey(context),
-              titleColor: textLightGrey(context),
+              backgroundColor: ColorRes.bgMediumGrey,
+              titleColor: ColorRes.textLightGrey,
               horizontalMargin: 10,
             ),
           ),
@@ -316,8 +316,8 @@ class CameraEditActionButtons extends StatelessWidget {
                     onTap: controller.handleContentUpload,
                     title: LKey.post.tr,
                     btnHeight: 44,
-                    backgroundColor: themeAccentSolid(context),
-                    titleColor: whitePure(context),
+                    backgroundColor: ColorRes.themeAccentSolid,
+                    titleColor: ColorRes.whitePure,
                     horizontalMargin: 10,
                   )),
           ),

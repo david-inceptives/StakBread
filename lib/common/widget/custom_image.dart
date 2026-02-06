@@ -6,7 +6,7 @@ import 'package:stakBread/utilities/app_res.dart';
 import 'package:stakBread/utilities/asset_res.dart';
 import 'package:stakBread/utilities/style_res.dart';
 import 'package:stakBread/utilities/text_style_custom.dart';
-import 'package:stakBread/utilities/theme_res.dart';
+import 'package:stakBread/utilities/color_res.dart';
 
 class CustomImage extends StatelessWidget {
   final Size size;
@@ -79,13 +79,13 @@ class CustomImage extends StatelessWidget {
                           placeholder: (context, url) {
                             return isImageLoaderVisible
                                 ? Shimmer.fromColors(
-                                    baseColor: bgGrey(context),
-                                    highlightColor: bgMediumGrey(context),
+                                    baseColor: ColorRes.bgGrey,
+                                    highlightColor: ColorRes.bgMediumGrey,
                                     child: Container(
                                       height: size.height,
                                       width: size.width,
                                       decoration: BoxDecoration(
-                                          color: bgGrey(context),
+                                          color: ColorRes.bgGrey,
                                           borderRadius:
                                               BorderRadius.circular(radius)),
                                     ))
@@ -113,7 +113,7 @@ class CustomImage extends StatelessWidget {
                       borderRadius: SmoothBorderRadius(cornerRadius: radius),
                       side: BorderSide(
                           color: strokeColor ??
-                              whitePure(context).withValues(alpha: .3),
+                              ColorRes.whitePure.withValues(alpha: .3),
                           width: strokeWidth),
                     ),
                   ),
@@ -163,14 +163,14 @@ class ImageErrorWidget extends StatelessWidget {
               return Image.asset(placeHolderImage ?? AssetRes.icNoImage,
                   height: constraints.maxHeight / 2,
                   width: constraints.maxWidth / 2,
-                  color: textDarkGrey(context));
+                  color: ColorRes.textDarkGrey);
             })
           : Text(
               (fullName?[0] ?? AppRes.appName[0]).toUpperCase(),
               style: TextStyleCustom.unboundedMedium500(
                   fontSize:
                       size.height / 2, // Fallback to 50 if size is not finite
-                  color: whitePure(context),
+                  color: ColorRes.whitePure,
                   opacity: 0.4),
             ),
     );

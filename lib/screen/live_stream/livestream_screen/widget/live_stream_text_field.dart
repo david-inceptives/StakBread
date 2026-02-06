@@ -10,7 +10,7 @@ import 'package:stakBread/utilities/asset_res.dart';
 import 'package:stakBread/utilities/color_res.dart';
 import 'package:stakBread/utilities/style_res.dart';
 import 'package:stakBread/utilities/text_style_custom.dart';
-import 'package:stakBread/utilities/theme_res.dart';
+import 'package:stakBread/utilities/color_res.dart';
 
 class LiveStreamTextFieldView extends StatelessWidget {
   final bool isAudience;
@@ -40,8 +40,8 @@ class LiveStreamTextFieldView extends StatelessWidget {
                 borderRadius:
                     SmoothBorderRadius(cornerRadius: 30, cornerSmoothing: 1),
                 side: BorderSide(
-                    color: whitePure(context).withValues(alpha: .18))),
-            color: whitePure(context).withValues(alpha: .15)),
+                    color: ColorRes.whitePure.withValues(alpha: .18))),
+            color: ColorRes.whitePure.withValues(alpha: .15)),
         child: TextField(
           controller: controller.textCommentController,
           onChanged: (value) {
@@ -54,7 +54,7 @@ class LiveStreamTextFieldView extends StatelessWidget {
             hintText:
                 isAudience ? '${LKey.writeHere.tr}..' : LKey.whatDoYouThink.tr,
             hintStyle: TextStyleCustom.outFitLight300(
-                color: whitePure(context), fontSize: 17, opacity: .42),
+                color: ColorRes.whitePure, fontSize: 17, opacity: .42),
             contentPadding: const EdgeInsets.only(left: 10, right: 10),
             suffixIconConstraints: const BoxConstraints(),
             suffixIcon: TextFieldSuffixIcon(
@@ -67,8 +67,8 @@ class LiveStreamTextFieldView extends StatelessWidget {
             ),
           ),
           style: TextStyleCustom.outFitRegular400(
-              color: whitePure(context), fontSize: 17),
-          cursorColor: whitePure(context).withValues(alpha: .6),
+              color: ColorRes.whitePure, fontSize: 17),
+          cursorColor: ColorRes.whitePure.withValues(alpha: .6),
           onTapOutside: (event) =>
               FocusManager.instance.primaryFocus?.unfocus(),
         ),
@@ -156,7 +156,7 @@ class TextFieldSuffixIcon extends StatelessWidget {
         child: Text(
           LKey.send.tr,
           style: TextStyleCustom.unboundedMedium500(
-            color: whitePure(context),
+            color: ColorRes.whitePure,
             fontSize: 15,
           ),
         ),
@@ -186,7 +186,7 @@ class GiftIcon extends StatelessWidget {
         ),
         alignment: Alignment.center,
         child: Image.asset(AssetRes.icGift,
-            height: 20, width: 20, color: whitePure(context)),
+            height: 20, width: 20, color: ColorRes.whitePure),
       ),
     );
   }

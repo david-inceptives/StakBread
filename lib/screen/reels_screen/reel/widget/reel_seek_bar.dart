@@ -6,7 +6,7 @@ import 'package:stakBread/common/extensions/string_extension.dart';
 import 'package:stakBread/screen/dashboard_screen/dashboard_screen_controller.dart';
 import 'package:stakBread/screen/reels_screen/reel/reel_page_controller.dart';
 import 'package:stakBread/utilities/text_style_custom.dart';
-import 'package:stakBread/utilities/theme_res.dart';
+import 'package:stakBread/utilities/color_res.dart';
 import 'package:video_player/video_player.dart';
 
 class ReelSeekBar extends StatefulWidget {
@@ -125,7 +125,7 @@ class _ReelSeekBarState extends State<ReelSeekBar> {
                         shape: SmoothRectangleBorder(
                           borderRadius: SmoothBorderRadius(cornerRadius: 10, cornerSmoothing: 1),
                           side: BorderSide(
-                            color: whitePure(context).withAlpha(50),
+                            color: ColorRes.whitePure.withAlpha(50),
                             width: 1,
                           ),
                         ),
@@ -136,7 +136,7 @@ class _ReelSeekBarState extends State<ReelSeekBar> {
                       child: Text(
                         _currentPosition.printDuration,
                         style: TextStyleCustom.outFitMedium500(
-                          color: whitePure(context),
+                          color: ColorRes.whitePure,
                           fontSize: 15,
                         ),
                       ),
@@ -188,8 +188,8 @@ class _ReelSeekBarState extends State<ReelSeekBar> {
               value: position.clamp(0, duration),
               min: 0,
               max: duration,
-              activeColor: textLightGrey(context),
-              inactiveColor: textDarkGrey(context),
+              activeColor: ColorRes.textLightGrey,
+              inactiveColor: ColorRes.textDarkGrey,
               onChangeStart: (value) {
                 if (duration <= 0) return;
                 _createOverlay();

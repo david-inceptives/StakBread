@@ -13,7 +13,7 @@ import 'package:stakBread/screen/edit_profile_screen/edit_profile_screen_control
 import 'package:stakBread/screen/edit_profile_screen/widget/build_link_view.dart';
 import 'package:stakBread/utilities/asset_res.dart';
 import 'package:stakBread/utilities/text_style_custom.dart';
-import 'package:stakBread/utilities/theme_res.dart';
+import 'package:stakBread/utilities/color_res.dart';
 
 class EditProfileScreen extends StatelessWidget {
   final Function(User? user)? onUpdateUser;
@@ -36,25 +36,25 @@ class EditProfileScreen extends StatelessWidget {
                     height: 49,
                     margin: const EdgeInsets.symmetric(vertical: 3),
                     alignment: AlignmentDirectional.centerStart,
-                    color: bgLightGrey(context),
+                    color: ColorRes.bgLightGrey,
                     padding: const EdgeInsets.symmetric(horizontal: 20),
                     child: Text(
                       '${LKey.userId.tr} : ${controller.userData.value?.id}',
                       style: TextStyleCustom.outFitLight300(
-                          fontSize: 17, color: textLightGrey(context)),
+                          fontSize: 17, color: ColorRes.textLightGrey),
                     ),
                   ),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 20.0),
                     child: Text(LKey.profileImage.tr,
                         style: TextStyleCustom.outFitRegular400(
-                            fontSize: 17, color: textDarkGrey(context))),
+                            fontSize: 17, color: ColorRes.textDarkGrey)),
                   ),
                   Container(
                     height: 100,
                     width: double.infinity,
                     margin: const EdgeInsets.only(top: 8, bottom: 12),
-                    decoration: BoxDecoration(color: bgLightGrey(context)),
+                    decoration: BoxDecoration(color: ColorRes.bgLightGrey),
                     padding: const EdgeInsets.symmetric(horizontal: 20),
                     alignment: AlignmentDirectional.centerStart,
                     child: InkWell(
@@ -87,13 +87,13 @@ class EditProfileScreen extends StatelessWidget {
                               height: 26,
                               width: 26,
                               decoration: BoxDecoration(
-                                  color: textDarkGrey(context),
+                                  color: ColorRes.textDarkGrey,
                                   shape: BoxShape.circle),
                               child: Center(
                                 child: Image.asset(AssetRes.icEdit_1,
                                     width: 22,
                                     height: 22,
-                                    color: whitePure(context)),
+                                    color: ColorRes.whitePure),
                               ),
                             ),
                           )
@@ -137,8 +137,8 @@ class EditProfileScreen extends StatelessWidget {
             child: TextButtonCustom(
               onTap: controller.onSaveTap,
               title: LKey.save.tr,
-              backgroundColor: textDarkGrey(context),
-              titleColor: whitePure(context),
+              backgroundColor: ColorRes.textDarkGrey,
+              titleColor: ColorRes.whitePure,
             ),
           ),
         ],

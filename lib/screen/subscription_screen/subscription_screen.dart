@@ -1,4 +1,5 @@
 import 'package:figma_squircle_updated/figma_squircle.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:purchases_flutter/purchases_flutter.dart';
@@ -11,7 +12,7 @@ import 'package:stakBread/screen/subscription_screen/subscription_screen_control
 import 'package:stakBread/utilities/asset_res.dart';
 import 'package:stakBread/utilities/style_res.dart';
 import 'package:stakBread/utilities/text_style_custom.dart';
-import 'package:stakBread/utilities/theme_res.dart';
+import 'package:stakBread/utilities/color_res.dart';
 
 class SubscriptionScreen extends StatelessWidget {
   final Function(User? user)? onUpdateUser;
@@ -44,7 +45,7 @@ class SubscriptionScreen extends StatelessWidget {
                   const SizedBox(height: 10),
                   Text(LKey.subscribeToPlus.tr,
                       style: TextStyleCustom.outFitRegular400(
-                          fontSize: 18, color: textLightGrey(context)),
+                          fontSize: 18, color: ColorRes.textLightGrey),
                       textAlign: TextAlign.center),
                   const SizedBox(height: 22),
                   Row(
@@ -86,21 +87,21 @@ class SubscriptionScreen extends StatelessWidget {
                                         side: BorderSide(
                                           color: isSelected
                                               ? Colors.transparent
-                                              : textLightGrey(context)
+                                              : ColorRes.textLightGrey
                                                   .withValues(alpha: .2),
                                         ),
                                       ),
                                       color: isSelected
                                           ? null
-                                          : bgLightGrey(context),
+                                          : ColorRes.bgLightGrey,
                                       gradient: isSelected
                                           ? StyleRes.themeGradient
                                           : null,
                                       shadows: isSelected
                                           ? [
                                               BoxShadow(
-                                                  color: disableGrey(context),
-                                                  blurRadius: 10)
+                                                  color: ColorRes.disabledGrey,
+                                                  blurRadius: 10),
                                             ]
                                           : null),
                                   padding: const EdgeInsets.symmetric(
@@ -123,9 +124,8 @@ class SubscriptionScreen extends StatelessWidget {
                                                   .unboundedMedium500(
                                                       fontSize: 15,
                                                       color: isSelected
-                                                          ? whitePure(context)
-                                                          : textLightGrey(
-                                                              context)),
+                                                          ? ColorRes.whitePure
+                                                          : ColorRes.textLightGrey),
                                             ),
                                             if (package.getDetail.description
                                                 .isNotEmpty)
@@ -134,9 +134,8 @@ class SubscriptionScreen extends StatelessWidget {
                                                 style: TextStyleCustom
                                                     .outFitRegular400(
                                                         color: isSelected
-                                                            ? whitePure(context)
-                                                            : textLightGrey(
-                                                                context)),
+                                                            ? ColorRes.whitePure
+                                                            : ColorRes.textLightGrey),
                                               ),
                                           ],
                                         ),
@@ -147,8 +146,8 @@ class SubscriptionScreen extends StatelessWidget {
                                             TextStyleCustom.outFitExtraBold800(
                                                 fontSize: 24,
                                                 color: isSelected
-                                                    ? whitePure(context)
-                                                    : textLightGrey(context)),
+                                                    ? ColorRes.whitePure
+                                                    : ColorRes.textLightGrey),
                                       )
                                     ],
                                   ),
@@ -163,15 +162,15 @@ class SubscriptionScreen extends StatelessWidget {
                   TextButtonCustom(
                       onTap: controller.onMakePurchase,
                       title: LKey.subscribeNow.tr,
-                      backgroundColor: textDarkGrey(context),
-                      titleColor: whitePure(context)),
+                      backgroundColor: ColorRes.textDarkGrey,
+                      titleColor: ColorRes.whitePure),
                   Padding(
                     padding:
                         const EdgeInsets.only(left: 20.0, right: 20.0, top: 40),
                     child: Text(
                       LKey.subscriptionTerms.tr,
                       style: TextStyleCustom.outFitLight300(
-                          fontSize: 13, color: textLightGrey(context)),
+                          fontSize: 13, color: ColorRes.textLightGrey),
                       textAlign: TextAlign.center,
                     ),
                   ),
@@ -199,8 +198,8 @@ class BuildIconWithText extends StatelessWidget {
       decoration: ShapeDecoration(
         shape: SmoothRectangleBorder(
             borderRadius: SmoothBorderRadius(cornerRadius: 30),
-            side: BorderSide(color: bgGrey(context))),
-        color: bgMediumGrey(context),
+            side: BorderSide(color: ColorRes.bgGrey)),
+        color: ColorRes.bgMediumGrey,
       ),
       padding: const EdgeInsets.symmetric(horizontal: 18),
       child: Row(
@@ -215,7 +214,7 @@ class BuildIconWithText extends StatelessWidget {
           Text(
             title,
             style: TextStyleCustom.outFitRegular400(
-                fontSize: 15, color: textDarkGrey(context)),
+                fontSize: 15, color: ColorRes.textDarkGrey),
           )
         ],
       ),

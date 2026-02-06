@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:stakBread/screen/selected_music_sheet/selected_music_sheet_controller.dart';
 import 'package:stakBread/utilities/style_res.dart';
-import 'package:stakBread/utilities/theme_res.dart';
+import 'package:stakBread/utilities/color_res.dart';
 
 class WaveSlider extends StatelessWidget {
   final int audioDuration;
@@ -105,7 +105,7 @@ class WaveSlider extends StatelessWidget {
                             width: controller.barWidth,
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(10),
-                              color: disableGrey(context),
+                              color: ColorRes.disabledGrey,
                             ),
                           );
                         },

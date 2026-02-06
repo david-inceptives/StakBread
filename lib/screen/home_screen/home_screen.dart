@@ -7,7 +7,7 @@ import 'package:stakBread/screen/reels_screen/reels_screen.dart';
 import 'package:stakBread/utilities/app_res.dart';
 import 'package:stakBread/utilities/asset_res.dart';
 import 'package:stakBread/utilities/text_style_custom.dart';
-import 'package:stakBread/utilities/theme_res.dart';
+import 'package:stakBread/utilities/color_res.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -16,7 +16,7 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final controller = Get.put(HomeScreenController());
     return Scaffold(
-      backgroundColor: blackPure(context),
+      backgroundColor: ColorRes.blackPure,
       body: Stack(
         children: [
           ReelsScreen(
@@ -46,7 +46,7 @@ class HomeScreen extends StatelessWidget {
                     Center(
                       child: CustomPaint(
                         painter: TrianglePainter(
-                            strokeColor: whitePure(context), strokeWidth: 0, paintingStyle: PaintingStyle.fill),
+                            strokeColor: ColorRes.whitePure, strokeWidth: 0, paintingStyle: PaintingStyle.fill),
                         child: const SizedBox(height: 9, width: 15),
                       ),
                     ),
@@ -54,7 +54,7 @@ class HomeScreen extends StatelessWidget {
                       width: MediaQuery.of(context).size.width,
                       constraints: const BoxConstraints(maxHeight: 200),
                       decoration: ShapeDecoration(
-                        color: whitePure(context),
+                        color: ColorRes.whitePure,
                         shape: SmoothRectangleBorder(
                           borderRadius: SmoothBorderRadius(cornerRadius: 8, cornerSmoothing: 1),
                         ),
@@ -82,12 +82,12 @@ class HomeScreen extends StatelessWidget {
                                             tabType.title.toUpperCase(),
                                             style: TextStyleCustom.unboundedBold700(
                                                 fontSize: 14,
-                                                color: isSelected ? textDarkGrey(context) : textLightGrey(context)),
+                                                color: isSelected ? ColorRes.textDarkGrey : ColorRes.textLightGrey),
                                           ),
                                         ),
                                         if (isSelected)
                                           Image.asset(AssetRes.icCheckCircle,
-                                              color: isSelected ? textDarkGrey(context) : textLightGrey(context),
+                                              color: isSelected ? ColorRes.textDarkGrey : ColorRes.textLightGrey,
                                               height: 24,
                                               width: 24),
                                       ],
@@ -127,9 +127,9 @@ class HomeTopCenterWidget extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Obx(() => Text(controller.selectedReelCategory.value.title.toUpperCase(),
-                style: TextStyleCustom.unboundedBold700(fontSize: 16, color: whitePure(context)))),
+                style: TextStyleCustom.unboundedBold700(fontSize: 16, color: ColorRes.whitePure))),
             const SizedBox(width: 5),
-            Image.asset(AssetRes.icDownArrow, color: whitePure(context), height: 12, width: 12),
+            Image.asset(AssetRes.icDownArrow, color: ColorRes.whitePure, height: 12, width: 12),
           ],
         ),
       ),

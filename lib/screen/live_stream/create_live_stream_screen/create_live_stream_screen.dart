@@ -14,7 +14,7 @@ import 'package:stakBread/screen/live_stream/create_live_stream_screen/create_li
 import 'package:stakBread/utilities/asset_res.dart';
 import 'package:stakBread/utilities/style_res.dart';
 import 'package:stakBread/utilities/text_style_custom.dart';
-import 'package:stakBread/utilities/theme_res.dart';
+import 'package:stakBread/utilities/color_res.dart';
 
 class CreateLiveStreamScreen extends StatelessWidget {
   const CreateLiveStreamScreen({super.key});
@@ -52,7 +52,7 @@ class CreateLiveStreamScreen extends StatelessWidget {
                         image: AssetRes.icClose,
                         height: 30,
                         width: 30,
-                        color: whitePure(context),
+                        color: ColorRes.whitePure,
                         padding: const EdgeInsets.symmetric(horizontal: 15),
                         onTap: controller.onCloseTap,
                       )),
@@ -65,7 +65,7 @@ class CreateLiveStreamScreen extends StatelessWidget {
                           height: 50,
                           width: 50,
                           decoration: BoxDecoration(
-                              color: whitePure(context),
+                              color: ColorRes.whitePure,
                               shape: BoxShape.circle),
                           alignment: Alignment.center,
                           child: GradientIcon(
@@ -78,13 +78,13 @@ class CreateLiveStreamScreen extends StatelessWidget {
                       Container(
                         height: 75,
                         decoration: ShapeDecoration(
-                          color: whitePure(context).withValues(alpha: .15),
+                          color: ColorRes.whitePure.withValues(alpha: .15),
                           shape: SmoothRectangleBorder(
                               borderRadius: SmoothBorderRadius(
                                   cornerRadius: 12, cornerSmoothing: 1),
                               side: BorderSide(
                                   color:
-                                      whitePure(context).withValues(alpha: .18),
+                                      ColorRes.whitePure.withValues(alpha: .18),
                                   width: 1)),
                         ),
                         margin: const EdgeInsets.symmetric(horizontal: 20),
@@ -99,14 +99,14 @@ class CreateLiveStreamScreen extends StatelessWidget {
                                   horizontal: 15, vertical: 10),
                               hintStyle: TextStyleCustom.outFitLight300(
                                   fontSize: 17,
-                                  color: whitePure(context)
+                                  color: ColorRes.whitePure
                                       .withValues(alpha: .7))),
                           expands: true,
                           maxLines: null,
                           minLines: null,
                           keyboardType: TextInputType.text,
                           style: TextStyleCustom.outFitRegular400(
-                              color: whitePure(context), fontSize: 17),
+                              color: ColorRes.whitePure, fontSize: 17),
                         ),
                       ),
                       Row(
@@ -115,14 +115,14 @@ class CreateLiveStreamScreen extends StatelessWidget {
                           Obx(() {
                             bool isChecked = controller.isRestricted.value;
                             return Checkbox(
-                              checkColor: textLightGrey(context),
+                              checkColor: ColorRes.textLightGrey,
                               fillColor:
                                   const WidgetStatePropertyAll(Colors.white),
                               value: isChecked,
                               shape: RoundedRectangleBorder(
                                   borderRadius: SmoothBorderRadius(
                                       cornerRadius: 2, cornerSmoothing: 1)),
-                              activeColor: whitePure(context),
+                              activeColor: ColorRes.whitePure,
                               side: BorderSide.none,
                               onChanged: (bool? value) {
                                 controller.isRestricted.value = value ?? false;
@@ -132,7 +132,7 @@ class CreateLiveStreamScreen extends StatelessWidget {
                           Text(
                             LKey.restrictUserRequests.tr,
                             style: TextStyleCustom.outFitLight300(
-                                color: whitePure(context), fontSize: 16),
+                                color: ColorRes.whitePure, fontSize: 16),
                           )
                         ],
                       ),
@@ -144,7 +144,7 @@ class CreateLiveStreamScreen extends StatelessWidget {
                               shape: SmoothRectangleBorder(
                                   borderRadius: SmoothBorderRadius(
                                       cornerRadius: 10, cornerSmoothing: 1)),
-                              color: whitePure(context)),
+                              color: ColorRes.whitePure),
                           margin: const EdgeInsets.symmetric(horizontal: 20),
                           alignment: Alignment.center,
                           child: GradientText(

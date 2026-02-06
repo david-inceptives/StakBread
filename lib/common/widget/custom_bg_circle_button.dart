@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:stakBread/utilities/theme_res.dart';
+import 'package:stakBread/utilities/color_res.dart';
 
 class CustomBgCircleButton extends StatelessWidget {
   final String image;
@@ -25,12 +25,12 @@ class CustomBgCircleButton extends StatelessWidget {
         alignment: Alignment.center,
         decoration: BoxDecoration(
             shape: BoxShape.circle,
-            color: bgColor ?? whitePure(context).withValues(alpha: .3)),
+            color: bgColor ?? ColorRes.whitePure.withValues(alpha: .3)),
         child: Image.asset(
           image,
           width: iconSize ?? 20,
           height: iconSize ?? 20,
-          color: whitePure(context),
+          color: ColorRes.whitePure,
         ),
       ),
     );

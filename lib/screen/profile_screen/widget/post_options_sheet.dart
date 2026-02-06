@@ -9,7 +9,7 @@ import 'package:stakBread/screen/live_stream/create_live_stream_screen/create_li
 import 'package:stakBread/screen/profile_screen/profile_screen_controller.dart';
 import 'package:stakBread/utilities/asset_res.dart';
 import 'package:stakBread/utilities/text_style_custom.dart';
-import 'package:stakBread/utilities/theme_res.dart';
+import 'package:stakBread/utilities/color_res.dart';
 
 class PostOptionsSheet extends StatelessWidget {
   final ProfileScreenController controller;
@@ -24,7 +24,7 @@ class PostOptionsSheet extends StatelessWidget {
       children: [
         Container(
           decoration: ShapeDecoration(
-              color: whitePure(context),
+              color: ColorRes.whitePure,
               shape: const SmoothRectangleBorder(
                 borderRadius: SmoothBorderRadius.vertical(
                     top: SmoothRadius(cornerRadius: 30, cornerSmoothing: 1)),
@@ -97,13 +97,13 @@ class PostOptionIconWithText extends StatelessWidget {
               child: Row(
                 children: [
                   Image.asset(image,
-                      color: textDarkGrey(context), height: 35, width: 35),
+                      color: ColorRes.textDarkGrey, height: 35, width: 35),
                   const SizedBox(width: 20),
                   Expanded(
                       child: Text(
                     text,
                     style: TextStyleCustom.unboundedRegular400(
-                        fontSize: 15, color: textDarkGrey(context)),
+                        fontSize: 15, color: ColorRes.textDarkGrey),
                   ))
                 ],
               ),

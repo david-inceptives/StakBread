@@ -8,7 +8,7 @@ import 'package:stakBread/model/user_model/user_model.dart';
 import 'package:stakBread/screen/feed_screen/feed_screen_controller.dart';
 import 'package:stakBread/utilities/style_res.dart';
 import 'package:stakBread/utilities/text_style_custom.dart';
-import 'package:stakBread/utilities/theme_res.dart';
+import 'package:stakBread/utilities/color_res.dart';
 
 class StoryView extends StatelessWidget {
   final FeedScreenController controller;
@@ -58,8 +58,8 @@ class StoryView extends StatelessWidget {
                             color: !isStoryAvailable
                                 ? Colors.transparent
                                 : (isWatch
-                                    ? disableGrey(context)
-                                    : themeAccentSolid(context)),
+                                    ? ColorRes.disabledGrey
+                                    : ColorRes.themeAccentSolid),
                             width: 2,
                             strokeAlign: BorderSide.strokeAlignOutside),
                       ),
@@ -77,12 +77,12 @@ class StoryView extends StatelessWidget {
                           width: addIconSize,
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
-                            color: themeAccentSolid(context),
+                            color: ColorRes.themeAccentSolid,
                             border:
-                                Border.all(color: whitePure(context), width: 2),
+                                Border.all(color: ColorRes.whitePure, width: 2),
                           ),
                           child: Icon(Icons.add_rounded,
-                              color: whitePure(context), size: 18),
+                              color: ColorRes.whitePure, size: 18),
                         ),
                       ),
                     ),
@@ -92,7 +92,7 @@ class StoryView extends StatelessWidget {
               Text(
                 LKey.you.tr,
                 style: TextStyleCustom.outFitRegular400(
-                    fontSize: 13, color: blackPure(context)),
+                    fontSize: 13, color: ColorRes.blackPure),
               ),
             ],
           ),

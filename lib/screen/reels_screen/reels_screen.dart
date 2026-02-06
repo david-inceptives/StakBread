@@ -11,7 +11,7 @@ import 'package:stakBread/screen/reels_screen/reel/reel_page.dart';
 import 'package:stakBread/screen/reels_screen/reels_screen_controller.dart';
 import 'package:stakBread/screen/reels_screen/widget/reels_text_field.dart';
 import 'package:stakBread/screen/reels_screen/widget/reels_top_bar.dart';
-import 'package:stakBread/utilities/theme_res.dart';
+import 'package:stakBread/utilities/color_res.dart';
 
 // ---------------------------------------------------------------
 // REELS SCREEN (PAGEVIEW)
@@ -63,7 +63,7 @@ class _ReelsScreenState extends State<ReelsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: blackPure(context),
+      backgroundColor: ColorRes.blackPure,
       body: Stack(
         fit: StackFit.expand,
         children: [
@@ -81,7 +81,7 @@ class _ReelsScreenState extends State<ReelsScreen> {
                       Obx(() {
                         final reels = widget.reels;
                         if (widget.isLoading?.value == true && reels.isEmpty) {
-                          return Center(child: CupertinoActivityIndicator(color: textLightGrey(context)));
+                          return Center(child: CupertinoActivityIndicator(color: ColorRes.textLightGrey));
                         }
                         if (widget.isLoading?.value == false && reels.isEmpty) {
                           return NoDataWidgetWithScroll(
@@ -98,7 +98,7 @@ class _ReelsScreenState extends State<ReelsScreen> {
                               () {
                                 bool isLoading = controller.isLoading.value;
                                 return isLoading
-                                    ? Center(child: CupertinoActivityIndicator(color: textLightGrey(context)))
+                                    ? Center(child: CupertinoActivityIndicator(color: ColorRes.textLightGrey))
                                     : ReelPage(
                                         reelData: reels[index],
                                         autoPlay: index == controller.currentIndex.value,

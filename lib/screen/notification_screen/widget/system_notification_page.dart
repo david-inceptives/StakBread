@@ -5,7 +5,7 @@ import 'package:stakBread/common/extensions/string_extension.dart';
 import 'package:stakBread/common/widget/custom_image.dart';
 import 'package:stakBread/model/misc/admin_notification_model.dart';
 import 'package:stakBread/utilities/text_style_custom.dart';
-import 'package:stakBread/utilities/theme_res.dart';
+import 'package:stakBread/utilities/color_res.dart';
 
 class SystemNotificationPage extends StatelessWidget {
   final AdminNotificationData data;
@@ -16,7 +16,7 @@ class SystemNotificationPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      color: bgLightGrey(context),
+      color: ColorRes.bgLightGrey,
       margin: const EdgeInsets.symmetric(vertical: 2),
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       child: Column(
@@ -39,15 +39,15 @@ class SystemNotificationPage extends StatelessWidget {
             ),
           Text(data.title ?? '',
               style: TextStyleCustom.outFitMedium500(
-                  fontSize: 16, color: textDarkGrey(context))),
+                  fontSize: 16, color: ColorRes.textDarkGrey)),
           DetectableText(
             text: data.description ?? '',
             basicStyle: TextStyleCustom.outFitLight300(
-                fontSize: 15, color: textLightGrey(context)),
+                fontSize: 15, color: ColorRes.textLightGrey),
             detectionRegExp:
                 detectionRegExp(atSign: false, hashtag: false, url: true)!,
             detectedStyle: TextStyleCustom.outFitMedium500(
-                color: themeAccentSolid(context)),
+                color: ColorRes.themeAccentSolid),
             onTap: (p0) {
               p0.lunchUrlWithHttps;
             },
@@ -56,7 +56,7 @@ class SystemNotificationPage extends StatelessWidget {
           Text(
             (data.createdAt ?? '').formatDate,
             style: TextStyleCustom.outFitLight300(
-                fontSize: 12, color: textLightGrey(context)),
+                fontSize: 12, color: ColorRes.textLightGrey),
           ),
         ],
       ),

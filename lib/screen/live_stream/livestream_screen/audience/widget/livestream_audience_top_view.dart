@@ -19,7 +19,7 @@ import 'package:stakBread/screen/live_stream/livestream_screen/widget/members_sh
 import 'package:stakBread/utilities/asset_res.dart';
 import 'package:stakBread/utilities/style_res.dart';
 import 'package:stakBread/utilities/text_style_custom.dart';
-import 'package:stakBread/utilities/theme_res.dart';
+import 'package:stakBread/utilities/color_res.dart';
 
 class LiveStreamAudienceTopView extends StatelessWidget {
   final bool isAudience;
@@ -86,11 +86,11 @@ class _BuildTopView extends StatelessWidget {
                 decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     border: Border.all(
-                        color: whitePure(context).withValues(alpha: .5),
+                        color: ColorRes.whitePure.withValues(alpha: .5),
                         width: 1.5)),
                 alignment: Alignment.center,
                 child: Image.asset(AssetRes.icClose1,
-                    color: whitePure(context).withValues(alpha: .5),
+                    color: ColorRes.whitePure.withValues(alpha: .5),
                     width: 18,
                     height: 18),
               ),
@@ -103,7 +103,7 @@ class _BuildTopView extends StatelessWidget {
             controller.reportUser(controller.liveData.value.hostId);
           },
           child: Image.asset(AssetRes.icReport,
-              color: whitePure(context).withValues(alpha: 0.5),
+              color: ColorRes.whitePure.withValues(alpha: 0.5),
               width: 28,
               height: 28),
         ),
@@ -158,7 +158,7 @@ class _BuildCenterView extends StatelessWidget {
                   username: hostUser?.username,
                   fontSize: 13,
                   iconSize: 18,
-                  fontColor: whitePure(context),
+                  fontColor: ColorRes.whitePure,
                   isVerify: hostUser?.isVerify,
                 ),
                 FittedBox(
@@ -166,7 +166,7 @@ class _BuildCenterView extends StatelessWidget {
                     height: 18,
                     padding: const EdgeInsets.symmetric(horizontal: 10),
                     decoration: ShapeDecoration(
-                      color: whitePure(context).withValues(alpha: 1),
+                      color: ColorRes.whitePure.withValues(alpha: 1),
                       shape: SmoothRectangleBorder(
                         borderRadius: SmoothBorderRadius(cornerRadius: 5),
                       ),
@@ -197,9 +197,9 @@ class _BuildCenterView extends StatelessWidget {
                   padding: const EdgeInsets.symmetric(horizontal: 13),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(30),
-                    color: blackPure(context).withValues(alpha: .1),
+                    color: ColorRes.blackPure.withValues(alpha: .1),
                     border: Border.all(
-                        color: whitePure(context).withValues(alpha: 0.3)),
+                        color: ColorRes.whitePure.withValues(alpha: 0.3)),
                   ),
                   child: Row(
                     children: [
@@ -208,7 +208,7 @@ class _BuildCenterView extends StatelessWidget {
                       Text(
                         watchingCount.numberFormat,
                         style: TextStyleCustom.outFitMedium500(
-                            color: whitePure(context)),
+                            color: ColorRes.whitePure),
                       ),
                     ],
                   ),
@@ -217,14 +217,14 @@ class _BuildCenterView extends StatelessWidget {
                   LiveStreamCircleBorderButton(
                     image: AssetRes.icVideoRequest,
                     margin: EdgeInsets.zero,
-                    iconColor: whitePure(context),
+                    iconColor: ColorRes.whitePure,
                     onTap: () => controller.onVideoRequestSend(liveData),
                   ),
                 if (!isBattleOn)
                   LiveStreamCircleBorderButton(
                     image: AssetRes.icAudience,
                     margin: EdgeInsets.zero,
-                    iconColor: whitePure(context),
+                    iconColor: ColorRes.whitePure,
                     onTap: () {
                       Get.bottomSheet(const MembersSheet(isHost: false),
                           isScrollControlled: true);

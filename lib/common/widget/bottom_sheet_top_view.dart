@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:stakBread/common/widget/custom_divider.dart';
 import 'package:stakBread/utilities/text_style_custom.dart';
-import 'package:stakBread/utilities/theme_res.dart';
+import 'package:stakBread/utilities/color_res.dart';
 
 class BottomSheetTopView extends StatelessWidget {
   final String title;
@@ -36,7 +36,7 @@ class BottomSheetTopView extends StatelessWidget {
                 if (sideBtnVisibility) const SizedBox(height: 25, width: 25),
                 Text(title,
                     style: TextStyleCustom.unboundedRegular400(
-                        color: textDarkGrey(context), fontSize: 15)),
+                        color: ColorRes.textDarkGrey, fontSize: 15)),
                 if (sideBtnVisibility)
                   InkWell(
                     onTap: () {
@@ -45,7 +45,7 @@ class BottomSheetTopView extends StatelessWidget {
                     child: Icon(
                       Icons.close_rounded,
                       size: 25,
-                      color: textDarkGrey(context),
+                      color: ColorRes.textDarkGrey,
                     ),
                   )
               ],

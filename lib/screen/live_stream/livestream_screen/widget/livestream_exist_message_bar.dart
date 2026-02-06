@@ -8,7 +8,7 @@ import 'package:stakBread/model/livestream/livestream.dart';
 import 'package:stakBread/screen/live_stream/livestream_screen/livestream_screen_controller.dart';
 import 'package:stakBread/utilities/app_res.dart';
 import 'package:stakBread/utilities/text_style_custom.dart';
-import 'package:stakBread/utilities/theme_res.dart';
+import 'package:stakBread/utilities/color_res.dart';
 
 class LivestreamExistMessageBar extends StatefulWidget {
   final LivestreamScreenController controller;
@@ -79,7 +79,7 @@ class _LivestreamExistMessageBarState extends State<LivestreamExistMessageBar> {
       width: double.infinity,
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
       decoration: BoxDecoration(
-        color: whitePure(context).withValues(alpha: .1),
+        color: ColorRes.whitePure.withValues(alpha: .1),
       ),
       child: Row(
         spacing: 5,
@@ -93,14 +93,14 @@ class _LivestreamExistMessageBarState extends State<LivestreamExistMessageBar> {
                           widget.controller.minViewersThreshold.toString()
                     }),
               style: TextStyleCustom.outFitLight300(
-                  color: whitePure(context), fontSize: 17),
+                  color: ColorRes.whitePure, fontSize: 17),
             ),
           ),
           Obx(
             () => Text(
               Duration(seconds: currentSecLeft.value).printDuration,
               style: TextStyleCustom.unboundedMedium500(
-                color: whitePure(context),
+                color: ColorRes.whitePure,
                 fontSize: 14,
               ),
             ),

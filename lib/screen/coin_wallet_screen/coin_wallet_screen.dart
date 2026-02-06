@@ -5,7 +5,7 @@ import 'package:stakBread/screen/coin_wallet_screen/coin_wallet_screen_controlle
 import 'package:stakBread/screen/coin_wallet_screen/widget/coin_wallet_list.dart';
 import 'package:stakBread/screen/coin_wallet_screen/widget/coin_wallet_top_view.dart';
 import 'package:stakBread/utilities/text_style_custom.dart';
-import 'package:stakBread/utilities/theme_res.dart';
+import 'package:stakBread/utilities/color_res.dart';
 
 class CoinWalletScreen extends StatelessWidget {
   const CoinWalletScreen({super.key});
@@ -20,12 +20,12 @@ class CoinWalletScreen extends StatelessWidget {
           const SizedBox(height: 15),
           Text(LKey.coinShop.tr,
               style: TextStyleCustom.unboundedRegular400(
-                color: textDarkGrey(context),
+                color: ColorRes.textDarkGrey,
                 fontSize: 17,
               )),
           const SizedBox(height: 5),
           Text(LKey.rechargeWallet.tr,
-              style: TextStyleCustom.outFitLight300(color: textLightGrey(context), fontSize: 17),
+              style: TextStyleCustom.outFitLight300(color: ColorRes.textLightGrey, fontSize: 17),
               textAlign: TextAlign.center),
           CoinWalletList(controller: controller)
         ],

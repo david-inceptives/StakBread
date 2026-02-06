@@ -18,7 +18,7 @@ import 'package:stakBread/screen/live_stream/livestream_screen/widget/live_strea
 import 'package:stakBread/utilities/asset_res.dart';
 import 'package:stakBread/utilities/color_res.dart';
 import 'package:stakBread/utilities/text_style_custom.dart';
-import 'package:stakBread/utilities/theme_res.dart';
+import 'package:stakBread/utilities/color_res.dart';
 
 class LiveStreamSearchScreen extends StatelessWidget {
   const LiveStreamSearchScreen({super.key});
@@ -34,8 +34,8 @@ class LiveStreamSearchScreen extends StatelessWidget {
             LiveStreamSearchTopView(controller: controller),
             CustomSearchTextField(
               onChanged: controller.onSearchChange,
-              backgroundColor: whitePure(context).withValues(alpha: .15),
-              borderSide: BorderSide(color: whitePure(context).withValues(alpha: .18)),
+              backgroundColor: ColorRes.whitePure.withValues(alpha: .15),
+              borderSide: BorderSide(color: ColorRes.whitePure.withValues(alpha: .18)),
             ),
             LiveStreamListView(controller: controller),
           ],
@@ -68,16 +68,16 @@ class LiveStreamSearchTopView extends StatelessWidget {
                 decoration: ShapeDecoration(
                   shape: SmoothRectangleBorder(
                       borderRadius: SmoothBorderRadius(cornerRadius: 30, cornerSmoothing: 0),
-                      side: BorderSide(color: whitePure(context).withValues(alpha: .3), width: 1),
+                      side: BorderSide(color: ColorRes.whitePure.withValues(alpha: .3), width: 1),
                       borderAlign: BorderAlign.inside),
                   color: ColorRes.textStoryBgGradient2,
                 ),
                 child: Row(
                   children: [
-                    Image.asset(AssetRes.icLive, color: whitePure(context), height: 22, width: 22),
+                    Image.asset(AssetRes.icLive, color: ColorRes.whitePure, height: 22, width: 22),
                     const SizedBox(width: 5),
                     Text(LKey.livestreams.tr.toUpperCase(),
-                        style: TextStyleCustom.unboundedRegular400(fontSize: 12, color: whitePure(context)))
+                        style: TextStyleCustom.unboundedRegular400(fontSize: 12, color: ColorRes.whitePure))
                   ],
                 ),
               ),
@@ -97,13 +97,13 @@ class LiveStreamSearchTopView extends StatelessWidget {
                 children: [
                   Image.asset(
                     AssetRes.icLive_1,
-                    color: blackPure(context),
+                    color: ColorRes.blackPure,
                     width: 25,
                     height: 25,
                   ),
                   Text(
                     LKey.goLive.tr,
-                    style: TextStyleCustom.unboundedRegular400(color: blackPure(context), fontSize: 12),
+                    style: TextStyleCustom.unboundedRegular400(color: ColorRes.blackPure, fontSize: 12),
                   ),
                 ],
               ),
@@ -134,7 +134,7 @@ class LiveStreamListView extends StatelessWidget {
           ClipRect(
             child: BackdropFilter(
               filter: ImageFilter.blur(sigmaX: 60, sigmaY: 60),
-              child: Container(color: blackPure(context).withValues(alpha: .5)),
+              child: Container(color: ColorRes.blackPure.withValues(alpha: .5)),
             ),
           )
         ],
@@ -165,7 +165,7 @@ class LiveStreamListView extends StatelessWidget {
                               image: allUsers.first.profile?.addBaseURL(),
                               fullName: allUsers.first.fullname,
                               strokeWidth: 2,
-                              strokeColor: whitePure(context).withValues(alpha: .55)),
+                              strokeColor: ColorRes.whitePure.withValues(alpha: .55)),
                         ),
                       ),
                       Positioned(
@@ -179,7 +179,7 @@ class LiveStreamListView extends StatelessWidget {
                             image: allUsers[1].profile?.addBaseURL(),
                             fullName: allUsers[1].fullname,
                             strokeWidth: 2,
-                            strokeColor: whitePure(context).withValues(alpha: .55),
+                            strokeColor: ColorRes.whitePure.withValues(alpha: .55),
                           ),
                         ),
                       ),
@@ -207,7 +207,7 @@ class LiveStreamListView extends StatelessWidget {
                           image: allUsers.first.profile?.addBaseURL(),
                           fullName: allUsers.first.fullname,
                           strokeWidth: 2,
-                          strokeColor: whitePure(context).withValues(alpha: .55),
+                          strokeColor: ColorRes.whitePure.withValues(alpha: .55),
                         ),
                       ),
                       Positioned(
@@ -221,7 +221,7 @@ class LiveStreamListView extends StatelessWidget {
                             image: allUsers[1].profile?.addBaseURL(),
                             fullName: allUsers[1].fullname,
                             strokeWidth: 2,
-                            strokeColor: whitePure(context).withValues(alpha: .55),
+                            strokeColor: ColorRes.whitePure.withValues(alpha: .55),
                           ),
                         ),
                       ),
@@ -236,7 +236,7 @@ class LiveStreamListView extends StatelessWidget {
                             image: allUsers[2].profile?.addBaseURL(),
                             fullName: allUsers[2].fullname,
                             strokeWidth: 2,
-                            strokeColor: whitePure(context).withValues(alpha: .55),
+                            strokeColor: ColorRes.whitePure.withValues(alpha: .55),
                           ),
                         ),
                       ),
@@ -259,7 +259,7 @@ class LiveStreamListView extends StatelessWidget {
                           image: allUsers.first.profile?.addBaseURL(),
                           fullName: allUsers.first.fullname,
                           strokeWidth: 2,
-                          strokeColor: whitePure(context).withValues(alpha: .55),
+                          strokeColor: ColorRes.whitePure.withValues(alpha: .55),
                         ),
                       ),
                       Positioned(
@@ -273,7 +273,7 @@ class LiveStreamListView extends StatelessWidget {
                             image: allUsers[1].profile?.addBaseURL(),
                             fullName: allUsers[1].fullname,
                             strokeWidth: 2,
-                            strokeColor: whitePure(context).withValues(alpha: .55),
+                            strokeColor: ColorRes.whitePure.withValues(alpha: .55),
                           ),
                         ),
                       ),
@@ -289,7 +289,7 @@ class LiveStreamListView extends StatelessWidget {
                             image: allUsers[2].profile?.addBaseURL(),
                             fullName: allUsers[2].fullname,
                             strokeWidth: 2,
-                            strokeColor: whitePure(context).withValues(alpha: .55),
+                            strokeColor: ColorRes.whitePure.withValues(alpha: .55),
                           ),
                         ),
                       ),
@@ -304,7 +304,7 @@ class LiveStreamListView extends StatelessWidget {
                             image: allUsers[3].profile?.addBaseURL(),
                             fullName: allUsers[3].fullname,
                             strokeWidth: 2,
-                            strokeColor: whitePure(context).withValues(alpha: .55),
+                            strokeColor: ColorRes.whitePure.withValues(alpha: .55),
                           ),
                         ),
                       ),
@@ -317,7 +317,7 @@ class LiveStreamListView extends StatelessWidget {
                 image: allUsers.first.profile?.addBaseURL(),
                 fullName: allUsers.first.fullname,
                 strokeWidth: 2,
-                strokeColor: whitePure(context).withValues(alpha: .55),
+                strokeColor: ColorRes.whitePure.withValues(alpha: .55),
               ),
             _ => const SizedBox()
           });
@@ -332,19 +332,19 @@ class LiveStreamListView extends StatelessWidget {
               height: 30,
               padding: const EdgeInsets.symmetric(horizontal: 10),
               decoration: BoxDecoration(
-                  color: whitePure(context).withValues(alpha: .15),
+                  color: ColorRes.whitePure.withValues(alpha: .15),
                   borderRadius: SmoothBorderRadius(cornerRadius: 30),
-                  border: Border.all(color: whitePure(context).withValues(alpha: .15))),
+                  border: Border.all(color: ColorRes.whitePure.withValues(alpha: .15))),
               child: FullNameWithBlueTick(
                   username: hostUser.username,
                   isVerify: hostUser.isVerify,
                   iconSize: 16,
                   icon: AssetRes.icVerifiedWhite,
-                  style: TextStyleCustom.outFitMedium500(color: whitePure(context), fontSize: 15)),
+                  style: TextStyleCustom.outFitMedium500(color: ColorRes.whitePure, fontSize: 15)),
             ),
           Text(
             '${watchingCount.numberFormat} ${LKey.viewers.tr}',
-            style: TextStyleCustom.outFitLight300(color: whitePure(context)),
+            style: TextStyleCustom.outFitLight300(color: ColorRes.whitePure),
           ),
         ],
       );
@@ -353,7 +353,7 @@ class LiveStreamListView extends StatelessWidget {
     Widget _buildDescription(Livestream stream) {
       return Flexible(
           child: Text(stream.description ?? '',
-              style: TextStyleCustom.outFitSemiBold600(color: whitePure(context), fontSize: 19),
+              style: TextStyleCustom.outFitSemiBold600(color: ColorRes.whitePure, fontSize: 19),
               maxLines: 3,
               overflow: TextOverflow.ellipsis));
     }

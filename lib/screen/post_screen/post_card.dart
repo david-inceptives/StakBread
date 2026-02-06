@@ -12,7 +12,7 @@ import 'package:stakBread/screen/post_screen/widget/post_animation_like.dart';
 import 'package:stakBread/screen/post_screen/widget/post_view_action_button.dart';
 import 'package:stakBread/screen/post_screen/widget/post_view_center.dart';
 import 'package:stakBread/screen/post_screen/widget/post_view_info_header.dart';
-import 'package:stakBread/utilities/theme_res.dart';
+import 'package:stakBread/utilities/color_res.dart';
 
 class PostCard extends StatelessWidget {
   final Post post;
@@ -58,7 +58,7 @@ class PostCard extends StatelessWidget {
           return const SizedBox();
         } else {
           return Container(
-            color: scaffoldBackgroundColor(context),
+            color: ColorRes.whitePure,
             padding: const EdgeInsets.only(left: 10.0, right: 10, top: 10),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,

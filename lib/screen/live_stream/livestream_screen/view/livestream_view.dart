@@ -14,7 +14,7 @@ import 'package:stakBread/screen/live_stream/livestream_screen/audience/widget/l
 import 'package:stakBread/screen/live_stream/livestream_screen/livestream_screen_controller.dart';
 import 'package:stakBread/utilities/asset_res.dart';
 import 'package:stakBread/utilities/text_style_custom.dart';
-import 'package:stakBread/utilities/theme_res.dart';
+import 'package:stakBread/utilities/color_res.dart';
 
 class LivestreamView extends StatelessWidget {
   final RxList<StreamView> streamViews;
@@ -274,7 +274,7 @@ class LiveStreamUserView extends StatelessWidget {
                   AssetRes.icMicOff,
                   height: 25,
                   width: 25,
-                  color: whitePure(context).withValues(alpha: .6),
+                  color: ColorRes.whitePure.withValues(alpha: .6),
                 )),
           if (isNameAndSpeakerVisible)
             _buildUserInfoOverlay(context,
@@ -308,7 +308,7 @@ class LiveStreamUserView extends StatelessWidget {
               ),
             FullNameWithBlueTick(
               username: liveUser?.username,
-              fontColor: whitePure(context),
+              fontColor: ColorRes.whitePure,
               fontSize: 12,
               isVerify: liveUser?.isVerify,
               onTap: () => _showUserActionSheet(liveUser!, state),
@@ -352,7 +352,7 @@ class MuteUnMuteButton extends StatelessWidget {
           isMute.value ? AssetRes.icSpeakerMute : AssetRes.icSpeaker,
           width: 24,
           height: 24,
-          color: whitePure(context).withValues(alpha: .5),
+          color: ColorRes.whitePure.withValues(alpha: .5),
         ),
       ),
     );

@@ -10,7 +10,7 @@ import 'package:stakBread/model/user_model/user_model.dart';
 import 'package:stakBread/screen/comment_sheet/comment_sheet_controller.dart';
 import 'package:stakBread/screen/comment_sheet/helper/comment_helper.dart';
 import 'package:stakBread/utilities/text_style_custom.dart';
-import 'package:stakBread/utilities/theme_res.dart';
+import 'package:stakBread/utilities/color_res.dart';
 
 class CommentBottomTextFieldView extends StatelessWidget {
   final CommentHelper helper;
@@ -23,7 +23,7 @@ class CommentBottomTextFieldView extends StatelessWidget {
   Widget build(BuildContext context) {
     final controller = Get.find<CommentSheetController>();
     return Container(
-      color: whitePure(context),
+      color: ColorRes.whitePure,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -68,12 +68,12 @@ class CommentBottomTextFieldView extends StatelessWidget {
                                             bottom: Radius.circular(19)),
                                     border: Border(
                                       top: !helper.isReplyUser.value
-                                          ? BorderSide(color: bgGrey(context))
+                                          ? BorderSide(color: ColorRes.bgGrey)
                                           : BorderSide.none,
                                       bottom:
-                                          BorderSide(color: bgGrey(context)),
-                                      left: BorderSide(color: bgGrey(context)),
-                                      right: BorderSide(color: bgGrey(context)),
+                                          BorderSide(color: ColorRes.bgGrey),
+                                      left: BorderSide(color: ColorRes.bgGrey),
+                                      right: BorderSide(color: ColorRes.bgGrey),
                                     )),
                                 child: DetectableTextField(
                                   onTap: () async {
@@ -89,7 +89,7 @@ class CommentBottomTextFieldView extends StatelessWidget {
                                   controller: helper.detectableTextController,
                                   focusNode: helper.detectableTextFocusNode,
                                   style: TextStyleCustom.outFitRegular400(
-                                      color: textDarkGrey(context),
+                                      color: ColorRes.textDarkGrey,
                                       fontSize: 16),
                                   onChanged: helper.onChanged,
                                   decoration: InputDecoration(
@@ -125,8 +125,7 @@ class CommentBottomTextFieldView extends StatelessWidget {
                                                     style: TextStyleCustom
                                                         .unboundedMedium500(
                                                       fontSize: 15,
-                                                      color: themeAccentSolid(
-                                                          context),
+                                                      color: ColorRes.themeAccentSolid,
                                                     ),
                                                     textAlign: isTextComment
                                                         ? TextAlign.start
@@ -139,7 +138,7 @@ class CommentBottomTextFieldView extends StatelessWidget {
                                     ),
                                     hintText: '${LKey.writeHere.tr}..',
                                     hintStyle: TextStyle(
-                                        color: textLightGrey(context)),
+                                        color: ColorRes.textLightGrey),
                                   ),
                                 ),
                               ),
@@ -172,10 +171,10 @@ class ReplyingToUserText extends StatelessWidget {
           height: 50,
           alignment: Alignment.centerLeft,
           decoration: BoxDecoration(
-              color: bgMediumGrey(context),
+              color: ColorRes.bgMediumGrey,
               borderRadius:
                   const BorderRadius.vertical(top: Radius.circular(19)),
-              border: Border.all(color: bgGrey(context))),
+              border: Border.all(color: ColorRes.bgGrey)),
           padding: const EdgeInsets.symmetric(horizontal: 20.0),
           child: Row(
             children: [
@@ -184,12 +183,12 @@ class ReplyingToUserText extends StatelessWidget {
                     '${LKey.replyingTo.tr} @${helper.replyComment.value?.user?.username}',
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: TextStyle(color: textLightGrey(context))),
+                    style: TextStyle(color: ColorRes.textLightGrey)),
               ),
               InkWell(
                   onTap: helper.onCloseReply,
                   child: Icon(Icons.close_rounded,
-                      color: textLightGrey(context), size: 20)),
+                      color: ColorRes.textLightGrey, size: 20)),
             ],
           ),
         ),

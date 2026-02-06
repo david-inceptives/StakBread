@@ -55,10 +55,20 @@ class LKey {
   static const String descriptionHere = "Description here..";
   static const String signIn = "SIGN IN";
   static const String toContinue = "TO CONTINUE";
+  static const String welcomeBack = "Welcome Back!";
+  static const String welcomeBackDesc =
+      "Welcome back — we missed you! Your services, bookings, and updates are all ready for you now.";
+  static const String emailOrUsername = "Email or Username";
   static const String enterYourEmail = "Enter Your Email";
   static const String enterPassword = "Enter Password";
+  static const String rememberMe = "Remember me";
   static const String forgetPassword = "Forget Password?";
   static const String logIn = "Log in";
+  static const String register = "Register";
+  static const String orSignInWith = "Or sign in with";
+  static const String dontHaveAccount = "Don't have an account?";
+  static const String agreeToPolicyContinue =
+      "By continuing, you agree to our";
   static const String logOut = "Log out";
   static const String deleteAccount = "Delete Account";
   static const String createAccountHere = "Create account here!";
@@ -71,9 +81,17 @@ class LKey {
   static const String reTypePassword = "Re-Type Password";
   static const String enterHere = "Enter here..";
   static const String createAccount = "Create Account";
+  static const String createYourAccount = "Create Your Account";
+  static const String registerNowDesc =
+      "Register now to book experts, follow your task updates, and stay connected.";
+  static const String orRegisterWith = "Or register with";
+  static const String alreadyHaveAccount = "Already have an account?";
   static const String enterFullName = "Enter Full Name";
   static const String livestreams = "LIVESTREAMS";
+  static const String search = "Search";
   static const String searchHere = "Search here..";
+  static const String verify = "Verify";
+  static const String uploadResume = "Upload Resume";
   static const String viewers = "Viewers";
   static const String messages = "Messages";
   static const String message = "Message";

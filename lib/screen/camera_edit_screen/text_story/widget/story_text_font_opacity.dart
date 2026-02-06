@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:stakBread/utilities/text_style_custom.dart';
-import 'package:stakBread/utilities/theme_res.dart';
+import 'package:stakBread/utilities/color_res.dart';
 
 class StoryTextFontOpacity extends StatelessWidget {
   final RxDouble progressValue;
@@ -14,22 +14,22 @@ class StoryTextFontOpacity extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: blackPure(context),
+      color: ColorRes.blackPure,
       padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
       child: Obx(
         () => Column(
           children: [
             Text(
               '${(((progressValue.value - min) / (max - min)) * 100).toInt()}%',
-              style: TextStyleCustom.outFitRegular400(color: whitePure(context), fontSize: 13),
+              style: TextStyleCustom.outFitRegular400(color: ColorRes.whitePure, fontSize: 13),
             ),
             const SizedBox(height: 10),
             Slider(
               value: progressValue.value,
               min: min,
               max: max,
-              activeColor: whitePure(context),
-              inactiveColor: textDarkGrey(context),
+              activeColor: ColorRes.whitePure,
+              inactiveColor: ColorRes.textDarkGrey,
               onChanged: (value) {
                 progressValue.value = value;
               },

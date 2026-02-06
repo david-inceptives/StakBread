@@ -8,7 +8,7 @@ import 'package:stakBread/languages/languages_keys.dart';
 import 'package:stakBread/screen/chat_screen/chat_screen_controller.dart';
 import 'package:stakBread/screen/chat_screen/widget/chat_bottom_action_view.dart';
 import 'package:stakBread/utilities/asset_res.dart';
-import 'package:stakBread/utilities/theme_res.dart';
+import 'package:stakBread/utilities/color_res.dart';
 
 class SendMediaSheet extends StatelessWidget {
   final String image;
@@ -26,7 +26,7 @@ class SendMediaSheet extends StatelessWidget {
           shape: const SmoothRectangleBorder(
               borderRadius: SmoothBorderRadius.vertical(
                   top: SmoothRadius(cornerRadius: 40, cornerSmoothing: 1))),
-          color: scaffoldBackgroundColor(context)),
+          color: ColorRes.whitePure),
       child: SafeArea(
         top: false,
         minimum: const EdgeInsets.only(bottom: 20),
@@ -42,12 +42,12 @@ class SendMediaSheet extends StatelessWidget {
                       fit: BoxFit.contain,
                       errorBuilder: (context, error, stackTrace) => Container(
                             decoration: BoxDecoration(
-                              color: bgGrey(context),
+                              color: ColorRes.bgGrey,
                               borderRadius: BorderRadius.circular(15),
                             ),
                             alignment: Alignment.center,
                             child: Image.asset(AssetRes.icNoImage,
-                                height: 100, width: 100, color: textDarkGrey(context)),
+                                height: 100, width: 100, color: ColorRes.textDarkGrey),
                           )),
                 ),
               ),

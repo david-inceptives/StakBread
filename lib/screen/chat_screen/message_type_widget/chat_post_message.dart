@@ -19,7 +19,7 @@ import 'package:stakBread/utilities/app_res.dart';
 import 'package:stakBread/utilities/asset_res.dart';
 import 'package:stakBread/utilities/font_res.dart';
 import 'package:stakBread/utilities/text_style_custom.dart';
-import 'package:stakBread/utilities/theme_res.dart';
+import 'package:stakBread/utilities/color_res.dart';
 
 class ChatPostMessage extends StatelessWidget {
   final MessageData message;
@@ -64,7 +64,7 @@ class ChatPostReelVideoMessage extends StatelessWidget {
         shape: SmoothRectangleBorder(
             borderRadius:
                 SmoothBorderRadius(cornerRadius: 15, cornerSmoothing: 1)),
-        color: textDarkGrey(context),
+        color: ColorRes.textDarkGrey,
         shadows: messageBubbleShadow,
       ),
       child: Column(
@@ -85,7 +85,7 @@ class ChatPostReelVideoMessage extends StatelessWidget {
                       radius: 12,
                       isShowPlaceHolder: true),
                   Image.asset(AssetRes.icChatPlay,
-                      width: 54, height: 54, color: whitePure(context))
+                      width: 54, height: 54, color: ColorRes.whitePure)
                 ],
               ),
             ),
@@ -120,7 +120,7 @@ class ChatPostImageMessage extends StatelessWidget {
           shape: SmoothRectangleBorder(
               borderRadius:
                   SmoothBorderRadius(cornerRadius: 15, cornerSmoothing: 1)),
-          color: textDarkGrey(context),
+          color: ColorRes.textDarkGrey,
           shadows: messageBubbleShadow,
         ),
         child: Column(
@@ -172,7 +172,7 @@ class ChatPostTextMessage extends StatelessWidget {
                 borderRadius:
                     SmoothBorderRadius(cornerRadius: 15, cornerSmoothing: 1)),
             shadows: messageBubbleShadow,
-            color: textDarkGrey(context)),
+            color: ColorRes.textDarkGrey),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -207,7 +207,7 @@ class ChatPostProfile extends StatelessWidget {
           Expanded(
             child: FullNameWithBlueTick(
                 username: user?.username ?? '',
-                fontColor: whitePure(context),
+                fontColor: ColorRes.whitePure,
                 iconSize: 18,
                 isVerify: user?.isVerify),
           )
@@ -227,7 +227,7 @@ class ChatPostText extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     TextStyle collapsedStyle = TextStyleCustom.outFitLight300(
-        fontSize: 15, color: whitePure(context), opacity: .8);
+        fontSize: 15, color: ColorRes.whitePure, opacity: .8);
 
     return Padding(
       padding:
@@ -248,7 +248,7 @@ class ChatPostText extends StatelessWidget {
                   TextSpan(
                     text: text,
                     style: textStyle?.copyWith(
-                      color: themeAccentSolid(context),
+                      color: ColorRes.themeAccentSolid,
                       fontFamily: FontRes.outFitMedium500,
                       fontSize: 15,
                     ),
@@ -259,7 +259,7 @@ class ChatPostText extends StatelessWidget {
               return TextSpan(
                 text: text,
                 style: textStyle?.copyWith(
-                  color: blueFollow(context),
+                  color: ColorRes.blueFollow,
                   fontFamily: FontRes.outFitMedium500,
                   fontSize: 15,
                 ),

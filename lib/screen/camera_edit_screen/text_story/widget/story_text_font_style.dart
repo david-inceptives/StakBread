@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:stakBread/screen/camera_edit_screen/text_story/story_text_view_controller.dart';
 import 'package:stakBread/utilities/text_style_custom.dart';
-import 'package:stakBread/utilities/theme_res.dart';
+import 'package:stakBread/utilities/color_res.dart';
 
 class StoryTextFontStyle extends StatelessWidget {
   const StoryTextFontStyle({super.key});
@@ -11,7 +11,7 @@ class StoryTextFontStyle extends StatelessWidget {
   Widget build(BuildContext context) {
     final controller = Get.find<StoryTextViewController>();
     return Container(
-      color: blackPure(context),
+      color: ColorRes.blackPure,
       padding: const EdgeInsets.symmetric(vertical: 5),
       child: Column(
         children: [
@@ -30,7 +30,7 @@ class StoryTextFontStyle extends StatelessWidget {
                       bool isSelected = controller.selectedAlignment.value == align;
                       return Icon(
                         align.icon,
-                        color: isSelected ? whitePure(context) : textLightGrey(context),
+                        color: isSelected ? ColorRes.whitePure : ColorRes.textLightGrey,
                         size: 30,
                       );
                     },
@@ -42,7 +42,7 @@ class StoryTextFontStyle extends StatelessWidget {
           const SizedBox(height: 10),
           Text(
             'Align'.toUpperCase(),
-            style: TextStyleCustom.outFitRegular400(color: whitePure(context), fontSize: 12),
+            style: TextStyleCustom.outFitRegular400(color: ColorRes.whitePure, fontSize: 12),
           )
         ],
       ),

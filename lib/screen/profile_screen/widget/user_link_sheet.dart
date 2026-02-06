@@ -6,7 +6,7 @@ import 'package:stakBread/common/widget/custom_divider.dart';
 import 'package:stakBread/model/user_model/user_model.dart';
 import 'package:stakBread/utilities/asset_res.dart';
 import 'package:stakBread/utilities/text_style_custom.dart';
-import 'package:stakBread/utilities/theme_res.dart';
+import 'package:stakBread/utilities/color_res.dart';
 
 class UserLinkSheet extends StatelessWidget {
   final List<Link> links;
@@ -19,7 +19,7 @@ class UserLinkSheet extends StatelessWidget {
       children: [
         Container(
           decoration: ShapeDecoration(
-              color: whitePure(context),
+              color: ColorRes.whitePure,
               shape: const SmoothRectangleBorder(
                 borderRadius: SmoothBorderRadius.vertical(
                     top: SmoothRadius(cornerRadius: 30, cornerSmoothing: 1)),
@@ -32,7 +32,7 @@ class UserLinkSheet extends StatelessWidget {
                     height: 1,
                     width: Get.width / 4,
                     margin: const EdgeInsets.only(top: 10, bottom: 10),
-                    color: bgGrey(context)),
+                    color: ColorRes.bgGrey),
                 Column(
                   children: List.generate(
                     links.length,
@@ -52,7 +52,7 @@ class UserLinkSheet extends StatelessWidget {
                                 child: Row(
                                   children: [
                                     Image.asset(AssetRes.icLink,
-                                        color: textDarkGrey(context),
+                                        color: ColorRes.textDarkGrey,
                                         height: 35,
                                         width: 35),
                                     const SizedBox(width: 20),
@@ -66,12 +66,12 @@ class UserLinkSheet extends StatelessWidget {
                                           style: TextStyleCustom
                                               .unboundedMedium500(
                                                   fontSize: 15,
-                                                  color: textDarkGrey(context)),
+                                                  color: ColorRes.textDarkGrey),
                                         ),
                                         Text(
                                           link.url ?? '',
                                           style: TextStyleCustom.outFitLight300(
-                                              color: textLightGrey(context)),
+                                              color: ColorRes.textLightGrey),
                                         ),
                                       ],
                                     ))

@@ -5,7 +5,7 @@ import 'package:stakBread/languages/languages_keys.dart';
 import 'package:stakBread/screen/create_feed_screen/create_feed_screen_controller.dart';
 import 'package:stakBread/utilities/asset_res.dart';
 import 'package:stakBread/utilities/text_style_custom.dart';
-import 'package:stakBread/utilities/theme_res.dart';
+import 'package:stakBread/utilities/color_res.dart';
 
 class FeedCommentToggle extends StatelessWidget {
   const FeedCommentToggle({super.key});
@@ -15,16 +15,16 @@ class FeedCommentToggle extends StatelessWidget {
     final controller = Get.find<CreateFeedScreenController>();
     return Container(
       height: 47,
-      color: bgLightGrey(context),
+      color: ColorRes.bgLightGrey,
       padding: const EdgeInsets.symmetric(horizontal: 18),
       child: Row(
         children: [
-          Image.asset(AssetRes.icComment, height: 22, width: 22, color: textDarkGrey(context)),
+          Image.asset(AssetRes.icComment, height: 22, width: 22, color: ColorRes.textDarkGrey),
           const SizedBox(width: 12),
           Expanded(
             child: Text(
               LKey.allowComments.tr,
-              style: TextStyleCustom.outFitLight300(fontSize: 15, color: textDarkGrey(context)),
+              style: TextStyleCustom.outFitLight300(fontSize: 15, color: ColorRes.textDarkGrey),
             ),
           ),
           CustomToggle(

@@ -13,7 +13,7 @@ import 'package:stakBread/languages/languages_keys.dart';
 import 'package:stakBread/screen/location_screen/location_screen_controller.dart';
 import 'package:stakBread/utilities/asset_res.dart';
 import 'package:stakBread/utilities/text_style_custom.dart';
-import 'package:stakBread/utilities/theme_res.dart';
+import 'package:stakBread/utilities/color_res.dart';
 
 class LocationScreen extends StatelessWidget {
   final LatLng latLng;
@@ -52,18 +52,18 @@ class LocationScreen extends StatelessWidget {
                     height: 37,
                     margin: const EdgeInsets.all(15),
                     decoration: BoxDecoration(
-                      color: whitePure(context),
+                      color: ColorRes.whitePure,
                       shape: BoxShape.circle,
                       boxShadow: [
                         BoxShadow(
-                            color: blackPure(context).withValues(alpha: .15),
+                            color: ColorRes.blackPure.withValues(alpha: .15),
                             offset: const Offset(0, 4),
                             blurRadius: 11.6)
                       ],
                     ),
                     alignment: Alignment.center,
                     child: Image.asset(AssetRes.icClose,
-                        color: textLightGrey(context), height: 20, width: 20),
+                        color: ColorRes.textLightGrey, height: 20, width: 20),
                   ),
                 ),
                 Expanded(
@@ -77,12 +77,12 @@ class LocationScreen extends StatelessWidget {
                           margin: EdgeInsets.only(
                               top: AppBar().preferredSize.height),
                           decoration: BoxDecoration(
-                            color: whitePure(context),
+                            color: ColorRes.whitePure,
                             borderRadius: const BorderRadius.vertical(
                                 top: Radius.circular(30)),
                             boxShadow: [
                               BoxShadow(
-                                  color: blackPure(context)
+                                  color: ColorRes.blackPure
                                       .withValues(alpha: 0.15),
                                   offset: const Offset(0, 4),
                                   blurRadius: 11.6)
@@ -156,13 +156,13 @@ class LocationScreen extends StatelessWidget {
       BuildContext context, LocationScreenController controller) {
     return Container(
       height: 155,
-      color: whitePure(context),
+      color: ColorRes.whitePure,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Center(
             child: CustomDivider(
-                color: bgGrey(context),
+                color: ColorRes.bgGrey,
                 margin: const EdgeInsets.only(top: 10, bottom: 15),
                 height: 1,
                 width: 100),
@@ -177,7 +177,7 @@ class LocationScreen extends StatelessWidget {
                     Text(
                       controller.placeTitle.value,
                       style: TextStyleCustom.unboundedSemiBold600(
-                          color: textDarkGrey(context), fontSize: 13),
+                          color: ColorRes.textDarkGrey, fontSize: 13),
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                     ),
@@ -185,7 +185,7 @@ class LocationScreen extends StatelessWidget {
                     Text(
                       '${controller.latLng.value.getDistance} ${LKey.km.tr}',
                       style: TextStyleCustom.outFitLight300(
-                          color: textLightGrey(context), fontSize: 13),
+                          color: ColorRes.textLightGrey, fontSize: 13),
                     ),
                   ],
                 ),

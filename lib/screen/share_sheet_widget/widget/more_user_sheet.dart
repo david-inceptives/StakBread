@@ -11,7 +11,7 @@ import 'package:stakBread/model/livestream/app_user.dart';
 import 'package:stakBread/screen/share_sheet_widget/share_sheet_widget_controller.dart';
 import 'package:stakBread/utilities/asset_res.dart';
 import 'package:stakBread/utilities/text_style_custom.dart';
-import 'package:stakBread/utilities/theme_res.dart';
+import 'package:stakBread/utilities/color_res.dart';
 
 class MoreUserSheet extends StatelessWidget {
   const MoreUserSheet({super.key});
@@ -22,7 +22,7 @@ class MoreUserSheet extends StatelessWidget {
     return Container(
         margin: EdgeInsets.only(top: AppBar().preferredSize.height * 2),
         decoration: ShapeDecoration(
-            color: whitePure(context),
+            color: ColorRes.whitePure,
             shape: const SmoothRectangleBorder(
                 borderRadius: SmoothBorderRadius.vertical(
                     top: SmoothRadius(cornerRadius: 30, cornerSmoothing: 1)))),
@@ -79,14 +79,14 @@ class MoreUserSheet extends StatelessWidget {
                                           width: 21,
                                           decoration: BoxDecoration(
                                               shape: BoxShape.circle,
-                                              color: whitePure(context),
+                                              color: ColorRes.whitePure,
                                               border: Border.all(
-                                                  color: whitePure(context),
+                                                  color: ColorRes.whitePure,
                                                   width: 1)),
                                           alignment: Alignment.center,
                                           child: Image.asset(
                                               AssetRes.icCheckCircle,
-                                              color: themeAccentSolid(context)),
+                                              color: ColorRes.themeAccentSolid),
                                         ),
                                       ),
                                     ),
@@ -99,7 +99,7 @@ class MoreUserSheet extends StatelessWidget {
                                     const EdgeInsets.symmetric(horizontal: 10),
                                 child: Text(chatUser?.username ?? '',
                                     style: TextStyleCustom.outFitRegular400(
-                                        color: textDarkGrey(context),
+                                        color: ColorRes.textDarkGrey,
                                         fontSize: 14),
                                     overflow: TextOverflow.ellipsis,
                                     textAlign: TextAlign.center,

@@ -13,7 +13,7 @@ import 'package:stakBread/languages/languages_keys.dart';
 import 'package:stakBread/model/general/location_place_model.dart';
 import 'package:stakBread/utilities/asset_res.dart';
 import 'package:stakBread/utilities/text_style_custom.dart';
-import 'package:stakBread/utilities/theme_res.dart';
+import 'package:stakBread/utilities/color_res.dart';
 
 class LocationSheet extends StatefulWidget {
   final Function(Places place) onLocationTap;
@@ -40,7 +40,7 @@ class _LocationSheetState extends State<LocationSheet> {
     return Container(
       margin: EdgeInsets.only(top: AppBar().preferredSize.height * 2),
       decoration: ShapeDecoration(
-        color: whitePure(context),
+        color: ColorRes.whitePure,
         shape: const SmoothRectangleBorder(
           borderRadius: SmoothBorderRadius.vertical(
             top: SmoothRadius(cornerRadius: 30, cornerSmoothing: 1),
@@ -133,7 +133,7 @@ class LocationErrorWidget extends StatelessWidget {
         Text(
           LKey.seePlacesNearYou.tr,
           style: TextStyleCustom.outFitMedium500(
-            color: textDarkGrey(context),
+            color: ColorRes.textDarkGrey,
             fontSize: 16,
           ),
         ),
@@ -141,7 +141,7 @@ class LocationErrorWidget extends StatelessWidget {
         Text(
           LKey.turnOnLocationServicesMessage.tr,
           style: TextStyleCustom.outFitLight300(
-            color: textDarkGrey(context),
+            color: ColorRes.textDarkGrey,
             fontSize: 14,
           ),
         ),
@@ -154,8 +154,8 @@ class LocationErrorWidget extends StatelessWidget {
           },
           title: LKey.turnOnLocationServicesButton.tr,
           fontSize: 14,
-          backgroundColor: textDarkGrey(context),
-          titleColor: whitePure(context),
+          backgroundColor: ColorRes.textDarkGrey,
+          titleColor: ColorRes.whitePure,
           radius: 5,
           btnHeight: 35,
           margin: const EdgeInsets.symmetric(horizontal: 40),

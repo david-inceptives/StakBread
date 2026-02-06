@@ -14,7 +14,7 @@ import 'package:stakBread/screen/video_player_screen/video_player_screen.dart';
 import 'package:stakBread/utilities/asset_res.dart';
 import 'package:stakBread/utilities/style_res.dart';
 import 'package:stakBread/utilities/text_style_custom.dart';
-import 'package:stakBread/utilities/theme_res.dart';
+import 'package:stakBread/utilities/color_res.dart';
 
 class ChatMediaMessage extends StatelessWidget {
   final bool isMe;
@@ -32,7 +32,7 @@ class ChatMediaMessage extends StatelessWidget {
       constraints: BoxConstraints(maxWidth: width),
       decoration: ShapeDecoration(
         shape: SmoothRectangleBorder(borderRadius: SmoothBorderRadius(cornerRadius: 15, cornerSmoothing: 1)),
-        color: isMe ? null : bgLightGrey(context),
+        color: isMe ? null : ColorRes.bgLightGrey,
         gradient: isMe ? StyleRes.themeGradient : null,
         shadows: messageBubbleShadow,
       ),
@@ -83,7 +83,7 @@ class ChatMediaMessage extends StatelessWidget {
                       height: 45,
                       width: 45,
                       decoration:
-                          BoxDecoration(color: blackPure(context).withValues(alpha: .5), shape: BoxShape.circle),
+                          BoxDecoration(color: ColorRes.blackPure.withValues(alpha: .5), shape: BoxShape.circle),
                       alignment: const Alignment(.1, 0),
                       child: Image.asset(AssetRes.icPlay, width: 30, height: 30),
                     )
@@ -97,7 +97,7 @@ class ChatMediaMessage extends StatelessWidget {
               child: Text(
                 message.textMessage ?? '',
                 style: TextStyleCustom.outFitRegular400(
-                    color: isMe ? whitePure(context) : textDarkGrey(context), fontSize: 16),
+                    color: isMe ? ColorRes.whitePure : ColorRes.textDarkGrey, fontSize: 16),
               ),
             )
         ],

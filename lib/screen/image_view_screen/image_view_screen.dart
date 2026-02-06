@@ -7,7 +7,7 @@ import 'package:stakBread/common/extensions/string_extension.dart';
 import 'package:stakBread/common/widget/custom_page_indicator.dart';
 import 'package:stakBread/model/post_story/post_model.dart';
 import 'package:stakBread/utilities/asset_res.dart';
-import 'package:stakBread/utilities/theme_res.dart';
+import 'package:stakBread/utilities/color_res.dart';
 
 class ImageViewScreen extends StatefulWidget {
   final List<Images> images;
@@ -83,7 +83,7 @@ class _ImageViewScreenState extends State<ImageViewScreen> {
                   AssetRes.icBackArrow,
                   height: 20,
                   width: 20,
-                  color: whitePure(context),
+                  color: ColorRes.whitePure,
                   alignment: Alignment.center,
                 ),
               ),

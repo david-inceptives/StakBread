@@ -18,9 +18,10 @@ import 'package:stakBread/screen/settings_screen/widget/setting_icon_text_with_a
 import 'package:stakBread/screen/subscription_screen/subscription_screen.dart';
 import 'package:stakBread/screen/term_and_privacy_screen/term_and_privacy_screen.dart';
 import 'package:stakBread/utilities/asset_res.dart';
+import 'package:stakBread/utilities/const_res.dart';
 import 'package:stakBread/utilities/style_res.dart';
 import 'package:stakBread/utilities/text_style_custom.dart';
-import 'package:stakBread/utilities/theme_res.dart';
+import 'package:stakBread/utilities/color_res.dart';
 
 class SettingsScreen extends StatelessWidget {
   final Function(User? user)? onUpdateUser;
@@ -57,15 +58,16 @@ class SettingsScreen extends StatelessWidget {
                   Get.to(() => const SavedPostScreen());
                 },
               ),
-              SettingIconTextWithArrow(
-                icon: AssetRes.icLanguage_1,
-                title: LKey.languages,
-                onTap: () {
-                  Get.to(() => const SelectLanguageScreen(
-                      languageNavigationType:
-                          LanguageNavigationType.fromSetting));
-                },
-              ),
+              if (kTranslationFeatureEnabled)
+                SettingIconTextWithArrow(
+                  icon: AssetRes.icLanguage_1,
+                  title: LKey.languages,
+                  onTap: () {
+                    Get.to(() => const SelectLanguageScreen(
+                        languageNavigationType:
+                            LanguageNavigationType.fromSetting));
+                  },
+                ),
               SettingIconTextWithArrow(
                 icon: AssetRes.icBlock,
                 title: LKey.blockedUsers,
@@ -99,7 +101,7 @@ class SettingsScreen extends StatelessWidget {
                         : controller.onChangedWhoCanSeePost,
                     selectedValue: controller.selectedWhoCanSeePost.value,
                     style: TextStyleCustom.outFitRegular400(
-                        fontSize: 15, color: textLightGrey(context)),
+                        fontSize: 15, color: ColorRes.textLightGrey),
                     getTitle: (value) => value.title,
                   ),
                 ),
@@ -224,22 +226,22 @@ class _SubscriptionCardState extends State<SubscriptionCard> {
                   text: TextSpan(
                       text: isVerify ? LKey.youAre.tr : LKey.become.tr,
                       style: TextStyleCustom.outFitRegular400(
-                          color: whitePure(context), fontSize: 15),
+                          color: ColorRes.whitePure, fontSize: 15),
                       children: [
                         TextSpan(
                             text: ' ${LKey.plus.tr} ',
                             style: TextStyleCustom.outFitExtraBold800(
-                                color: whitePure(context), fontSize: 15)),
+                                color: ColorRes.whitePure, fontSize: 15)),
                         TextSpan(
                             text: isVerify ? LKey.member.tr : '',
                             style: TextStyleCustom.outFitRegular400(
-                                color: whitePure(context), fontSize: 15)),
+                                color: ColorRes.whitePure, fontSize: 15)),
                       ]),
                 ),
               ),
               if (!isVerify)
                 Image.asset(AssetRes.icForwardArrow,
-                    width: 24, height: 20, color: whitePure(context))
+                    width: 24, height: 20, color: ColorRes.whitePure)
             ],
           ),
         ),
@@ -258,14 +260,14 @@ class SettingLabel extends StatelessWidget {
     return Container(
       height: 39,
       width: double.infinity,
-      color: bgMediumGrey(context),
+      color: ColorRes.bgMediumGrey,
       alignment: AlignmentDirectional.centerStart,
       padding: const EdgeInsets.symmetric(horizontal: 20),
       margin: const EdgeInsets.symmetric(vertical: 1),
       child: Text(
         title.tr.toUpperCase(),
         style: TextStyleCustom.outFitMedium500(
-                fontSize: 13, color: textLightGrey(context))
+                fontSize: 13, color: ColorRes.textLightGrey)
             .copyWith(letterSpacing: 2),
       ),
     );

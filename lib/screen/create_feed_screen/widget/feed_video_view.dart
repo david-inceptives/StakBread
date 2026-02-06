@@ -8,7 +8,7 @@ import 'package:stakBread/screen/color_filter_screen/color_filter_screen.dart';
 import 'package:stakBread/screen/create_feed_screen/create_feed_screen_controller.dart';
 import 'package:stakBread/utilities/asset_res.dart';
 import 'package:stakBread/utilities/text_style_custom.dart';
-import 'package:stakBread/utilities/theme_res.dart';
+import 'package:stakBread/utilities/color_res.dart';
 import 'package:video_player/video_player.dart';
 
 class FeedVideoView extends StatelessWidget {
@@ -39,7 +39,7 @@ class FeedVideoView extends StatelessWidget {
         return Container(
           width: Get.width,
           height: Get.width,
-          color: blackPure(context),
+          color: ColorRes.blackPure,
           child: Stack(
             alignment: Alignment.center,
             children: [
@@ -110,7 +110,7 @@ class FeedVideoView extends StatelessWidget {
                           image: value.isPlaying
                               ? AssetRes.icPause
                               : AssetRes.icPlay,
-                          bgColor: textDarkGrey(context).withValues(alpha: .4),
+                          bgColor: ColorRes.textDarkGrey.withValues(alpha: .4),
                           size: const Size(65, 65),
                           iconSize: 40,
                           onTap: () {
@@ -125,7 +125,7 @@ class FeedVideoView extends StatelessWidget {
                         width: double.infinity,
                         margin: const EdgeInsets.symmetric(horizontal: 15),
                         decoration: ShapeDecoration(
-                            color: textDarkGrey(context).withValues(alpha: .3),
+                            color: ColorRes.textDarkGrey.withValues(alpha: .3),
                             shape: SmoothRectangleBorder(
                                 borderRadius: SmoothBorderRadius(
                                     cornerRadius: 5, cornerSmoothing: 1))),
@@ -137,17 +137,17 @@ class FeedVideoView extends StatelessWidget {
                                 child: Text(
                                   value.position.printDuration,
                                   style: TextStyleCustom.outFitMedium500(
-                                      color: whitePure(context), fontSize: 12),
+                                      color: ColorRes.whitePure, fontSize: 12),
                                 )),
                             Expanded(
                               child: Slider(
                                 value: value.position.inMicroseconds.toDouble(),
                                 min: 0,
                                 max: value.duration.inMicroseconds.toDouble(),
-                                thumbColor: themeAccentSolid(context),
-                                activeColor: whitePure(context),
+                                thumbColor: ColorRes.themeAccentSolid,
+                                activeColor: ColorRes.whitePure,
                                 inactiveColor:
-                                    whitePure(context).withValues(alpha: .3),
+                                    ColorRes.whitePure.withValues(alpha: .3),
                                 onChangeStart: (value) {
                                   playerController.pause();
                                 },
@@ -166,7 +166,7 @@ class FeedVideoView extends StatelessWidget {
                               child: Text(
                                 value.duration.printDuration,
                                 style: TextStyleCustom.outFitMedium500(
-                                    color: whitePure(context), fontSize: 12),
+                                    color: ColorRes.whitePure, fontSize: 12),
                               ),
                             ),
                           ],

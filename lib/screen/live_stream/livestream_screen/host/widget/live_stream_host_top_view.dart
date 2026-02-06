@@ -12,7 +12,7 @@ import 'package:stakBread/screen/live_stream/livestream_screen/widget/members_sh
 import 'package:stakBread/utilities/asset_res.dart';
 import 'package:stakBread/utilities/color_res.dart';
 import 'package:stakBread/utilities/text_style_custom.dart';
-import 'package:stakBread/utilities/theme_res.dart';
+import 'package:stakBread/utilities/color_res.dart';
 
 class LiveStreamHostTopView extends StatelessWidget {
   final LivestreamScreenController controller;
@@ -60,7 +60,7 @@ class LiveStreamHostTopView extends StatelessWidget {
                         LiveStreamBorderButton(
                             title: watchingCount.numberFormat,
                             imageIcon: AssetRes.icEye_2,
-                            imageColor: whitePure(context)),
+                            imageColor: ColorRes.whitePure),
                         LiveStreamBorderButton(
                             title: (userState?.totalCoin ?? 0).numberFormat,
                             imageIcon: AssetRes.icCoin),
@@ -69,7 +69,7 @@ class LiveStreamHostTopView extends StatelessWidget {
                             margin: const EdgeInsets.all(0),
                             size: const Size(30, 30),
                             iconSize: 18,
-                            iconColor: whitePure(context),
+                            iconColor: ColorRes.whitePure,
                             onTap: () {
                               Get.bottomSheet(const MembersSheet(isHost: true),
                                   isScrollControlled: true);
@@ -87,15 +87,15 @@ class LiveStreamHostTopView extends StatelessWidget {
                                         borderRadius: SmoothBorderRadius(
                                             cornerRadius: 30),
                                         side: BorderSide(
-                                            color: whitePure(context)
+                                            color: ColorRes.whitePure
                                                 .withValues(alpha: .3))),
-                                    color: whitePure(context),
+                                    color: ColorRes.whitePure,
                                     shadows: livestreamShadow),
                                 child: Text(
                                   LKey.startBattle.tr,
                                   style: TextStyleCustom.unboundedRegular400(
                                       fontSize: 10,
-                                      color: themeAccentSolid(context)),
+                                      color: ColorRes.themeAccentSolid),
                                 ),
                               ),
                             ),
@@ -134,7 +134,7 @@ class StopLiveStreamSheet extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 30),
           width: double.infinity,
           decoration: ShapeDecoration(
-              color: whitePure(context),
+              color: ColorRes.whitePure,
               shape: const SmoothRectangleBorder(
                   borderRadius: SmoothBorderRadius.vertical(
                       top:
@@ -147,7 +147,7 @@ class StopLiveStreamSheet extends StatelessWidget {
                 alignment: Alignment.center,
                 child: Container(
                   height: .5,
-                  color: textLightGrey(context),
+                  color: ColorRes.textLightGrey,
                   width: 100,
                 ),
               ),
@@ -155,12 +155,12 @@ class StopLiveStreamSheet extends StatelessWidget {
               Text(
                 title ?? LKey.endStreamTitle.tr,
                 style: TextStyleCustom.unboundedRegular400(
-                    fontSize: 15, color: textDarkGrey(context)),
+                    fontSize: 15, color: ColorRes.textDarkGrey),
               ),
               Text(
                 description ?? LKey.endStreamMessage.tr,
                 style: TextStyleCustom.outFitLight300(
-                    fontSize: 17, color: textLightGrey(context)),
+                    fontSize: 17, color: ColorRes.textLightGrey),
               ),
               const SizedBox(height: 40),
               Row(
@@ -169,7 +169,7 @@ class StopLiveStreamSheet extends StatelessWidget {
                     child: TextButtonCustom(
                         onTap: Get.back,
                         title: LKey.cancel.tr,
-                        backgroundColor: bgMediumGrey(context)),
+                        backgroundColor: ColorRes.bgMediumGrey),
                   ),
                   Expanded(
                       child: TextButtonCustom(
@@ -178,8 +178,8 @@ class StopLiveStreamSheet extends StatelessWidget {
                             onTap();
                           },
                           title: positiveText ?? LKey.yes.tr,
-                          backgroundColor: themeAccentSolid(context),
-                          titleColor: whitePure(context),
+                          backgroundColor: ColorRes.themeAccentSolid,
+                          titleColor: ColorRes.whitePure,
                           horizontalMargin: 5)),
                 ],
               ),
@@ -222,11 +222,11 @@ class LiveStreamBorderButton extends StatelessWidget {
           shape: SmoothRectangleBorder(
             borderRadius: SmoothBorderRadius(cornerRadius: 30),
             side: BorderSide(
-              color: whitePure(context).withValues(alpha: .3),
+              color: ColorRes.whitePure.withValues(alpha: .3),
             ),
           ),
           shadows: shadow,
-          color: backgroundColor ?? blackPure(context).withValues(alpha: .1),
+          color: backgroundColor ?? ColorRes.blackPure.withValues(alpha: .1),
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -236,7 +236,7 @@ class LiveStreamBorderButton extends StatelessWidget {
               Image.asset(imageIcon, height: 16, width: 16, color: imageColor),
             Text(title,
                 style: TextStyleCustom.outFitRegular400(
-                    color: whitePure(context))),
+                    color: ColorRes.whitePure)),
           ],
         ),
       ),
@@ -282,15 +282,15 @@ class LiveStreamCircleBorderButton extends StatelessWidget {
           shape: SmoothRectangleBorder(
               borderRadius: SmoothBorderRadius(cornerRadius: 30),
               side: BorderSide(
-                color: borderColor ?? whitePure(context).withValues(alpha: .3),
+                color: borderColor ?? ColorRes.whitePure.withValues(alpha: .3),
               )),
-          color: (bgColor ?? blackPure(context)).withValues(alpha: .1),
+          color: (bgColor ?? ColorRes.blackPure).withValues(alpha: .1),
         ),
         child: Image.asset(
           image,
           height: iconSize ?? 20,
           width: iconSize ?? 20,
-          color: iconColor ?? whitePure(context).withValues(alpha: .3),
+          color: iconColor ?? ColorRes.whitePure.withValues(alpha: .3),
         ),
       ),
     );

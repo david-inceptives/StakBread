@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:stakBread/utilities/theme_res.dart';
+import 'package:stakBread/utilities/color_res.dart';
 
 class LoaderWidget extends StatelessWidget {
   final Color? color;
@@ -10,6 +10,6 @@ class LoaderWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Center(
         child: CircularProgressIndicator(
-            color: color ?? themeAccentSolid(context)));
+            color: color ?? ColorRes.themeAccentSolid));
   }
 }

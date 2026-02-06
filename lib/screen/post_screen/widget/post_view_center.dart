@@ -23,7 +23,7 @@ import 'package:stakBread/utilities/app_res.dart';
 import 'package:stakBread/utilities/asset_res.dart';
 import 'package:stakBread/utilities/font_res.dart';
 import 'package:stakBread/utilities/text_style_custom.dart';
-import 'package:stakBread/utilities/theme_res.dart';
+import 'package:stakBread/utilities/color_res.dart';
 
 class PostViewCenter extends StatelessWidget {
   final Post post;
@@ -98,7 +98,7 @@ class _PostTextViewState extends State<PostTextView> {
   Widget build(BuildContext context) {
     TextStyle collapsedStyle = TextStyleCustom.outFitLight300(
         fontSize: 15,
-        color: widget.basicTextColor ?? textLightGrey(context),
+        color: widget.basicTextColor ?? ColorRes.textLightGrey,
         opacity: .8);
 
     return InkWell(
@@ -119,7 +119,7 @@ class _PostTextViewState extends State<PostTextView> {
             lessStyle: collapsedStyle,
             moreStyle: collapsedStyle,
             style: TextStyleCustom.outFitRegular400(
-                color: widget.basicTextColor ?? textDarkGrey(context),
+                color: widget.basicTextColor ?? ColorRes.textDarkGrey,
                 fontSize: 15,
                 opacity: widget.basicTextOpacity),
             annotations: [
@@ -130,7 +130,7 @@ class _PostTextViewState extends State<PostTextView> {
                         text: text,
                         style: textStyle?.copyWith(
                           color: widget.hashtagTextColor ??
-                              themeAccentSolid(context),
+                              ColorRes.themeAccentSolid,
                           fontFamily: FontRes.outFitMedium500,
                           fontSize: 15,
                         ),
@@ -146,7 +146,7 @@ class _PostTextViewState extends State<PostTextView> {
                     TextSpan(
                         text: text,
                         style: textStyle?.copyWith(
-                          color: themeAccentSolid(context),
+                          color: ColorRes.themeAccentSolid,
                           fontFamily: FontRes.outFitMedium500,
                           fontSize: 15,
                         ),
@@ -161,7 +161,7 @@ class _PostTextViewState extends State<PostTextView> {
                   return TextSpan(
                     text: text,
                     style: textStyle?.copyWith(
-                      color: widget.mentionTextColor ?? blueFollow(context),
+                      color: widget.mentionTextColor ?? ColorRes.blueFollow,
                       fontFamily: FontRes.outFitMedium500,
                       fontSize: 15,
                     ),
@@ -335,7 +335,7 @@ class PostVideoView extends StatelessWidget {
                 width: 35,
                 decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    color: textDarkGrey(context).withValues(alpha: .4)),
+                    color: ColorRes.textDarkGrey.withValues(alpha: .4)),
                 alignment: Alignment.center,
                 child: Image.asset(AssetRes.icPlay, width: 20, height: 20),
               )

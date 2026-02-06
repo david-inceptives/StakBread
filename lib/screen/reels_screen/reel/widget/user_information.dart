@@ -23,7 +23,7 @@ import 'package:stakBread/utilities/app_res.dart';
 import 'package:stakBread/utilities/asset_res.dart';
 import 'package:stakBread/utilities/font_res.dart';
 import 'package:stakBread/utilities/text_style_custom.dart';
-import 'package:stakBread/utilities/theme_res.dart';
+import 'package:stakBread/utilities/color_res.dart';
 
 class UserInformation extends StatelessWidget {
   final ReelController controller;
@@ -75,7 +75,7 @@ class UserInfoHeader extends StatelessWidget {
             child: FullNameWithBlueTick(
                 username: user?.username,
                 isVerify: user?.isVerify,
-                fontColor: whitePure(context),
+                fontColor: ColorRes.whitePure,
                 fontSize: 14,
                 iconSize: 18),
           ),
@@ -126,7 +126,7 @@ class _FollowButtonState extends State<FollowButton> {
                       const EdgeInsets.symmetric(vertical: 4.0, horizontal: 5),
                   child: CupertinoActivityIndicator(
                       radius: 8.5,
-                      color: whitePure(context).withValues(alpha: .3)))
+                      color: ColorRes.whitePure.withValues(alpha: .3)))
               : Container(
                   margin: const EdgeInsets.symmetric(horizontal: 3),
                   padding:
@@ -135,14 +135,14 @@ class _FollowButtonState extends State<FollowButton> {
                     shape: SmoothRectangleBorder(
                         borderRadius: SmoothBorderRadius(cornerRadius: 30),
                         side: BorderSide(
-                            color: whitePure(context).withValues(alpha: .3)),
+                            color: ColorRes.whitePure.withValues(alpha: .3)),
                         borderAlign: BorderAlign.inside),
-                    color: whitePure(context).withValues(alpha: .05),
+                    color: ColorRes.whitePure.withValues(alpha: .05),
                   ),
                   child: Text(
                     LKey.follow.tr,
                     style: TextStyleCustom.outFitRegular400(
-                        fontSize: 13, color: whitePure(context)),
+                        fontSize: 13, color: ColorRes.whitePure),
                   ),
                 ),
         ),
@@ -168,7 +168,7 @@ class UserStats extends StatelessWidget {
                 ? DateFormat('dd MMM yyyy').format(DateTime.now())
                 : (reel.createdAt ?? '').formatDate,
             style: TextStyleCustom.outFitLight300(
-                color: whitePure(context), opacity: .8, fontSize: 11),
+                color: ColorRes.whitePure, opacity: .8, fontSize: 11),
           ),
           if (views > 0)
             Row(
@@ -178,13 +178,13 @@ class UserStats extends StatelessWidget {
                   width: 3,
                   margin: const EdgeInsets.symmetric(horizontal: 3),
                   decoration: BoxDecoration(
-                      color: whitePure(context).withValues(alpha: .8),
+                      color: ColorRes.whitePure.withValues(alpha: .8),
                       shape: BoxShape.circle),
                 ),
                 Text(
                   '${reel.views?.numberFormat ?? '0'} ${LKey.views.tr}',
                   style: TextStyleCustom.outFitLight300(
-                      color: whitePure(context), opacity: .8, fontSize: 11),
+                      color: ColorRes.whitePure, opacity: .8, fontSize: 11),
                 ),
               ],
             )
@@ -231,7 +231,7 @@ class UserLocation extends StatelessWidget {
               Expanded(
                 child: Text(reel.placeTitle ?? '',
                     style: TextStyleCustom.outFitLight300(
-                      color: whitePure(context),
+                      color: ColorRes.whitePure,
                     ),
                     overflow: TextOverflow.ellipsis,
                     maxLines: 2),
@@ -276,7 +276,7 @@ class _UserDescriptionState extends State<UserDescription> {
               child: ReadMoreText(
                 reel.descriptionWithUserName,
                 style: TextStyleCustom.outFitLight300(
-                    color: whitePure(context), opacity: .8, fontSize: 15),
+                    color: ColorRes.whitePure, opacity: .8, fontSize: 15),
                 isCollapsed: isCollapsed,
                 annotations: [
                   Annotation(
@@ -286,7 +286,7 @@ class _UserDescriptionState extends State<UserDescription> {
                         TextSpan(
                             text: text,
                             style: textStyle?.copyWith(
-                              color: whitePure(context).withValues(alpha: .8),
+                              color: ColorRes.whitePure.withValues(alpha: .8),
                               fontFamily: FontRes.outFitMedium500,
                               fontSize: 15,
                             ),
@@ -305,7 +305,7 @@ class _UserDescriptionState extends State<UserDescription> {
                       return TextSpan(
                         text: text,
                         style: textStyle?.copyWith(
-                            color: whitePure(context).withValues(alpha: .8),
+                            color: ColorRes.whitePure.withValues(alpha: .8),
                             fontFamily: FontRes.outFitMedium500,
                             fontSize: 15),
                         recognizer: TapGestureRecognizer()
@@ -330,9 +330,9 @@ class _UserDescriptionState extends State<UserDescription> {
                 trimExpandedText: '   ',
                 delimiter: '',
                 moreStyle: TextStyleCustom.outFitLight300(
-                    color: whitePure(context), opacity: .8, fontSize: 15),
+                    color: ColorRes.whitePure, opacity: .8, fontSize: 15),
                 lessStyle: TextStyleCustom.outFitLight300(
-                    color: whitePure(context), opacity: .8, fontSize: 15),
+                    color: ColorRes.whitePure, opacity: .8, fontSize: 15),
               ),
             ),
           ),

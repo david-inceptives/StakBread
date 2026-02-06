@@ -2,7 +2,7 @@ import 'package:figma_squircle_updated/figma_squircle.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:stakBread/utilities/text_style_custom.dart';
-import 'package:stakBread/utilities/theme_res.dart';
+import 'package:stakBread/utilities/color_res.dart';
 
 class CustomPopupMenuButton extends StatelessWidget {
   final List<MenuItem> items;
@@ -34,14 +34,14 @@ class CustomPopupMenuButton extends StatelessWidget {
       constraints: const BoxConstraints(maxHeight: 150),
       onOpened: onOpened,
       onCanceled: onCanceled,
-      surfaceTintColor: disableGrey(context),
+      surfaceTintColor: ColorRes.disabledGrey,
       offset: offset ?? Offset.zero,
-      color: whitePure(context),
+      color: ColorRes.whitePure,
       shadowColor: Colors.black,
       position: PopupMenuPosition.under,
       popUpAnimationStyle: const AnimationStyle(curve: Curves.linear),
       shape: SmoothRectangleBorder(
-        side: BorderSide(color: bgLightGrey(context)),
+        side: BorderSide(color: ColorRes.bgLightGrey),
         borderRadius: const SmoothBorderRadius.all(
             SmoothRadius(cornerRadius: 8, cornerSmoothing: 1)),
       ),
@@ -53,7 +53,7 @@ class CustomPopupMenuButton extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 10),
               child: Text(e.title.tr,
                   style: TextStyleCustom.outFitRegular400(
-                      fontSize: 17, color: textDarkGrey(context))));
+                      fontSize: 17, color: ColorRes.textDarkGrey)));
         }).toList();
       },
       child: child,

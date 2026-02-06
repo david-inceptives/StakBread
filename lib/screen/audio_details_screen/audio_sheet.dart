@@ -15,7 +15,7 @@ import 'package:stakBread/model/post_story/music/music_model.dart';
 import 'package:stakBread/screen/audio_details_screen/audio_details_screen.dart';
 import 'package:stakBread/utilities/asset_res.dart';
 import 'package:stakBread/utilities/text_style_custom.dart';
-import 'package:stakBread/utilities/theme_res.dart';
+import 'package:stakBread/utilities/color_res.dart';
 
 class AudioSheet extends StatefulWidget {
   final Music? music;
@@ -83,7 +83,7 @@ class _AudioSheetState extends State<AudioSheet> {
               shape: const SmoothRectangleBorder(
                   borderRadius: SmoothBorderRadius.vertical(
                       top: SmoothRadius(cornerRadius: 40, cornerSmoothing: 1))),
-              color: whitePure(context)),
+              color: ColorRes.whitePure),
           alignment: Alignment.center,
           child: SafeArea(
             top: false,
@@ -92,7 +92,7 @@ class _AudioSheetState extends State<AudioSheet> {
                 Container(
                     height: 2,
                     width: 100,
-                    color: bgGrey(context),
+                    color: ColorRes.bgGrey,
                     margin: const EdgeInsets.only(top: 10, bottom: 20)),
                 Container(
                   height: 115,
@@ -112,7 +112,7 @@ class _AudioSheetState extends State<AudioSheet> {
                                   music.value?.isSaved ?? false
                                       ? AssetRes.icFillBookmark1
                                       : AssetRes.icBookmark,
-                                  color: textDarkGrey(context),
+                                  color: ColorRes.textDarkGrey,
                                   width: 21,
                                   height: 25),
                             ),
@@ -124,7 +124,7 @@ class _AudioSheetState extends State<AudioSheet> {
                 Text(
                   widget.music?.title ?? '',
                   style: TextStyleCustom.outFitRegular400(
-                      fontSize: 15, color: textDarkGrey(context)),
+                      fontSize: 15, color: ColorRes.textDarkGrey),
                 ),
                 const SizedBox(height: 7),
                 FullNameWithBlueTick(
@@ -139,18 +139,18 @@ class _AudioSheetState extends State<AudioSheet> {
                 Text(
                   widget.music?.user?.fullname ?? LKey.admin.tr,
                   style: TextStyleCustom.outFitRegular400(
-                      color: textLightGrey(context), fontSize: 16),
+                      color: ColorRes.textLightGrey, fontSize: 16),
                 ),
                 const SizedBox(height: 20),
                 Text(
                   (widget.music?.postCount ?? 0).toString(),
                   style: TextStyleCustom.unboundedSemiBold600(
-                      color: textDarkGrey(context), fontSize: 16),
+                      color: ColorRes.textDarkGrey, fontSize: 16),
                 ),
                 Text(
                   LKey.reels.tr,
                   style: TextStyleCustom.outFitRegular400(
-                      color: textLightGrey(context), fontSize: 15),
+                      color: ColorRes.textLightGrey, fontSize: 15),
                 ),
                 const SizedBox(height: 25),
                 TextButtonCustom(
@@ -159,8 +159,8 @@ class _AudioSheetState extends State<AudioSheet> {
                     Get.to(() => AudioDetailsScreen(music: music));
                   },
                   title: LKey.checkVideos.tr,
-                  backgroundColor: themeAccentSolid(context),
-                  titleColor: whitePure(context),
+                  backgroundColor: ColorRes.themeAccentSolid,
+                  titleColor: ColorRes.whitePure,
                   horizontalMargin: 40,
                 ),
                 const SizedBox(height: 10),
@@ -206,7 +206,7 @@ class AudioImageWidget extends StatelessWidget {
             shape: BoxShape.circle,
             boxShadow: [
               BoxShadow(
-                  color: textDarkGrey(context).withValues(alpha: .2),
+                  color: ColorRes.textDarkGrey.withValues(alpha: .2),
                   blurRadius: 25)
             ],
           ),
@@ -238,7 +238,7 @@ class AudioImageWidget extends StatelessWidget {
                     !isPlaying.value ? AssetRes.icPlay : AssetRes.icPause,
                     height: 30,
                     width: 30,
-                    color: whitePure(context))),
+                    color: ColorRes.whitePure)),
           )
       ],
     );
