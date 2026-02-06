@@ -13,6 +13,8 @@ import 'package:stakBread/screen/search_screen/search_screen.dart';
 import 'package:stakBread/utilities/text_style_custom.dart';
 import 'package:stakBread/utilities/color_res.dart';
 
+import '../../utilities/asset_res.dart';
+
 class DiscoverScreen extends StatelessWidget {
   final User? myUser;
 
@@ -87,13 +89,13 @@ class DiscoverScreen extends StatelessWidget {
           ),
           const SizedBox(width: 12),
           _NotificationIcon(
-            icon: Icons.notifications_outlined,
+            icon: AssetRes.icNotification,
             count: notifCount,
             onTap: () => Get.to(() => const NotificationScreen()),
           ),
           const SizedBox(width: 8),
           _NotificationIcon(
-            icon: Icons.chat_bubble_outline_rounded,
+            icon: AssetRes.icMessage,
             count: messageCount,
             onTap: () => Get.to(() => const MessageScreen()),
           ),
@@ -165,7 +167,7 @@ class DiscoverScreen extends StatelessWidget {
 }
 
 class _NotificationIcon extends StatelessWidget {
-  final IconData icon;
+  final String icon;
   final int count;
   final VoidCallback onTap;
 
@@ -186,7 +188,13 @@ class _NotificationIcon extends StatelessWidget {
           alignment: Alignment.center,
           clipBehavior: Clip.none,
           children: [
-            Icon(icon, size: 26, color: ColorRes.textDarkGrey),
+            Image.asset(
+                icon,
+              height: 26,
+              width: 26,
+              fit: BoxFit.contain,
+                color: ColorRes.textDarkGrey
+            ),
             if (count > 0)
               Positioned(
                 top: 4,

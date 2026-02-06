@@ -81,8 +81,8 @@ class AssetRes {
   static const String icEdit = '${icons}ic_edit.png';
   static const String icBlock = '${icons}ic_block.png';
   static const String icEye_1 = '${icons}ic_eye_1.png';
-  static const String icMessage = '${icons}ic_message.png';
-  static const String icNotification_1 = '${icons}ic_notification_1.png';
+  static const String icMessage = '${icons}message.png';
+  static const String icNotification_1 = '${icons}notification_1.png';
   static const String icQrCode_1 = '${icons}ic_qr_code_1.png';
   static const String icReport = '${icons}ic_report.png';
   static const String icPro = '${icons}ic_pro.png';
