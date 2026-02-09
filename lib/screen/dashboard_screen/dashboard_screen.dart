@@ -10,6 +10,7 @@ import 'package:stakBread/screen/camera_screen/camera_screen.dart';
 import 'package:stakBread/screen/create_feed_screen/create_feed_screen.dart';
 import 'package:stakBread/screen/dashboard_screen/dashboard_screen_controller.dart';
 import 'package:stakBread/screen/discover_screen/discover_screen.dart';
+import 'package:stakBread/screen/explore_screen/explore_tab_screen.dart';
 import 'package:stakBread/screen/profile_screen/profile_screen.dart';
 import 'package:stakBread/screen/store_screen/store_screen.dart';
 import 'package:stakBread/utilities/style_res.dart';
@@ -35,7 +36,7 @@ class DashboardScreen extends StatelessWidget {
                 index: controller.selectedPageIndex.value,
                 children: [
                   IndexedStackChild(child: DiscoverScreen(myUser: myUser), preload: true),
-                  IndexedStackChild(child: Container(), preload: false),
+                  IndexedStackChild(child: const ExploreTabScreen(), preload: false),
                   IndexedStackChild(child: Container(), preload: false),
                   IndexedStackChild(child: const StoreScreen(), preload: true),
                   IndexedStackChild(child: ProfileScreen(isDashBoard: false, user: myUser, isTopBarVisible: false), preload: true)

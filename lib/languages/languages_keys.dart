@@ -111,6 +111,9 @@ class LKey {
   static const String buyNow = "Buy Now";
   static const String productsForYou = "Products For You";
   static const String topSellingProducts = "Top Selling Products";
+  static const String trendingReels = "Trending Reels";
+  static const String trendingCreators = "Trending Creators";
+  static const String viewResume = "View Resume";
   static const String storeBannerTitle = "Experience Sound Like Never Before!";
   static const String storeBannerSubtitle =
       "Crystal-Clear Audio, Deep Bass, And Ultimate Comfort.";

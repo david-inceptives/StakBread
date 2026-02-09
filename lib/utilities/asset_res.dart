@@ -40,6 +40,17 @@ class AssetRes {
   static const String camera3 = '${images}c3.png';
   static const String camera4 = '${images}c4.png';
   static const String emptyCart = '${images}empty_cart.png';
+  static const String reel1 = '${images}r1.png';
+  static const String reel2 = '${images}r2.png';
+  static const String reel3 = '${images}r3.png';
+  static const String reel4 = '${images}r4.png';
+  static const String creator1 = '${images}creator_1.png';
+  static const String creator2 = '${images}creator_2.png';
+  static const String categoryChipMusic = '${images}music.png';
+  static const String categoryChipFood = '${images}food.png';
+  static const String categoryChipFashion = '${images}fashoin.png';
+  static const String categoryChipGames = '${images}games.png';
+  static const String categoryChipComedy = '${images}comedy.png';
 
   // Icons
   static const String icLanguage = '${icons}ic_language.png';
