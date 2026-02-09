@@ -34,6 +34,22 @@ class SessionManager {
     return storage.read(SessionKeys.password);
   }
 
+  void setRememberMeCredentials({String? email, String? password}) {
+    if (email != null) storage.write(SessionKeys.rememberMeEmail, email);
+    if (password != null) storage.write(SessionKeys.rememberMePassword, password);
+    storage.write(SessionKeys.rememberMeChecked, true);
+  }
+
+  void clearRememberMe() {
+    storage.remove(SessionKeys.rememberMeEmail);
+    storage.remove(SessionKeys.rememberMePassword);
+    storage.remove(SessionKeys.rememberMeChecked);
+  }
+
+  String? getRememberMeEmail() => storage.read(SessionKeys.rememberMeEmail);
+  String? getRememberMePassword() => storage.read(SessionKeys.rememberMePassword);
+  bool get isRememberMeChecked => storage.read(SessionKeys.rememberMeChecked) == true;
+
   Token? getToken() {
     var token = storage.read(SessionKeys.authToken);
     if (token is Token?) {
@@ -191,6 +207,7 @@ class SessionManager {
     storage.remove(SessionKeys.notifyCount);
     storage.remove(SessionKeys.fallbackLang);
     storage.remove(SessionKeys.lang);
+    // Do NOT remove rememberMeEmail, rememberMePassword, rememberMeChecked so login fields stay filled after logout
   }
 }
 
@@ -203,6 +220,9 @@ class SessionKeys {
   static const user = "user";
   static const authToken = "authToken";
   static const password = "password";
+  static const rememberMeEmail = "remember_me_email";
+  static const rememberMePassword = "remember_me_password";
+  static const rememberMeChecked = "remember_me_checked";
   static const notifyCount = "notify_count";
   static const isLanguageScreenSelect = "is_language_screen_select";
   static const isOnBoardingScreenSelect = "is_on_boarding_screen_select";

@@ -60,8 +60,7 @@ class NoInternetSheet extends StatelessWidget {
                         },
                         title: LKey.refresh.tr,
                         titleColor: ColorRes.whitePure,
-                        backgroundColor:
-                            ColorRes.whitePure.withValues(alpha: .3),
+                        backgroundColor: ColorRes.green,
                         horizontalMargin: 0,
                       ),
                       SizedBox(height: AppBar().preferredSize.height * .5),

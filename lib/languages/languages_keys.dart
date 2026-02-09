@@ -107,6 +107,51 @@ class LKey {
   static const String livestreams = "LIVESTREAMS";
   static const String search = "Search";
   static const String searchHere = "Search here..";
+  static const String viewAll = "View All";
+  static const String buyNow = "Buy Now";
+  static const String productsForYou = "Products For You";
+  static const String topSellingProducts = "Top Selling Products";
+  static const String storeBannerTitle = "Experience Sound Like Never Before!";
+  static const String storeBannerSubtitle =
+      "Crystal-Clear Audio, Deep Bass, And Ultimate Comfort.";
+  static const String cosmetics = "Cosmetics";
+  static const String toys = "Toys";
+  static const String clothing = "Clothing";
+  static const String tech = "Tech";
+  static const String skincare = "Skincare";
+  static const String photography = "Photography";
+  static const String addToCart = "Add To Cart";
+  static const String viewCart = "View Cart";
+  static const String cart = "Cart";
+  static const String delivery = "Delivery";
+  static const String regularDelivery = "Regular Delivery";
+  static const String deliveryDays = "3-6 days";
+  static const String address = "Address";
+  static const String payment = "Payment";
+  static const String mastercard = "Mastercard";
+  static const String cardholderName = "Cardholder Name";
+  static const String couponCode = "Coupon code";
+  static const String yourCode = "Your code";
+  static const String totalPrice = "Total Price";
+  static const String includeTaxes = "Include taxes";
+  static const String paymentDetails = "Payment Details";
+  static const String checkOut = "Check Out";
+  static const String sizeLabel = "Size";
+  static const String colorLabel = "Color";
+  static const String yourCartIsEmpty = "Your Cart Is Empty!";
+  static const String yourCartIsEmptySubtext = "Looks Like You Haven't Added Anything To Your Cart Yet";
+  static const String startShopping = "Start Shopping";
+  static const String productsYouMayLike = "Products You May Like!";
+  static const String viewProduct = "View Product";
+  static const String orderConfirmed = "Order Confirmed!";
+  static const String yourOrderIsConfirmed = "Your Order Is Confirmed!";
+  static const String orderConfirmedSubtext = "Track Your Order To See Progress Of Your Order. We Will Deliver To You Soon!";
+  static const String done = "Done";
+  static const String reviewsAndRatings = "Reviews & Ratings";
+  static const String allReviews = "All";
+  static const String verifiedCustomer = "Verified Customer";
+  static const String productDetailDescription =
+      "This Old Retro Camera Brings Timeless Photography Back To Life With Its Classic Design, Durable Build, And Authentic Film-Shooting Experience. Crafted From High-Quality Materials And Preserved With Care, It Captures The Charm Of Vintage Photography While Delivering Rich, Nostalgic Images You Can't Replicate With Digital Devices.";
   static const String verify = "Verify";
   static const String uploadResume = "Upload Resume";
   static const String viewers = "Viewers";
@@ -230,7 +275,6 @@ class LKey {
   static const String changeCover = "Change Cover";
   static const String uploadNow = "Upload Now";
   static const String discard = "Discard";
-  static const String done = "Done";
   static const String fontFamily = "Font Family";
   static const String typeSomething = "Type Something...";
   static const String users = "Users";
@@ -641,4 +685,5 @@ class LKey {
   static const String shop = "Shop";
   static const String createPost = "Create Post";
   static const String postNow = "Post Now";
+  static const String productDetails = "Product Details";
 }

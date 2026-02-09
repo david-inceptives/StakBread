@@ -31,7 +31,18 @@ class AuthScreenController extends BaseController {
   void onInit() {
     CommonService.instance.fetchGlobalSettings();
     FirebaseNotificationManager.instance;
+    _loadRememberMe();
     super.onInit();
+  }
+
+  void _loadRememberMe() {
+    if (SessionManager.instance.isRememberMeChecked) {
+      final email = SessionManager.instance.getRememberMeEmail();
+      final password = SessionManager.instance.getRememberMePassword();
+      if (email != null && email.isNotEmpty) emailController.text = email;
+      if (password != null && password.isNotEmpty) passwordController.text = password;
+      rememberMe.value = true;
+    }
   }
 
   Future<void> onLogin() async {
@@ -66,6 +77,7 @@ class AuthScreenController extends BaseController {
       stopLoader();
 
       if (data != null) {
+        _saveOrClearRememberMe(email: email, password: password);
         _navigateScreen(data);
       }
     } else {
@@ -74,8 +86,17 @@ class AuthScreenController extends BaseController {
       stopLoader();
 
       if (data != null) {
+        _saveOrClearRememberMe(email: email, password: password);
         _navigateScreen(data);
       }
+    }
+  }
+
+  void _saveOrClearRememberMe({required String email, required String password}) {
+    if (rememberMe.value) {
+      SessionManager.instance.setRememberMeCredentials(email: email, password: password);
+    } else {
+      SessionManager.instance.clearRememberMe();
     }
   }
 

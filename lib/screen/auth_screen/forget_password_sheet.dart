@@ -30,6 +30,7 @@ class ForgetPasswordSheet extends StatelessWidget {
             BottomSheetTopView(title: LKey.forgetPassword.tr),
             Expanded(
               child: SingleChildScrollView(
+                padding: const EdgeInsets.symmetric(horizontal: 24),
                 child: Column(
                   children: [
                     const SizedBox(height: 10),
@@ -42,9 +43,9 @@ class ForgetPasswordSheet extends StatelessWidget {
                     TextButtonCustom(
                         onTap: controller.forgetPassword,
                         title: LKey.forgetPassword.tr,
-                        backgroundColor: ColorRes.textDarkGrey,
+                        backgroundColor: ColorRes.green,
                         titleColor: ColorRes.whitePure,
-                        margin: const EdgeInsets.all(15)),
+                        margin: const EdgeInsets.symmetric(horizontal: 0, vertical: 15)),
                     const PrivacyPolicyText(),
                   ],
                 ),

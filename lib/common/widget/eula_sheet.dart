@@ -35,7 +35,7 @@ class EulaSheet extends StatelessWidget {
               },
               title: LKey.accept.tr,
               titleColor: ColorRes.whitePure,
-              backgroundColor: ColorRes.themeColor,
+              backgroundColor: ColorRes.green,
             ),
           )
         ],

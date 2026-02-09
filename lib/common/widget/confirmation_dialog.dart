@@ -84,7 +84,7 @@ class ConfirmationSheet extends StatelessWidget {
                       onTap();
                     },
                     title: positiveText ?? LKey.continueText.tr,
-                    backgroundColor: ColorRes.textDarkGrey,
+                    backgroundColor: ColorRes.green,
                     margin: EdgeInsets.zero,
                     titleColor: ColorRes.whitePure,
                   ),

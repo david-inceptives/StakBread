@@ -218,7 +218,7 @@ class _LiveStreamUserInfoSheetState extends State<LiveStreamUserInfoSheet> {
                                           title: LKey.checkProfile.tr,
                                           titleColor: ColorRes.textLightGrey,
                                           backgroundColor:
-                                              ColorRes.bgMediumGrey,
+                                              ColorRes.green,
                                           horizontalMargin: 0,
                                         ),
                                       ),
@@ -235,7 +235,7 @@ class _LiveStreamUserInfoSheetState extends State<LiveStreamUserInfoSheet> {
                                                   : ColorRes.whitePure,
                                               backgroundColor: isFollow
                                                   ? ColorRes.bgGrey
-                                                  : ColorRes.blueFollow,
+                                                  : ColorRes.green,
                                               horizontalMargin: 0),
                                     ),
                                   ],

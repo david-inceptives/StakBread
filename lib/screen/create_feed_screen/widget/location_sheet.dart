@@ -154,7 +154,7 @@ class LocationErrorWidget extends StatelessWidget {
           },
           title: LKey.turnOnLocationServicesButton.tr,
           fontSize: 14,
-          backgroundColor: ColorRes.textDarkGrey,
+          backgroundColor: ColorRes.green,
           titleColor: ColorRes.whitePure,
           radius: 5,
           btnHeight: 35,

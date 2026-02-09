@@ -77,7 +77,7 @@ class BaseSelectSheet<T> extends StatelessWidget {
                     onTap: () => Get.back(),
                     titleColor: ColorRes.whitePure,
                     horizontalMargin: 0,
-                    backgroundColor: ColorRes.blackPure,
+                    backgroundColor: ColorRes.green,
                   ),
                 ),
               ),

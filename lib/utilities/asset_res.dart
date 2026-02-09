@@ -25,6 +25,21 @@ class AssetRes {
   static const String icBattleView = '${images}ic_battle_view.png';
   static const String greyPicture = '${images}grey_picture.jpeg';
   static const String icUserPlaceholder = '${images}ic_user_placeholder.png';
+  static const String categoryCosmetics = '${images}category_cosmetics.png';
+  static const String categoryToys = '${images}category_toys.png';
+  static const String categoryClothing = '${images}category_clothing.png';
+  static const String categoryTech = '${images}category_tech.png';
+  static const String categorySkincare = '${images}category_skincare.png';
+  static const String categoryPhotography = '${images}category_photography.png';
+  static const String storeBannerModel = '${images}store_banner_model.png';
+  static const String product1 = '${images}product_1.png';
+  static const String product2 = '${images}product_2.png';
+  static const String product3 = '${images}product_3.png';
+  static const String camera1 = '${images}c1.png';
+  static const String camera2 = '${images}c2.png';
+  static const String camera3 = '${images}c3.png';
+  static const String camera4 = '${images}c4.png';
+  static const String emptyCart = '${images}empty_cart.png';
 
   // Icons
   static const String icLanguage = '${icons}ic_language.png';
@@ -150,5 +165,8 @@ class AssetRes {
   static const String icAddNew = '${icons}add_new.png';
   static const String icProfile = '${icons}profile.png';
   static const String icStore = '${icons}store.png';
+  static const String icStoreFill = '${icons}store_fill.png';
   static const String icLogo = '${icons}logo.png';
+  static const String icRating = '${icons}rating.png';
+  static const String icSuccess = '${icons}success.png';
 }

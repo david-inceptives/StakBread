@@ -63,7 +63,7 @@ class _AddEditLinksSheetState extends State<AddEditLinksSheet> {
                 onTap: _onSave,
                 title: LKey.save.tr,
                 titleColor: ColorRes.whitePure,
-                backgroundColor: ColorRes.blackPure),
+                backgroundColor: ColorRes.green),
             SizedBox(height: AppBar().preferredSize.height),
           ],
         ),
