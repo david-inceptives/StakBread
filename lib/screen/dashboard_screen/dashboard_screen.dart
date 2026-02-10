@@ -245,17 +245,11 @@ class DashboardScreen extends StatelessWidget {
               child: Stack(
                 alignment: Alignment.center,
                 children: [
-                  ColorFiltered(
-                    colorFilter: ColorFilter.mode(
-                      iconColor,
-                      BlendMode.srcIn,
-                    ),
-                    child: Image.asset(
-                      controller.bottomIconList[index],
-                      height: 28,
-                      width: 28,
-                      fit: BoxFit.contain,
-                    ),
+                  Image.asset(
+                    isSelected?controller.bottomIconListFill[index]:controller.bottomIconList[index],
+                    height: 28,
+                    width: 28,
+                    fit: BoxFit.contain,
                   ),
                   if (index == 4) _buildUnreadCount(controller, context),
                 ],

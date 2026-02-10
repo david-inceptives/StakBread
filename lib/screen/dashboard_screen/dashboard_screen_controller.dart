@@ -33,6 +33,13 @@ class DashboardScreenController extends BaseController with GetSingleTickerProvi
     AssetRes.icStore,
     AssetRes.icProfile
   ];
+  List<String> bottomIconListFill = [
+    AssetRes.icHomeFill,
+    AssetRes.icDiscoverFill,
+    AssetRes.icAddNew,
+    AssetRes.icStoreFill,
+    AssetRes.icProfileFill
+  ];
   RxInt selectedPageIndex = 0.obs;
   RxDouble scaleValue = 1.0.obs;
   Function(int index)? onBottomIndexChanged;

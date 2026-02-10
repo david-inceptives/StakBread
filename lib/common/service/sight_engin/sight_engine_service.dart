@@ -25,16 +25,22 @@ class SightEngineService {
       completion();
       return;
     }
+    final apiUser = SessionManager.instance.getSettings()?.sightEngineApiUser ?? '';
+    final apiSecret = SessionManager.instance.getSettings()?.sightEngineApiSecret ?? '';
+    final workflowId = SessionManager.instance.getSettings()?.sightEngineImageWorkflowId ?? '';
+    if (apiUser.isEmpty || apiSecret.isEmpty || workflowId.isEmpty) {
+      Loggers.info(
+        'Sight Engine image moderation skipped: missing credentials or workflow in settings.');
+      completion();
+      return;
+    }
     BaseController.share.showLoader();
     var request = http.MultipartRequest('POST',
         Uri.parse('https://api.sightengine.com/1.0/check-workflow.json'));
 
-    request.fields['workflow'] =
-        SessionManager.instance.getSettings()?.sightEngineImageWorkflowId ?? '';
-    request.fields['api_user'] =
-        SessionManager.instance.getSettings()?.sightEngineApiUser ?? '';
-    request.fields['api_secret'] =
-        SessionManager.instance.getSettings()?.sightEngineApiSecret ?? '';
+    request.fields['workflow'] = workflowId;
+    request.fields['api_user'] = apiUser;
+    request.fields['api_secret'] = apiSecret;
 
     for (XFile xFile in xFiles) {
       File file = File(xFile.path);
@@ -84,6 +90,16 @@ class SightEngineService {
       return;
     }
 
+    final apiUser = SessionManager.instance.getSettings()?.sightEngineApiUser ?? '';
+    final apiSecret = SessionManager.instance.getSettings()?.sightEngineApiSecret ?? '';
+    final workflowId = SessionManager.instance.getSettings()?.sightEngineVideoWorkflowId ?? '';
+    if (apiUser.isEmpty || apiSecret.isEmpty || workflowId.isEmpty) {
+      Loggers.info(
+        'Sight Engine video moderation skipped: missing api_user, api_secret or workflow_id in settings. Reel will upload without moderation.');
+      completion();
+      return;
+    }
+
     File file = File(xFile.path);
     BaseController.share.showLoader();
     if (duration > AppRes.sightEngineCropSec) {
@@ -106,12 +122,9 @@ class SightEngineService {
       Uri.parse(
           'https://api.sightengine.com/1.0/video/check-workflow-sync.json'),
     );
-    request.fields['workflow'] =
-        SessionManager.instance.getSettings()?.sightEngineVideoWorkflowId ?? '';
-    request.fields['api_user'] =
-        SessionManager.instance.getSettings()?.sightEngineApiUser ?? '';
-    request.fields['api_secret'] =
-        SessionManager.instance.getSettings()?.sightEngineApiSecret ?? '';
+    request.fields['workflow'] = workflowId;
+    request.fields['api_user'] = apiUser;
+    request.fields['api_secret'] = apiSecret;
 
     request.files.add(
       http.MultipartFile(

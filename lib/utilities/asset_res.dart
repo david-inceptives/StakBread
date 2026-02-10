@@ -172,12 +172,16 @@ class AssetRes {
   static const String icLinkPlaceholder = '${icons}ic_link_placeholder.png';
   static const String icAdd = '${icons}ic_add.png';
   static const String icHome = '${icons}home.png';
+  static const String icHomeFill = '${icons}home_fill.png';
   static const String icDiscover = '${icons}discover.png';
+  static const String icDiscoverFill = '${icons}discover_fill.png';
   static const String icAddNew = '${icons}add_new.png';
   static const String icProfile = '${icons}profile.png';
+  static const String icProfileFill = '${icons}profile_fill.png';
   static const String icStore = '${icons}store.png';
   static const String icStoreFill = '${icons}store_fill.png';
   static const String icLogo = '${icons}logo.png';
   static const String icRating = '${icons}rating.png';
   static const String icSuccess = '${icons}success.png';
+  static const String icCart = '${icons}cart.png';
 }

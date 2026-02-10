@@ -99,17 +99,20 @@ class StoreScreen extends StatelessWidget {
             ),
           ),
           const SizedBox(width: 10),
-          _IconWithBadge(
-            icon: Icons.notifications_outlined,
+
+          const SizedBox(width: 12),
+          _NotificationIcon(
+            icon:  AssetRes.icNotification,
             count: notifCount,
             onTap: () => Get.to(() => const NotificationScreen()),
           ),
-          const SizedBox(width: 10),
-          Obx(() => _IconWithBadge(
-                icon: Icons.shopping_cart_outlined,
-                count: cartController.totalItemCount,
-                onTap: () => Get.to(() => const CartScreen()),
-              )),
+          const SizedBox(width: 8),
+          _NotificationIcon(
+            icon:  AssetRes.icCart,
+            count: cartController.totalItemCount,
+            onTap: () => Get.to(() => const CartScreen()),
+          ),
+
         ],
       ),
     );
@@ -558,6 +561,61 @@ class _TopSellingCard extends StatelessWidget {
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class _NotificationIcon extends StatelessWidget {
+  final String icon;
+  final int count;
+  final VoidCallback onTap;
+
+  const _NotificationIcon({
+    required this.icon,
+    required this.count,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: onTap,
+      child: SizedBox(
+        width: 44,
+        height: 44,
+        child: Stack(
+          alignment: Alignment.center,
+          clipBehavior: Clip.none,
+          children: [
+            Image.asset(
+                icon,
+                height: 26,
+                width: 26,
+                fit: BoxFit.contain,
+                color: ColorRes.textDarkGrey
+            ),
+            if (count > 0)
+              Positioned(
+                top: 4,
+                right: 8,
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
+                  decoration: BoxDecoration(
+                    color: ColorRes.likeRed,
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Text(
+                    count > 99 ? '99+' : '$count',
+                    style: TextStyleCustom.outFitRegular400(
+                      color: ColorRes.whitePure,
+                      fontSize: 10,
+                    ),
+                  ),
+                ),
+              ),
+          ],
+        ),
       ),
     );
   }
