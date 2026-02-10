@@ -16,6 +16,7 @@ import 'package:stakBread/languages/languages_keys.dart';
 import 'package:stakBread/model/general/settings_model.dart';
 import 'package:stakBread/model/user_model/user_model.dart' as user;
 import 'package:stakBread/screen/dashboard_screen/dashboard_screen.dart';
+import 'package:stakBread/screen/interest_screen/interest_screen.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 
 class AuthScreenController extends BaseController {
@@ -308,7 +309,15 @@ class AuthScreenController extends BaseController {
     DebounceAction.shared.call(() async {
       SessionManager.instance.setLogin(true);
       SessionManager.instance.setUser(data);
-      Get.offAll(() => DashboardScreen(myUser: data));
+      final isNewRegister = data?.newRegister == true;
+      final userId = data?.id?.toInt();
+      final hasNotCompletedInterest =
+          userId != null && !SessionManager.instance.hasCompletedInterestScreen(userId);
+      if (isNewRegister || hasNotCompletedInterest) {
+        Get.offAll(() => InterestScreen(myUser: data));
+      } else {
+        Get.offAll(() => DashboardScreen(myUser: data));
+      }
     }, milliseconds: 250);
   }
 }

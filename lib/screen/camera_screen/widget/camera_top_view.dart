@@ -21,7 +21,8 @@ class CameraTopView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final controller = Get.find<CameraScreenController>();
-    final isReelType = cameraType == CameraScreenType.post;
+    final isReelType = cameraType == CameraScreenType.post ||
+        cameraType == CameraScreenType.videoResume;
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 17, vertical: 10),

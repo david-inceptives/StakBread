@@ -2,6 +2,11 @@ class LKey {
   static const String language = "Language";
   static const String fromAroundTheWorld = "FROM AROUND\nTHE WORLD";
   static const String continueText = "Continue";
+  static const String interest = "Interest";
+  static const String selectTopicThatInterestYou = "Select Topic That Interest You";
+  static const String chooseInterestsDescription =
+      "Choose from a diverse range of interests that align with your passions and preferences.";
+  static const String maybeLater = "Maybe Later";
   static const String shareYourTalent =
       "Share your talent with the\npeople around the world\nand build your healthy fanbase.";
   static const String next = "Next";
@@ -157,6 +162,13 @@ class LKey {
       "This Old Retro Camera Brings Timeless Photography Back To Life With Its Classic Design, Durable Build, And Authentic Film-Shooting Experience. Crafted From High-Quality Materials And Preserved With Care, It Captures The Charm Of Vintage Photography While Delivering Rich, Nostalgic Images You Can't Replicate With Digital Devices.";
   static const String verify = "Verify";
   static const String uploadResume = "Upload Resume";
+  static const String recordVideo = "Record Video";
+  static const String uploadFromInternalStorage = "Upload From Internal Storage";
+  static const String uploadFromCloud = "Upload From Cloud";
+  static const String resumeVideo = "Resume Video";
+  static const String writeCaptionHere = "Write Caption Here...";
+  static const String attachDocument = "Attach Document";
+  static const String addToResume = "Add To Resume";
   static const String viewers = "Viewers";
   static const String messages = "Messages";
   static const String message = "Message";

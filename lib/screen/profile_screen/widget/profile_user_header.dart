@@ -17,6 +17,7 @@ import 'package:stakBread/screen/profile_screen/profile_screen_controller.dart';
 import 'package:stakBread/screen/profile_screen/widget/profile_preview_interactive_screen.dart';
 import 'package:stakBread/screen/profile_screen/widget/user_link_sheet.dart';
 import 'package:stakBread/screen/settings_screen/settings_screen.dart';
+import 'package:stakBread/screen/video_resume/upload_resume_sheet.dart';
 import 'package:stakBread/utilities/asset_res.dart';
 import 'package:stakBread/utilities/style_res.dart';
 import 'package:stakBread/utilities/text_style_custom.dart';
@@ -577,7 +578,7 @@ class RowButton extends StatelessWidget {
             const SizedBox(width: 12),
             Expanded(
               child: InkWell(
-                onTap: () => {},
+                onTap: () => showUploadResumeSheet(),
                 child: Container(
                   height: 46,
                   alignment: Alignment.center,

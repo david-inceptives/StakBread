@@ -22,6 +22,7 @@ import 'package:stakBread/screen/camera_edit_screen/camera_edit_screen.dart';
 import 'package:stakBread/screen/camera_screen/camera_screen.dart';
 import 'package:stakBread/screen/color_filter_screen/widget/color_filtered.dart';
 import 'package:stakBread/screen/music_sheet/music_sheet.dart';
+import 'package:stakBread/screen/video_resume/resume_video_details_screen.dart';
 import 'package:stakBread/screen/selected_music_sheet/selected_music_sheet.dart';
 import 'package:stakBread/screen/selected_music_sheet/selected_music_sheet_controller.dart';
 import 'package:stakBread/utilities/app_res.dart';
@@ -202,6 +203,12 @@ class CameraScreenController extends BaseController
           if (mediaFile != null) await _handleReel(mediaFile);
           break;
 
+        case CameraScreenType.videoResume:
+          final mediaFile = await MediaPickerHelper.shared
+              .pickVideo(source: ImageSource.gallery);
+          if (mediaFile != null) await _handleVideoResume(mediaFile);
+          break;
+
         case CameraScreenType.story:
           final mediaFile = await MediaPickerHelper.shared.pickMedia();
           if (mediaFile != null) {
@@ -362,6 +369,9 @@ class CameraScreenController extends BaseController
         case CameraScreenType.story:
           await handleVideoStory(mediaFile);
           break;
+        case CameraScreenType.videoResume:
+          await _handleVideoResume(mediaFile);
+          break;
       }
 
       selectedMusic.value = null;
@@ -406,7 +416,8 @@ class CameraScreenController extends BaseController
 
   // UI interaction methods
   void onPlayPauseToggle({int? type}) {
-    if (cameraType == CameraScreenType.post) {
+    if (cameraType == CameraScreenType.post ||
+        cameraType == CameraScreenType.videoResume) {
       _toggleReelRecording();
     } else {
       if (type != null) {
@@ -475,6 +486,16 @@ class CameraScreenController extends BaseController
       Loggers.error('Reel handling error: $e');
       stopLoader();
     }
+  }
+
+  Future<void> _handleVideoResume(MediaFile file) async {
+    stopLoader();
+    disposeCamera();
+    _resetAll();
+    Get.off(() => ResumeVideoDetailsScreen(
+          videoPath: file.file.path,
+          thumbnailPath: file.thumbNail.path,
+        ));
   }
 
   Future<void> onMusicTap() async {

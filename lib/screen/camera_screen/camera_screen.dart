@@ -13,7 +13,7 @@ import 'package:stakBread/screen/selected_music_sheet/selected_music_sheet_contr
 import 'package:stakBread/utilities/asset_res.dart';
 import 'package:stakBread/utilities/color_res.dart';
 
-enum CameraScreenType { post, story }
+enum CameraScreenType { post, story, videoResume }
 
 class CameraScreen extends StatelessWidget {
   final CameraScreenType cameraType;

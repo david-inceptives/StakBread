@@ -175,6 +175,16 @@ class SessionManager {
     return storage.read(SessionKeys.isLogin) ?? false;
   }
 
+  bool hasCompletedInterestScreen([int? userId]) {
+    final id = userId ?? getUserID();
+    return storage.read('${SessionKeys.interestDonePrefix}$id') == true;
+  }
+
+  void setInterestScreenCompleted([int? userId]) {
+    final id = userId ?? getUserID();
+    storage.write('${SessionKeys.interestDonePrefix}$id', true);
+  }
+
   void setLogin(bool isLog) {
     storage.write(SessionKeys.isLogin, true);
   }
@@ -226,4 +236,5 @@ class SessionKeys {
   static const notifyCount = "notify_count";
   static const isLanguageScreenSelect = "is_language_screen_select";
   static const isOnBoardingScreenSelect = "is_on_boarding_screen_select";
+  static const interestDonePrefix = "interest_screen_done_";
 }

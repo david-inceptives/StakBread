@@ -87,7 +87,6 @@ class ExploreTabScreen extends StatelessWidget {
               LKey.viewAll.tr,
               onViewAll: () {},
             ),
-            _buildReelCategoryChips(ctrl),
             _buildReelsHorizontalList(ctrl),
           ],
         );
@@ -127,72 +126,7 @@ class ExploreTabScreen extends StatelessWidget {
     );
   }
 
-  static const List<_ReelCategory> _reelCategories = [
-    _ReelCategory(label: 'Music', imagePath: AssetRes.categoryChipMusic),
-    _ReelCategory(label: 'Food', imagePath: AssetRes.categoryChipFood),
-    _ReelCategory(label: 'Fashion', imagePath: AssetRes.categoryChipFashion),
-    _ReelCategory(label: 'Games', imagePath: AssetRes.categoryChipGames),
-    _ReelCategory(label: 'Comedy', imagePath: AssetRes.categoryChipComedy),
-  ];
 
-  Widget _buildReelCategoryChips(ExploreTabController ctrl) {
-    return SizedBox(
-      height: 40,
-      child: ListView.builder(
-        scrollDirection: Axis.horizontal,
-        padding: const EdgeInsets.symmetric(horizontal: 16),
-        itemCount: _reelCategories.length,
-        itemBuilder: (context, index) {
-          final cat = _reelCategories[index];
-          final selected = ctrl.selectedReelCategoryIndex.value == index;
-          return Padding(
-            padding: const EdgeInsets.only(right: 10),
-            child: Material(
-              color: selected ? const Color(0xFF2D3142) : ColorRes.whitePure,
-              borderRadius: BorderRadius.circular(20),
-              child: InkWell(
-                onTap: () {
-                  ctrl.selectedReelCategoryIndex.value = index;
-                  ctrl.update();
-                },
-                borderRadius: BorderRadius.circular(20),
-                child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-                  decoration: BoxDecoration(
-                    border: Border.all(
-                      color: selected ? const Color(0xFF2D3142) : ColorRes.borderLight,
-                      width: 1,
-                    ),
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Image.asset(
-                        cat.imagePath,
-                        width: 20,
-                        height: 20,
-                        fit: BoxFit.contain,
-                        colorBlendMode: selected ? BlendMode.srcIn : null,
-                      ),
-                      const SizedBox(width: 6),
-                      Text(
-                        cat.label,
-                        style: TextStyleCustom.outFitMedium500(
-                          fontSize: 14,
-                          color: selected ? ColorRes.whitePure : ColorRes.textDarkGrey,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-          );
-        },
-      ),
-    );
-  }
 
   Widget _buildReelsHorizontalList(ExploreTabController ctrl) {
     return SizedBox(
