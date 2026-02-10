@@ -3,21 +3,23 @@
 <plist version="1.0">
 <dict>
 	<key>CLIENT_ID</key>
-	<string>287248537835-afnu1vijppfuq887rbr9poi278dvngut.apps.googleusercontent.com</string>
+	<string>503717627382-oaq6ith4849mkeindqpi0cn0put45luj.apps.googleusercontent.com</string>
 	<key>REVERSED_CLIENT_ID</key>
-	<string>com.googleusercontent.apps.287248537835-afnu1vijppfuq887rbr9poi278dvngut</string>
+	<string>com.googleusercontent.apps.503717627382-oaq6ith4849mkeindqpi0cn0put45luj</string>
+	<key>ANDROID_CLIENT_ID</key>
+	<string>503717627382-aaoods60op0a53mkh110ftil1p98vs58.apps.googleusercontent.com</string>
 	<key>API_KEY</key>
-	<string>AIzaSyCnAJYGCJMKXciLodir1Q8fhg-jAJayr2k</string>
+	<string>AIzaSyALaLMjyBqhgZLZA2WaDDNDqI0AvMMwiHU</string>
 	<key>GCM_SENDER_ID</key>
-	<string>287248537835</string>
+	<string>503717627382</string>
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>com.retrytech.bubbly</string>
+	<string>com.id.stakbread</string>
 	<key>PROJECT_ID</key>
-	<string>stakBread-new</string>
+	<string>stakbread</string>
 	<key>STORAGE_BUCKET</key>
-	<string>stakBread-new.firebasestorage.app</string>
+	<string>stakbread.firebasestorage.app</string>
 	<key>IS_ADS_ENABLED</key>
 	<false></false>
 	<key>IS_ANALYTICS_ENABLED</key>
@@ -29,6 +31,6 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:287248537835:ios:2d17d8f3840e462fea864e</string>
+	<string>1:503717627382:ios:bbd04d67f0eed9130273d7</string>
 </dict>
 </plist>
