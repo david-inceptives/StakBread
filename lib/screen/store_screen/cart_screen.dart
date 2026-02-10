@@ -24,7 +24,7 @@ class CartScreen extends StatelessWidget {
           children: [
             CustomAppBar(
               title: LKey.cart.tr,
-              titleStyle: TextStyleCustom.unboundedSemiBold600(fontSize: 18, color: ColorRes.textDarkGrey),
+              titleStyle: TextStyleCustom.unboundedSemiBold600(fontSize: 15, color: ColorRes.textDarkGrey),
               bgColor: const Color(0xFFF5F6F8),
               rowWidget: IconButton(
                 icon: Icon(Icons.more_horiz, color: ColorRes.textDarkGrey, size: 24),

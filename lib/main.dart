@@ -1,9 +1,10 @@
 import 'dart:async';
 import 'dart:io';
-
+import 'package:device_preview/device_preview.dart';
 import 'package:audio_session/audio_session.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
@@ -56,7 +57,14 @@ Future<void> main() async {
     Get.put(DynamicTranslations());
 
     // Run app
-    runApp(const RestartWidget(child: MyApp()));
+    //runApp(const RestartWidget(child: MyApp()));
+
+    runApp(
+      DevicePreview(
+        enabled: !kReleaseMode,
+        builder: (context) => const RestartWidget(child: MyApp()), // Wrap your app
+      ),
+    );
   } catch (e, st) {
     Loggers.error('Fatal crash during app startup $st');
   }
@@ -68,10 +76,11 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
-      builder: (context, child) =>
-          ScrollConfiguration(behavior: MyBehavior(), child: child!),
+      //builder: (context, child) => ScrollConfiguration(behavior: MyBehavior(), child: child!),
       translations: Get.find<DynamicTranslations>(),
-      locale: Locale(SessionManager.instance.getLang()),
+      //locale: Locale(SessionManager.instance.getLang()),
+      locale: DevicePreview.locale(context),
+      builder: DevicePreview.appBuilder,
       fallbackLocale: Locale(SessionManager.instance.getFallbackLang()),
       themeMode: ThemeMode.light,
       darkTheme: ThemeRes.darkTheme(),

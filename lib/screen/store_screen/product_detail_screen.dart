@@ -47,10 +47,13 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
         child: Column(
           children: [
             CustomAppBar(
-                title: LKey.productDetails.tr,
-                titleStyle: TextStyleCustom.unboundedSemiBold600(
-                    fontSize: 15, color: ColorRes.textDarkGrey),
-                widget: Container()),
+              title: LKey.productDetails.tr,
+              titleStyle: TextStyleCustom.unboundedSemiBold600(fontSize: 15, color: ColorRes.textDarkGrey),
+              rowWidget: IconButton(
+                icon: Icon(Icons.more_horiz, color: ColorRes.textDarkGrey, size: 24),
+                onPressed: () {},
+              ),
+            ),
             Expanded(
               child: SingleChildScrollView(
                 child:  Column(
@@ -66,7 +69,6 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                           displayImage,
                           fit: BoxFit.contain,
                           width: double.infinity,
-                          height: 410,
                         )
                             : _placeholder(),
                       ),
@@ -79,35 +81,41 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Expanded(
-                            child: Row(
-                              children: List.generate(
-                                thumbnails.length > 4 ? 4 : thumbnails.length,
-                                    (i) {
-                                  final isSelected = selectedThumbIndex == i;
-                                  return GestureDetector(
-                                    onTap: () => setState(() => selectedThumbIndex = i),
-                                    child: Container(
-                                      width: 44,
-                                      height: 44,
-                                      margin: const EdgeInsets.only(right: 10),
-                                      decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(12),
-                                        border: Border.all(
-                                          color: isSelected ? ColorRes.textDarkGrey : ColorRes.borderLight,
-                                          width: isSelected ? 2.5 : 1.5,
+                            child: Container(
+                              width:200,
+                              child: SingleChildScrollView(
+                                scrollDirection: Axis.horizontal,
+                                child: Row(
+                                  children: List.generate(
+                                    thumbnails.length > 4 ? 4 : thumbnails.length,
+                                        (i) {
+                                      final isSelected = selectedThumbIndex == i;
+                                      return GestureDetector(
+                                        onTap: () => setState(() => selectedThumbIndex = i),
+                                        child: Container(
+                                          width: 44,
+                                          height: 44,
+                                          margin: const EdgeInsets.only(right: 10),
+                                          decoration: BoxDecoration(
+                                            borderRadius: BorderRadius.circular(12),
+                                            border: Border.all(
+                                              color: isSelected ? ColorRes.textDarkGrey : ColorRes.borderLight,
+                                              width: isSelected ? 2.5 : 1.5,
+                                            ),
+                                          ),
+                                          child: ClipRRect(
+                                            borderRadius: BorderRadius.circular(11),
+                                            child: Image.asset(
+                                              thumbnails[i],
+                                              fit: BoxFit.cover,
+                                              errorBuilder: (_, __, ___) => Icon(Icons.image, size: 32, color: ColorRes.textLightGrey),
+                                            ),
+                                          ),
                                         ),
-                                      ),
-                                      child: ClipRRect(
-                                        borderRadius: BorderRadius.circular(11),
-                                        child: Image.asset(
-                                          thumbnails[i],
-                                          fit: BoxFit.cover,
-                                          errorBuilder: (_, __, ___) => Icon(Icons.image, size: 32, color: ColorRes.textLightGrey),
-                                        ),
-                                      ),
-                                    ),
-                                  );
-                                },
+                                      );
+                                    },
+                                  ),
+                                ),
                               ),
                             ),
                           ),
