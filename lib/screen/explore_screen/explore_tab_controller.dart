@@ -1,5 +1,10 @@
 import 'package:get/get.dart';
 import 'package:stakBread/common/controller/base_controller.dart';
+import 'package:stakBread/common/service/api/post_service.dart';
+import 'package:stakBread/common/service/api/user_service.dart';
+import 'package:stakBread/common/service/navigation/navigate_with_controller.dart';
+import 'package:stakBread/screen/explore_screen/trending_creators_screen.dart';
+import 'package:stakBread/screen/reels_screen/reels_screen.dart';
 import 'package:stakBread/screen/store_screen/store_screen_controller.dart';
 import 'package:stakBread/utilities/asset_res.dart';
 
@@ -49,5 +54,70 @@ class ExploreTabController extends BaseController {
       return Get.find<StoreScreenController>().topSelling;
     }
     return [];
+  }
+
+  /// Opens Trending Creators full screen (View All).
+  void onTrendingCreatorsViewAll() {
+    Get.to(() => TrendingCreatorsScreen(
+          creators: creatorItems,
+          onCreatorTap: onCreatorTap,
+        ));
+  }
+
+  /// Fetches trending reels and opens ReelsScreen (View All).
+  Future<void> onTrendingReelsViewAll() async {
+    showLoader();
+    try {
+      final list = await PostService.instance.fetchPostsDiscover(type: PostType.reels);
+      stopLoader();
+      if (list.isNotEmpty) {
+        Get.to(() => ReelsScreen(reels: list.obs, position: 0));
+      }
+    } catch (_) {
+      stopLoader();
+    }
+  }
+
+  /// Tap on a reel thumbnail: fetch post and open ReelsScreen.
+  Future<void> onReelTap(ExploreReelItem item) async {
+    final postId = int.tryParse(item.id);
+    if (postId == null) return;
+    showLoader();
+    try {
+      final model = await PostService.instance.fetchPostById(postId: postId);
+      stopLoader();
+      final post = model.data?.post;
+      if (post != null) {
+        Get.to(() => ReelsScreen(reels: [post].obs, position: 0));
+      }
+    } catch (_) {
+      stopLoader();
+    }
+  }
+
+  /// Map creator id to dummy user id (c1->2, c2->3, c3->4).
+  static int? _creatorIdToUserId(String id) {
+    switch (id) {
+      case 'c1': return 2;
+      case 'c2': return 3;
+      case 'c3': return 4;
+      default: return int.tryParse(id);
+    }
+  }
+
+  /// Tap on creator: fetch user and open ProfileScreen.
+  Future<void> onCreatorTap(ExploreCreatorItem creator) async {
+    final userId = _creatorIdToUserId(creator.id);
+    if (userId == null) return;
+    showLoader();
+    try {
+      final user = await UserService.instance.fetchUserDetails(userId: userId);
+      stopLoader();
+      if (user != null) {
+        await NavigationService.shared.openProfileScreen(user);
+      }
+    } catch (_) {
+      stopLoader();
+    }
   }
 }

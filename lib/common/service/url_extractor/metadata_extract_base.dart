@@ -6,21 +6,21 @@ import 'package:html/dom.dart';
 import 'package:html/parser.dart' as parser;
 import 'package:http/http.dart' as http;
 
+import 'package:stakBread/utilities/const_res.dart';
+
 import 'parsers/base_parser.dart';
 import 'parsers/metadata_parser.dart';
 import 'utils/util.dart';
 
 /// Fetches a [url], validates it, and returns [UrlMetadata].
 Future<UrlMetadata?> extract(String url) async {
-  // if (!isURL(url)) {
-  //   return null;
-  // }
-
   /// Sane defaults; Always return the Domain name as the [title], and a [description] for a given [url]
   final defaultOutput = UrlMetadata(
     title: getDomain(url),
     description: url,
   );
+
+  if (useDummyApi) return defaultOutput;
 
   try {
     final response = await http.get(Uri.parse(url));

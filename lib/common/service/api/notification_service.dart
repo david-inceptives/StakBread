@@ -57,6 +57,7 @@ class NotificationService {
       String? topic,
       num? deviceType,
       String? authorizationToken}) async {
+    if (useDummyApi) return; // no real push in dummy mode
     bool isIOS = deviceType == 1;
 
     Map<String, dynamic> messageData = {

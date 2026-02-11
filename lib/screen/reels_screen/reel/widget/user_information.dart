@@ -20,11 +20,22 @@ import 'package:stakBread/screen/hashtag_screen/hashtag_screen.dart';
 import 'package:stakBread/screen/location_screen/location_screen.dart';
 import 'package:stakBread/screen/reels_screen/reel/reel_page_controller.dart';
 import 'package:stakBread/screen/reels_screen/reel/widget/reel_product_widget.dart';
+import 'package:stakBread/screen/store_screen/store_screen_controller.dart';
 import 'package:stakBread/utilities/app_res.dart';
 import 'package:stakBread/utilities/asset_res.dart';
 import 'package:stakBread/utilities/font_res.dart';
 import 'package:stakBread/utilities/text_style_custom.dart';
 import 'package:stakBread/utilities/color_res.dart';
+
+/// Returns the store product to show on this reel. When Post has productId, resolve by id; else use first product.
+StoreProduct? _reelProduct(ReelController controller) {
+  final store = Get.isRegistered<StoreScreenController>()
+      ? Get.find<StoreScreenController>()
+      : Get.put(StoreScreenController());
+  if (store.productsForYou.isNotEmpty) return store.productsForYou.first;
+  if (store.topSelling.isNotEmpty) return store.topSelling.first;
+  return null;
+}
 
 class UserInformation extends StatelessWidget {
   final ReelController controller;
@@ -71,8 +82,19 @@ class UserInfoHeader extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        /// 🛒 Product widget overlay (left side)
-        ReelProductWidget(controller: controller),
+        /// 🛒 Product widget overlay (left side); tap opens product detail
+        Builder(
+          builder: (_) {
+            final product = _reelProduct(controller);
+            return ReelProductWidget(
+              controller: controller,
+              product: product,
+              productTitle: product?.title,
+              productPrice: product?.price,
+              productImagePath: product?.imagePath,
+            );
+          },
+        ),
         SizedBox(height: 20,),
         Row(
           children: [

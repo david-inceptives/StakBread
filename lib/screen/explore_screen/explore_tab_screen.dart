@@ -85,7 +85,7 @@ class ExploreTabScreen extends StatelessWidget {
             _buildSectionHeader(
               LKey.trendingReels.tr,
               LKey.viewAll.tr,
-              onViewAll: () {},
+              onViewAll: () => ctrl.onTrendingReelsViewAll(),
             ),
             _buildReelsHorizontalList(ctrl),
           ],
@@ -137,7 +137,10 @@ class ExploreTabScreen extends StatelessWidget {
         itemCount: ctrl.reelItems.length,
         itemBuilder: (context, index) {
           final item = ctrl.reelItems[index];
-          return _ReelThumbnailCard(item: item);
+          return _ReelThumbnailCard(
+            item: item,
+            onTap: () => ctrl.onReelTap(item),
+          );
         },
       ),
     );
@@ -152,7 +155,7 @@ class ExploreTabScreen extends StatelessWidget {
             _buildSectionHeader(
               LKey.trendingCreators.tr,
               LKey.viewAll.tr,
-              onViewAll: () {},
+              onViewAll: () => ctrl.onTrendingCreatorsViewAll(),
             ),
             SizedBox(
               height: 200,
@@ -162,7 +165,10 @@ class ExploreTabScreen extends StatelessWidget {
                 itemCount: ctrl.creatorItems.length,
                 itemBuilder: (context, index) {
                   final creator = ctrl.creatorItems[index];
-                  return _CreatorCard(creator: creator);
+                  return _CreatorCard(
+                    creator: creator,
+                    onProfileTap: () => ctrl.onCreatorTap(creator),
+                  );
                 },
               ),
             ),
@@ -212,30 +218,34 @@ class _ReelCategory {
 
 class _ReelThumbnailCard extends StatelessWidget {
   final ExploreReelItem item;
+  final VoidCallback? onTap;
 
-  const _ReelThumbnailCard({required this.item});
+  const _ReelThumbnailCard({required this.item, this.onTap});
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: 110,
-      margin: const EdgeInsets.only(right: 12),
-      decoration: BoxDecoration(
-        color: ColorRes.borderLight,
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Stack(
-        fit: StackFit.expand,
-        children: [
-          ClipRRect(
-            borderRadius: BorderRadius.circular(12),
-            child: item.imagePath != null && item.imagePath!.isNotEmpty
-                ? Image.asset(item.imagePath!, fit: BoxFit.cover)
-                : Container(
-                    color: const Color(0xFFE8E8E8),
-                    child: Icon(Icons.videocam_outlined, size: 36, color: ColorRes.textLightGrey),
-                  ),
-          ),
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(12),
+      child: Container(
+        width: 110,
+        margin: const EdgeInsets.only(right: 12),
+        decoration: BoxDecoration(
+          color: ColorRes.borderLight,
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Stack(
+          fit: StackFit.expand,
+          children: [
+            ClipRRect(
+              borderRadius: BorderRadius.circular(12),
+              child: item.imagePath != null && item.imagePath!.isNotEmpty
+                  ? Image.asset(item.imagePath!, fit: BoxFit.cover)
+                  : Container(
+                      color: const Color(0xFFE8E8E8),
+                      child: Icon(Icons.videocam_outlined, size: 36, color: ColorRes.textLightGrey),
+                    ),
+            ),
          /* Positioned(
             left: 8,
             bottom: 8,
@@ -254,7 +264,8 @@ class _ReelThumbnailCard extends StatelessWidget {
               ],
             ),
           ),*/
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -262,8 +273,9 @@ class _ReelThumbnailCard extends StatelessWidget {
 
 class _CreatorCard extends StatelessWidget {
   final ExploreCreatorItem creator;
+  final VoidCallback? onProfileTap;
 
-  const _CreatorCard({required this.creator});
+  const _CreatorCard({required this.creator, this.onProfileTap});
 
   @override
   Widget build(BuildContext context) {
@@ -286,64 +298,74 @@ class _CreatorCard extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Stack(
-            clipBehavior: Clip.none,
-            children: [
-              Center(
-                child: CircleAvatar(
-                  radius: 36,
-                  backgroundColor: ColorRes.borderLight,
-                  backgroundImage: creator.avatarPath != null && creator.avatarPath!.isNotEmpty
-                      ? AssetImage(creator.avatarPath!) as ImageProvider
-                      : null,
-                  child: creator.avatarPath == null || creator.avatarPath!.isEmpty
-                      ? Image.asset(AssetRes.icUserPlaceholder, width: 48, height: 48, fit: BoxFit.cover)
-                      : null,
+          InkWell(
+            onTap: onProfileTap,
+            borderRadius: BorderRadius.circular(36),
+            child: Stack(
+              clipBehavior: Clip.none,
+              children: [
+                Center(
+                  child: CircleAvatar(
+                    radius: 36,
+                    backgroundColor: ColorRes.borderLight,
+                    backgroundImage: creator.avatarPath != null && creator.avatarPath!.isNotEmpty
+                        ? AssetImage(creator.avatarPath!) as ImageProvider
+                        : null,
+                    child: creator.avatarPath == null || creator.avatarPath!.isEmpty
+                        ? Image.asset(AssetRes.icUserPlaceholder, width: 48, height: 48, fit: BoxFit.cover)
+                        : null,
+                  ),
                 ),
-              ),
-              Positioned(
-                top: -4,
-                right: -4,
-                child: GestureDetector(
-                  onTap: () {},
-                  child: Icon(Icons.close, size: 18, color: ColorRes.textLightGrey),
+                Positioned(
+                  top: -4,
+                  right: -4,
+                  child: GestureDetector(
+                    onTap: () {},
+                    child: Icon(Icons.close, size: 18, color: ColorRes.textLightGrey),
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
           const SizedBox(height: 10),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Flexible(
-                child: Text(
-                  creator.name,
-                  style: TextStyleCustom.outFitSemiBold600(
-                    fontSize: 14,
-                    color: ColorRes.textDarkGrey,
+          InkWell(
+            onTap: onProfileTap,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Flexible(
+                  child: Text(
+                    creator.name,
+                    style: TextStyleCustom.outFitSemiBold600(
+                      fontSize: 14,
+                      color: ColorRes.textDarkGrey,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    textAlign: TextAlign.center,
                   ),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  textAlign: TextAlign.center,
                 ),
-              ),
-              if (creator.verified) ...[
-                const SizedBox(width: 4),
-                Icon(Icons.verified, size: 14, color: ColorRes.themeAccentSolid),
+                if (creator.verified) ...[
+                  const SizedBox(width: 4),
+                  Icon(Icons.verified, size: 14, color: ColorRes.themeAccentSolid),
+                ],
               ],
-            ],
+            ),
           ),
           const SizedBox(height: 2),
-          Text(
-            creator.profession,
-            style: TextStyleCustom.outFitRegular400(
-              fontSize: 12,
-              color: ColorRes.textLightGrey,
+          InkWell(
+            onTap: onProfileTap,
+            child: Text(
+              creator.profession,
+              style: TextStyleCustom.outFitRegular400(
+                fontSize: 12,
+                color: ColorRes.textLightGrey,
+              ),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              textAlign: TextAlign.center,
             ),
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            textAlign: TextAlign.center,
           ),
           const SizedBox(height: 10),
           SizedBox(

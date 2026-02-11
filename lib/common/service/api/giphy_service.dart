@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:stakBread/common/manager/logger.dart';
 import 'package:stakBread/model/giphy/giphy_model.dart';
+import 'package:stakBread/utilities/const_res.dart';
 
 // https://developers.giphy.com/docs/optional-settings/#rating
 enum GiphyRating {
@@ -38,6 +39,7 @@ class GiphyService {
     required int startCount,
     GiphyRating giphyRating = GiphyRating.g,
   }) async {
+    if (useDummyApi) return [];
     String url =
         'https://api.giphy.com/v1/stickers/search?api_key=$apiKey&q=$keyWord&limit=$paginationLimit&offset=$startCount&rating=${giphyRating.title}';
     http.Response response = await http.get(Uri.parse(url));
@@ -52,6 +54,7 @@ class GiphyService {
       {required String apiKey,
       GiphyRating giphyRating = GiphyRating.g,
       required int startCount}) async {
+    if (useDummyApi) return [];
     String url =
         'https://api.giphy.com/v1/stickers/trending?api_key=$apiKey&limit=$paginationLimit&offset=$startCount&rating=${giphyRating.title}';
     Loggers.info(url);

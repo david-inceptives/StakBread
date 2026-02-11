@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:shimmer/shimmer.dart';
 import 'package:stakBread/common/extensions/string_extension.dart';
 import 'package:stakBread/common/service/api/post_service.dart';
 import 'package:stakBread/common/widget/black_gradient_shadow.dart';
@@ -10,7 +11,6 @@ import 'package:stakBread/screen/dashboard_screen/dashboard_screen_controller.da
 import 'package:stakBread/screen/reels_screen/reel/reel_page_controller.dart';
 import 'package:stakBread/screen/reels_screen/reel/widget/reel_animation_like.dart';
 import 'package:stakBread/screen/reels_screen/reel/widget/reel_seek_bar.dart';
-import 'package:stakBread/screen/reels_screen/reel/widget/reel_product_widget.dart';
 import 'package:stakBread/screen/reels_screen/reel/widget/side_bar_list.dart';
 import 'package:stakBread/screen/reels_screen/reel/widget/user_information.dart';
 import 'package:stakBread/screen/reels_screen/reels_screen_controller.dart';
@@ -164,7 +164,10 @@ class _ReelPageState extends State<ReelPage> {
       child: Stack(
         alignment: Alignment.bottomCenter,
         children: [
-          /// 🎬 Directly play video (no thumbnail, no loader)
+          /// ✨ Shimmer placeholder until video is ready
+          if (!_initialized) _buildShimmerPlaceholder(),
+
+          /// 🎬 Video content (after init)
           if (_controller != null) buildContent(),
 
           /// 🕹 Tap Overlay (pause/play)
@@ -215,6 +218,32 @@ class _ReelPageState extends State<ReelPage> {
             );
           }),
         ],
+      ),
+    );
+  }
+
+  Widget _buildShimmerPlaceholder() {
+    return Positioned.fill(
+      child: Container(
+        color: ColorRes.blackPure,
+        child: Shimmer.fromColors(
+          baseColor: ColorRes.blackPure,
+          highlightColor: ColorRes.bgGrey.withValues(alpha: 0.2),
+          child: Column(
+            children: [
+              const Spacer(flex: 1),
+              Container(
+                height: MediaQuery.sizeOf(context).height,
+                decoration: BoxDecoration(
+                  color: ColorRes.bgGrey.withValues(alpha: 0.2),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+              const Spacer(flex: 1),
+
+            ],
+          ),
+        ),
       ),
     );
   }

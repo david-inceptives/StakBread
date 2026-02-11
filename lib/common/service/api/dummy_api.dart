@@ -285,7 +285,7 @@ class DummyApi {
           'fullname': 'Demo User',
           'username': 'demouser',
           'user_email': 'demo@demo.com',
-          'profile_photo': null,
+          'profile_photo': _loggedInUserProfileUrl,
           'bio': null,
           'follower_count': 0,
           'following_count': 0,
@@ -560,13 +560,65 @@ class DummyApi {
       return {'status': true, 'message': 'Success', 'data': _dummyPost(postType: 1, videoIndex: 0)..['id'] = 999};
     }
 
-    // Add comment
+    // Add comment – return dummy comment so it appears in list
     if (url.contains('addPostComment')) {
+      final id = DateTime.now().millisecondsSinceEpoch;
+      return {
+        'status': true,
+        'message': 'Success',
+        'data': _dummyCommentMap(id: id, commentId: null, comment: param?['comment'] ?? 'Dummy comment'),
+      };
+    }
+    if (url.contains('replyToComment')) {
+      final id = DateTime.now().millisecondsSinceEpoch;
+      final parentId = param?['comment_id'];
+      return {
+        'status': true,
+        'message': 'Success',
+        'data': _dummyCommentMap(id: id, commentId: parentId, comment: param?['reply'] ?? 'Dummy reply'),
+      };
+    }
+
+    // User links (add / edit / delete)
+    if (url.contains('addUserLink') || url.contains('editeUserLink') || url.contains('deleteUserLink')) {
+      return {'status': true, 'message': 'Success', 'data': []};
+    }
+
+    // Moderator
+    if (url.contains('moderator_deletePost') ||
+        url.contains('moderator_unFreezeUser') ||
+        url.contains('moderatorFreezeUser') ||
+        url.contains('moderatorDeleteStory')) {
       return {'status': true, 'message': 'Success', 'data': null};
     }
 
     // Default - success response for status-only endpoints
     return {'status': true, 'message': 'Success', 'data': null};
+  }
+
+  static Map<String, dynamic> _dummyCommentMap({
+    required int id,
+    int? commentId,
+    String comment = 'Dummy comment',
+  }) {
+    return {
+      'id': id,
+      'comment_id': commentId,
+      'post_id': 101,
+      'user_id': _loggedInUserId,
+      'comment': comment,
+      'reply': null,
+      'mentioned_user_ids': null,
+      'likes': 0,
+      'replies_count': 0,
+      'is_pinned': 0,
+      'type': 0,
+      'created_at': DateTime.now().toIso8601String(),
+      'updated_at': DateTime.now().toIso8601String(),
+      'is_liked': false,
+      'mentionedUsers': null,
+      'user': _dummyUserById(_loggedInUserId),
+    };
   }
 
   static Future<T?> getResponse<T>(

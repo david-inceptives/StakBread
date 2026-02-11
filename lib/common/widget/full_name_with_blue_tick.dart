@@ -49,7 +49,7 @@ class FullNameWithBlueTick extends StatelessWidget {
                       color: fontColor ?? ColorRes.textDarkGrey,
                       fontSize: fontSize ?? 11,
                     opacity: opacity,
-                  ).copyWith(height: 2),
+                  ),
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
             ),

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:stakBread/screen/reels_screen/reel/reel_page_controller.dart';
+import 'package:stakBread/screen/store_screen/product_detail_screen.dart';
+import 'package:stakBread/screen/store_screen/store_screen_controller.dart';
 import 'package:stakBread/utilities/asset_res.dart';
 import 'package:stakBread/utilities/color_res.dart';
 import 'package:stakBread/utilities/text_style_custom.dart';
@@ -9,6 +11,9 @@ import 'package:stakBread/utilities/text_style_custom.dart';
 /// Uses app colors. Shown on left side of reel; tap opens product or adds to cart.
 class ReelProductWidget extends StatelessWidget {
   final ReelController controller;
+
+  /// Optional product for opening product detail. If null, resolved from [productId] via store.
+  final StoreProduct? product;
 
   /// Optional product title from API (e.g. from Post.reelProductTitle). If null, placeholder is used.
   final String? productTitle;
@@ -19,12 +24,13 @@ class ReelProductWidget extends StatelessWidget {
   /// Optional image path or URL. If null, gift icon is used.
   final String? productImagePath;
 
-  /// Optional product id for navigation to product detail.
+  /// Optional product id for navigation to product detail when [product] is null.
   final String? productId;
 
   const ReelProductWidget({
     super.key,
     required this.controller,
+    this.product,
     this.productTitle,
     this.productPrice,
     this.productImagePath,
@@ -35,10 +41,10 @@ class ReelProductWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final title = productTitle?.trim().isNotEmpty == true
         ? productTitle!
-        : 'Mystery Gifts For You';
+        : (product?.title ?? 'Mystery Gifts For You');
     final price = productPrice?.trim().isNotEmpty == true
         ? productPrice!
-        : '\$ 19.99';
+        : (product?.price ?? '\$ 19.99');
 
     return Material(
       color: Colors.transparent,
@@ -152,9 +158,32 @@ class ReelProductWidget extends StatelessWidget {
     );
   }
 
+  StoreProduct? _resolveProduct() {
+    if (product != null) return product;
+    if (productId == null || productId!.isEmpty) return null;
+    final store = Get.isRegistered<StoreScreenController>()
+        ? Get.find<StoreScreenController>()
+        : Get.put(StoreScreenController());
+    for (final p in store.productsForYou) {
+      if (p.id == productId) return p;
+    }
+    for (final p in store.topSelling) {
+      if (p.id == productId) return p;
+    }
+    return null;
+  }
+
   void _onProductTap() {
+    final p = _resolveProduct();
+    if (p != null) {
+      Get.to(() => ProductDetailScreen(product: p));
+    }
   }
 
   void _onCartTap() {
+    final p = _resolveProduct();
+    if (p != null) {
+      Get.to(() => ProductDetailScreen(product: p));
+    }
   }
 }

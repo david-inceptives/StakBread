@@ -49,7 +49,7 @@ class ProductPurchasedController extends GetxController {
           storeName: 'Wander Store',
           description:
               'Lorem Ipsum is simply dummy text of the printing and typesetting industry.',
-          price: '£ 250.00',
+          price: '\$ 250.00',
           status: PurchasedOrderStatus.pending,
           placedDate: '24th July, 2022',
         )),
@@ -60,7 +60,7 @@ class ProductPurchasedController extends GetxController {
           storeName: 'Wander Store',
           description:
               'Lorem Ipsum is simply dummy text of the printing and typesetting industry.',
-          price: '£ 250.00',
+          price: '\$ 250.00',
           status: PurchasedOrderStatus.toShip,
           placedDate: '24th July, 2022',
         )),
@@ -71,7 +71,7 @@ class ProductPurchasedController extends GetxController {
           storeName: 'Wander Store',
           description:
               'Lorem Ipsum is simply dummy text of the printing and typesetting industry.',
-          price: '£ 250.00',
+          price: '\$ 250.00',
           status: PurchasedOrderStatus.completed,
           placedDate: '24th July, 2022',
         )),
@@ -82,7 +82,7 @@ class ProductPurchasedController extends GetxController {
           storeName: 'Wander Store',
           description:
               'Lorem Ipsum is simply dummy text of the printing and typesetting industry.',
-          price: '£ 250.00',
+          price: '\$ 250.00',
           status: PurchasedOrderStatus.cancelled,
           placedDate: '24th July, 2022',
           isReimbursed: true,
@@ -94,7 +94,7 @@ class ProductPurchasedController extends GetxController {
           storeName: 'Wander Store',
           description:
               'Lorem Ipsum is simply dummy text of the printing and typesetting industry.',
-          price: '£ 250.00',
+          price: '\$ 250.00',
           status: PurchasedOrderStatus.rejected,
           placedDate: '24th July, 2022',
           isReimbursed: true,

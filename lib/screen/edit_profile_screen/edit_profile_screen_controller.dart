@@ -109,14 +109,15 @@ class EditProfileScreenController extends BaseController {
         country: phoneController.selectedCode.value?.countryName,
         countryCode: phoneController.selectedCode.value?.countryCode);
     stopLoader();
-    if (userData == null) return;
-    onUpdateUser?.call(userData);
-    if (Get.isRegistered<FeedScreenController>()) {
-      final controller = Get.find<FeedScreenController>();
-      controller.myUser.value = userData;
-    }
-    if (fileProfileImage.value != null) {
-      File(fileProfileImage.value?.path ?? '').delete();
+    if (userData != null) {
+      onUpdateUser?.call(userData);
+      if (Get.isRegistered<FeedScreenController>()) {
+        final controller = Get.find<FeedScreenController>();
+        controller.myUser.value = userData;
+      }
+      if (fileProfileImage.value != null) {
+        File(fileProfileImage.value?.path ?? '').delete();
+      }
     }
     Get.back();
   }
