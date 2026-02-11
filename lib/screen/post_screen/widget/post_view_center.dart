@@ -131,7 +131,7 @@ class _PostTextViewState extends State<PostTextView> {
                         style: textStyle?.copyWith(
                           color: widget.hashtagTextColor ??
                               ColorRes.themeAccentSolid,
-                          fontFamily: FontRes.outFitMedium500,
+                          fontFamily: FontRes.lato,
                           fontSize: 15,
                         ),
                         recognizer: TapGestureRecognizer()
@@ -147,7 +147,7 @@ class _PostTextViewState extends State<PostTextView> {
                         text: text,
                         style: textStyle?.copyWith(
                           color: ColorRes.themeAccentSolid,
-                          fontFamily: FontRes.outFitMedium500,
+                          fontFamily: FontRes.lato,
                           fontSize: 15,
                         ),
                         recognizer: TapGestureRecognizer()
@@ -162,7 +162,7 @@ class _PostTextViewState extends State<PostTextView> {
                     text: text,
                     style: textStyle?.copyWith(
                       color: widget.mentionTextColor ?? ColorRes.blueFollow,
-                      fontFamily: FontRes.outFitMedium500,
+                      fontFamily: FontRes.lato,
                       fontSize: 15,
                     ),
                     recognizer: TapGestureRecognizer()

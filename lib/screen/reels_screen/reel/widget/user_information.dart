@@ -296,7 +296,7 @@ class _UserDescriptionState extends State<UserDescription> {
                             text: text,
                             style: textStyle?.copyWith(
                               color: ColorRes.whitePure.withValues(alpha: .8),
-                              fontFamily: FontRes.outFitMedium500,
+                              fontFamily: FontRes.lato,
                               fontSize: 15,
                             ),
                             recognizer: TapGestureRecognizer()
@@ -315,7 +315,7 @@ class _UserDescriptionState extends State<UserDescription> {
                         text: text,
                         style: textStyle?.copyWith(
                             color: ColorRes.whitePure.withValues(alpha: .8),
-                            fontFamily: FontRes.outFitMedium500,
+                            fontFamily: FontRes.lato,
                             fontSize: 15),
                         recognizer: TapGestureRecognizer()
                           ..onTap = () async {

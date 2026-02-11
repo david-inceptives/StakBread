@@ -17,12 +17,12 @@ class ThemeRes {
         titleTextStyle: TextStyle(
           color: ColorRes.textDarkGrey,
           fontSize: 18,
-          fontFamily: FontRes.outFitRegular400,
+          fontFamily: FontRes.lato,
           fontWeight: FontWeight.w500,
         ),
         iconTheme: IconThemeData(color: ColorRes.textDarkGrey),
       ),
-      fontFamily: FontRes.outFitRegular400,
+      fontFamily: FontRes.lato,
       bottomSheetTheme:
           const BottomSheetThemeData(backgroundColor: ColorRes.whitePure),
       sliderTheme: const SliderThemeData(

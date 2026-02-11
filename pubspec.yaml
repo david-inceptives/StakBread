@@ -180,71 +180,31 @@ flutter:
   # list giving the asset and other descriptors for the font. For
   # example:
   fonts:
-    - family: Black
+    # Lato - primary app font family
+    - family: Lato
       fonts:
-        - asset: assets/fonts/Outfit-Black.ttf
-          weight: 900
-    - family: Bold
-      fonts:
-        - asset: assets/fonts/Outfit-Bold.ttf
-          weight: 700
-    - family: ExtraBold
-      fonts:
-        - asset: assets/fonts/Outfit-ExtraBold.ttf
-          weight: 800
-    - family: ExtraLight
-      fonts:
-        - asset: assets/fonts/Outfit-ExtraLight.ttf
-          weight: 200
-    - family: Light
-      fonts:
-        - asset: assets/fonts/Outfit-Light.ttf
-          weight: 300
-    - family: Medium
-      fonts:
-        - asset: assets/fonts/Outfit-Medium.ttf
-          weight: 500
-    - family: Regular
-      fonts:
-        - asset: assets/fonts/Outfit-Regular.ttf
-          weight: 400
-    - family: SemiBold
-      fonts:
-        - asset: assets/fonts/Outfit-SemiBold.ttf
-          weight: 600
-    - family: Thin
-      fonts:
-        - asset: assets/fonts/Outfit-Thin.ttf
+        - asset: assets/fonts/Lato-Hairline.ttf
           weight: 100
-    - family: Unbounded-Black
-      fonts:
-        - asset: assets/fonts/Unbounded-Black.ttf
-          weight: 900
-    - family: Unbounded-Bold
-      fonts:
-        - asset: assets/fonts/Unbounded-Bold.ttf
-          weight: 700
-    - family: Unbounded-ExtraBold
-      fonts:
-        - asset: assets/fonts/Unbounded-ExtraBold.ttf
-          weight: 800
-    - family: Unbounded-ExtraLight
-      fonts:
-        - asset: assets/fonts/Unbounded-ExtraLight.ttf
-          weight: 200
-    - family: Unbounded-Light
-      fonts:
-        - asset: assets/fonts/Unbounded-Light.ttf
+        - asset: assets/fonts/Lato-HairlineItalic.ttf
+          weight: 100
+          style: italic
+        - asset: assets/fonts/Lato-Light.ttf
           weight: 300
-    - family: Unbounded-Medium
-      fonts:
-        - asset: assets/fonts/Unbounded-Medium.ttf
-          weight: 500
-    - family: Unbounded-Regular
-      fonts:
-        - asset: assets/fonts/Unbounded-Regular.ttf
+        - asset: assets/fonts/Lato-LightItalic.ttf
+          weight: 300
+          style: italic
+        - asset: assets/fonts/Lato-Regular.ttf
           weight: 400
-    - family: Unbounded-SemiBold
-      fonts:
-        - asset: assets/fonts/Unbounded-SemiBold.ttf
-          weight: 600
+        - asset: assets/fonts/Lato-Italic.ttf
+          weight: 400
+          style: italic
+        - asset: assets/fonts/Lato-Bold.ttf
+          weight: 700
+        - asset: assets/fonts/Lato-BoldItalic.ttf
+          weight: 700
+          style: italic
+        - asset: assets/fonts/Lato-Black.ttf
+          weight: 900
+        - asset: assets/fonts/Lato-BlackItalic.ttf
+          weight: 900
+          style: italic

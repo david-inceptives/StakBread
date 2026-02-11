@@ -249,7 +249,7 @@ class ChatPostText extends StatelessWidget {
                     text: text,
                     style: textStyle?.copyWith(
                       color: ColorRes.themeAccentSolid,
-                      fontFamily: FontRes.outFitMedium500,
+                      fontFamily: FontRes.lato,
                       fontSize: 15,
                     ),
                   )),
@@ -260,7 +260,7 @@ class ChatPostText extends StatelessWidget {
                 text: text,
                 style: textStyle?.copyWith(
                   color: ColorRes.blueFollow,
-                  fontFamily: FontRes.outFitMedium500,
+                  fontFamily: FontRes.lato,
                   fontSize: 15,
                 ),
               );
