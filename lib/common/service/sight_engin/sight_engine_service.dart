@@ -17,11 +17,20 @@ import 'package:stakBread/utilities/app_res.dart';
 class SightEngineService {
   static var shared = SightEngineService();
 
+  /// Skip moderation if credentials are missing so uploads (e.g. reel) don't fail with API secret error.
+  static bool get _hasValidCredentials {
+    final settings = SessionManager.instance.getSettings();
+    final user = settings?.sightEngineApiUser?.trim() ?? '';
+    final secret = settings?.sightEngineApiSecret?.trim() ?? '';
+    return user.isNotEmpty && secret.isNotEmpty;
+  }
+
   Future<void> checkImagesInSightEngine({
     required List<XFile> xFiles,
     required Function() completion,
   }) async {
-    if (SessionManager.instance.getSettings()?.isContentModeration == 0) {
+    if (SessionManager.instance.getSettings()?.isContentModeration == 0 ||
+        !_hasValidCredentials) {
       completion();
       return;
     }
@@ -79,7 +88,8 @@ class SightEngineService {
   Future<void> checkVideoInSightEngine({required XFile xFile,
     required int duration,
     required Function() completion}) async {
-    if (SessionManager.instance.getSettings()?.isContentModeration == 0) {
+    if (SessionManager.instance.getSettings()?.isContentModeration == 0 ||
+        !_hasValidCredentials) {
       completion();
       return;
     }
@@ -146,7 +156,8 @@ class SightEngineService {
 
   Future<void> chooseTextModeration(
       {required String text, required Function() completion}) async {
-    if (SessionManager.instance.getSettings()?.isContentModeration == 0) {
+    if (SessionManager.instance.getSettings()?.isContentModeration == 0 ||
+        !_hasValidCredentials) {
       completion();
       return;
     }

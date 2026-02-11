@@ -300,7 +300,6 @@ class LKey {
   static const String stop = "Stop";
   static const String startBattle = "Start Battle";
   static const String battleStartingIn = "Battle\nStarting\nin";
-  static const String cancel = "Cancel";
   static const String yes = "Yes";
   static const String members = "Members";
   static const String audience = "Audience";
@@ -701,4 +700,23 @@ class LKey {
   static const String createPost = "Create Post";
   static const String postNow = "Post Now";
   static const String productDetails = "Product Details";
+
+  // Orders Management (Sold Products)
+  static const String ordersManagement = "Orders Management";
+  static const String toShip = "To Ship";
+  static const String reimbursed = "Reimbursed";
+  static const String placedOn = "Placed On";
+  static const String cancelOrder = "CANCEL ORDER";
+  static const String cancel = "CANCEL";
+  static const String chat = "CHAT";
+  static const String review = "REVIEW";
+  static const String received = "Received";
+  static const String pendingForApproval = "Pending for Approval";
+  static const String productFromStore = "Product 01 From";
+  static const String wanderStore = "Wander Store";
+  static const String orderLoremDescription =
+      "Lorem Ipsum is simply dummy text of the printing and typesetting industry.";
+  static const String myOrders = "My Orders";
+  static const String reject = "REJECT";
+  static const String cancelled = "Cancelled";
 }

@@ -15,6 +15,8 @@ import '../../common/widget/custom_drop_down.dart';
 import '../../common/widget/custom_toggle.dart';
 import '../blocked_user_screen/blocked_user_screen.dart';
 import '../saved_post_screen/saved_post_screen.dart';
+import '../sold_products/order_management_screen.dart';
+import '../product_purchased/product_purchased_screen.dart';
 
 class SettingsScreen extends StatelessWidget {
   final Function(User? user)? onUpdateUser;
@@ -97,11 +99,11 @@ class SettingsScreen extends StatelessWidget {
                     _SectionHeader(title: LKey.orderManagement.tr),
                     _SettingTile(
                       title: LKey.productsSold.tr,
-                      onTap: () {},
+                      onTap: () => Get.to(() => const OrderManagementScreen()),
                     ),
                     _SettingTile(
                       title: LKey.productsPurchased.tr,
-                      onTap: () {},
+                      onTap: () => Get.to(() => const ProductPurchasedScreen()),
                     ),
                     _SectionHeader(title: LKey.paymentAndBilling.tr),
                     _SettingTile(
