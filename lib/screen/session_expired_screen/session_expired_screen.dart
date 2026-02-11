@@ -32,7 +32,6 @@ class _SessionExpiredScreenState extends State<SessionExpiredScreen> {
     return Scaffold(
       body: Stack(
         children: [
-          const ThemeBlurBg(),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20),
             child: SafeArea(
@@ -41,7 +40,7 @@ class _SessionExpiredScreenState extends State<SessionExpiredScreen> {
                 children: [
                   const SizedBox(height: 10),
                   Image.asset(widget.type.icon,
-                      height: 150, width: 150, color: ColorRes.whitePure),
+                      height: 150, width: 150, color: ColorRes.green),
                   Expanded(
                       child: SingleChildScrollView(
                     child: Column(
@@ -49,7 +48,7 @@ class _SessionExpiredScreenState extends State<SessionExpiredScreen> {
                       children: [
                         Text(widget.type.title.tr,
                             style: TextStyleCustom.unboundedRegular400(
-                                color: ColorRes.whitePure, fontSize: 20)),
+                                color: ColorRes.blackPure, fontSize: 20)),
                         Obx(() {
                           final helpMail = settings.value?.helpMail ?? '';
 
@@ -61,7 +60,7 @@ class _SessionExpiredScreenState extends State<SessionExpiredScreen> {
                           return RichText(
                             text: TextSpan(
                               style: TextStyleCustom.outFitRegular400(
-                                  color: ColorRes.bgGrey, fontSize: 17),
+                                  color: ColorRes.blackPure, fontSize: 17),
                               children: [
                                 TextSpan(text: parts.first),
                                 TextSpan(
@@ -72,7 +71,7 @@ class _SessionExpiredScreenState extends State<SessionExpiredScreen> {
                                         _url.lunchUrlWithHttps;
                                       },
                                     style: TextStyleCustom.outFitBold700(
-                                        color: ColorRes.bgGrey, fontSize: 17)),
+                                        color: ColorRes.green, fontSize: 17)),
                                 if (parts.length > 1)
                                   TextSpan(text: parts.last),
                               ],
@@ -95,8 +94,8 @@ class _SessionExpiredScreenState extends State<SessionExpiredScreen> {
                       }
                     },
                     title: widget.type.actionName,
-                    backgroundColor: ColorRes.whitePure,
-                    titleColor: ColorRes.blackPure,
+                    backgroundColor: ColorRes.green,
+                    titleColor: ColorRes.whitePure,
                     margin: const EdgeInsets.only(top: 20),
                   )
                 ],
