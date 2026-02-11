@@ -40,6 +40,7 @@ class AssetRes {
   static const String camera3 = '${images}c3.png';
   static const String camera4 = '${images}c4.png';
   static const String emptyCart = '${images}empty_cart.png';
+  static const String reelProductGift = '${images}reel_product_gift.png';
   static const String reel1 = '${images}r1.png';
   static const String reel2 = '${images}r2.png';
   static const String reel3 = '${images}r3.png';

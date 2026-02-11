@@ -19,6 +19,7 @@ import 'package:stakBread/model/user_model/user_model.dart';
 import 'package:stakBread/screen/hashtag_screen/hashtag_screen.dart';
 import 'package:stakBread/screen/location_screen/location_screen.dart';
 import 'package:stakBread/screen/reels_screen/reel/reel_page_controller.dart';
+import 'package:stakBread/screen/reels_screen/reel/widget/reel_product_widget.dart';
 import 'package:stakBread/utilities/app_res.dart';
 import 'package:stakBread/utilities/asset_res.dart';
 import 'package:stakBread/utilities/font_res.dart';
@@ -67,20 +68,28 @@ class UserInfoHeader extends StatelessWidget {
           Get.put(ProfileController(reelUser), tag: '${reelUser?.id}');
     }
     User? user = profileController.user;
-    return Row(
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Flexible(
-          child: InkWell(
-            onTap: () => controller.onUserTap(user),
-            child: FullNameWithBlueTick(
-                username: user?.username,
-                isVerify: user?.isVerify,
-                fontColor: ColorRes.whitePure,
-                fontSize: 14,
-                iconSize: 18),
-          ),
+        /// 🛒 Product widget overlay (left side)
+        ReelProductWidget(controller: controller),
+        SizedBox(height: 20,),
+        Row(
+          children: [
+            Flexible(
+              child: InkWell(
+                onTap: () => controller.onUserTap(user),
+                child: FullNameWithBlueTick(
+                    username: user?.username,
+                    isVerify: user?.isVerify,
+                    fontColor: ColorRes.whitePure,
+                    fontSize: 14,
+                    iconSize: 18),
+              ),
+            ),
+            FollowButton(controller: controller),
+          ],
         ),
-        FollowButton(controller: controller),
       ],
     );
   }

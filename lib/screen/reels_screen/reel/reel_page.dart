@@ -10,6 +10,7 @@ import 'package:stakBread/screen/dashboard_screen/dashboard_screen_controller.da
 import 'package:stakBread/screen/reels_screen/reel/reel_page_controller.dart';
 import 'package:stakBread/screen/reels_screen/reel/widget/reel_animation_like.dart';
 import 'package:stakBread/screen/reels_screen/reel/widget/reel_seek_bar.dart';
+import 'package:stakBread/screen/reels_screen/reel/widget/reel_product_widget.dart';
 import 'package:stakBread/screen/reels_screen/reel/widget/side_bar_list.dart';
 import 'package:stakBread/screen/reels_screen/reel/widget/user_information.dart';
 import 'package:stakBread/screen/reels_screen/reels_screen_controller.dart';
@@ -196,6 +197,7 @@ class _ReelPageState extends State<ReelPage> {
             likeKey: widget.likeKey,
             videoPlayerPlusController: _controller,
           ),
+
 
           /// 💖 Like Animation
           Obx(() {

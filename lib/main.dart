@@ -57,14 +57,14 @@ Future<void> main() async {
     Get.put(DynamicTranslations());
 
     // Run app
-    //runApp(const RestartWidget(child: MyApp()));
+    runApp(const RestartWidget(child: MyApp()));
 
-    runApp(
+   /* runApp(
       DevicePreview(
         enabled: !kReleaseMode,
         builder: (context) => const RestartWidget(child: MyApp()), // Wrap your app
       ),
-    );
+    );*/
   } catch (e, st) {
     Loggers.error('Fatal crash during app startup $st');
   }
@@ -76,11 +76,11 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
-      //builder: (context, child) => ScrollConfiguration(behavior: MyBehavior(), child: child!),
+      builder: (context, child) => ScrollConfiguration(behavior: MyBehavior(), child: child!),
       translations: Get.find<DynamicTranslations>(),
       //locale: Locale(SessionManager.instance.getLang()),
       locale: DevicePreview.locale(context),
-      builder: DevicePreview.appBuilder,
+      //builder: DevicePreview.appBuilder,
       fallbackLocale: Locale(SessionManager.instance.getFallbackLang()),
       themeMode: ThemeMode.light,
       darkTheme: ThemeRes.darkTheme(),
