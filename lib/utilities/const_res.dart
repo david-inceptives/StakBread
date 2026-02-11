@@ -2,6 +2,12 @@ const String baseURL = 'https://shortz.londonauthorhouse.com/';
 const String apiURL = '${baseURL}api/';
 const String apiKey = 'retry123';
 
+/// When true, all API calls are skipped and dummy/mock data is returned instead.
+const bool useDummyApi = true;
+
+/// Dummy share link shown in share sheet when [useDummyApi] is true.
+const String dummyShareLink = 'https://stakbread.app/demo/share';
+
 // If you change this topic you also change backend .env file
 String notificationTopic = "stakBread";
 

@@ -5,8 +5,10 @@ import 'package:get/get.dart';
 import 'package:stakBread/common/controller/base_controller.dart';
 import 'package:stakBread/common/extensions/user_extension.dart';
 import 'package:stakBread/common/manager/logger.dart';
+import 'package:stakBread/common/service/api/user_service.dart';
 import 'package:stakBread/model/livestream/app_user.dart';
 import 'package:stakBread/model/user_model/user_model.dart';
+import 'package:stakBread/utilities/const_res.dart';
 import 'package:stakBread/utilities/firebase_const.dart';
 
 class FirebaseFirestoreController extends BaseController {
@@ -21,6 +23,20 @@ class FirebaseFirestoreController extends BaseController {
     final exists = users.any((element) => element.userId == userId);
     if (exists) {
       Loggers.info('[LOAD_USER] User $userId already loaded, skipping fetch');
+      return;
+    }
+
+    if (useDummyApi) {
+      Loggers.info('[LOAD_USER] Dummy mode: fetching user $userId via API');
+      UserService.instance.fetchUserDetails(userId: userId).then((user) {
+        if (user != null && !users.any((e) => e.userId == userId)) {
+          users.add(user.appUser);
+          Loggers.info('[LOAD_USER] Dummy user ${user.id} added to list');
+        }
+      }).catchError((e) {
+        Loggers.error('[LOAD_USER] Dummy fetch failed: $e');
+        return null;
+      });
       return;
     }
 
@@ -62,6 +78,11 @@ class FirebaseFirestoreController extends BaseController {
 
   void updateUser(User? user) async {
     if (user == null) return;
+    if (useDummyApi) {
+      final idx = users.indexWhere((e) => e.userId == user.id);
+      if (idx >= 0) users[idx] = user.appUser;
+      return;
+    }
     DocumentSnapshot<AppUser> value = await db
         .collection(FirebaseConst.appUsers)
         .doc('${user.id}')
@@ -81,6 +102,10 @@ class FirebaseFirestoreController extends BaseController {
 
   void addUser(User? user) async {
     if (user == null) return;
+    if (useDummyApi) {
+      if (!users.any((e) => e.userId == user.id)) users.add(user.appUser);
+      return;
+    }
     DocumentSnapshot<AppUser> value = await db
         .collection(FirebaseConst.appUsers)
         .doc('${user.id}')

@@ -132,18 +132,38 @@ class CameraScreenController extends BaseController
   Future<void> _initCamera() async {
     Loggers.info('Initialize camera');
     if (isDeepAr) {
-      deepArControllerPlus.value.fireTrigger(trigger: 's');
-      await _initDeepArCamera();
+      final hasKeys = (appSetting?.deeparAndroidKey ?? '').isNotEmpty ||
+          (appSetting?.deeparIOSKey ?? '').isNotEmpty;
+      if (!hasKeys) {
+        Loggers.warning('DeepAR enabled but no license keys; skipping AR');
+        await _initFallbackCamera();
+        return;
+      }
+      try {
+        deepArControllerPlus.value.fireTrigger(trigger: 's');
+        await _initDeepArCamera();
+      } catch (e) {
+        Loggers.error('Error initializing AR: $e');
+        await _initFallbackCamera();
+      }
     } else {
-      Future.delayed(const Duration(milliseconds: 100), () {
-        RetrytechPlugin.shared.initCamera();
-      });
+      await _initFallbackCamera();
+    }
+  }
+
+  Future<void> _initFallbackCamera() async {
+    try {
+      await Future.delayed(const Duration(milliseconds: 100));
+      RetrytechPlugin.shared.initCamera();
+    } on PlatformException catch (e) {
+      Loggers.warning('Camera plugin not available: ${e.code} ${e.message}');
+    } catch (e) {
+      Loggers.error('Camera init error: $e');
     }
   }
 
   Future<void> _initDeepArCamera() async {
     try {
-      // Initialize DeepAR
       await deepArControllerPlus.value.initialize(
           androidLicenseKey: appSetting?.deeparAndroidKey,
           iosLicenseKey: appSetting?.deeparIOSKey,
@@ -152,7 +172,7 @@ class CameraScreenController extends BaseController
       isDeepARInitialized.value = true;
     } catch (e) {
       Loggers.error('Error initializing AR: $e');
-      RetrytechPlugin.shared.initCamera();
+      await _initFallbackCamera();
     }
   }
 
@@ -168,11 +188,17 @@ class CameraScreenController extends BaseController
 
   void disposeCamera() {
     Loggers.info('Dispose camera');
-    if (isDeepAr) {
-      isDeepARInitialized.value = false;
-      deepArControllerPlus.value.destroy();
-    } else {
-      RetrytechPlugin.shared.disposeCamera;
+    try {
+      if (isDeepAr) {
+        isDeepARInitialized.value = false;
+        deepArControllerPlus.value.destroy();
+      } else {
+        RetrytechPlugin.shared.disposeCamera;
+      }
+    } on PlatformException catch (e) {
+      Loggers.warning('Camera dispose: ${e.code}');
+    } catch (e) {
+      Loggers.error('Dispose camera error: $e');
     }
   }
 

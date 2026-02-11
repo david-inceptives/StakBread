@@ -16,6 +16,8 @@ import 'package:url_launcher/url_launcher.dart';
 
 extension StringExtention on String {
   String addBaseURL() {
+    if (trim().isEmpty) return this;
+    if (startsWith('http://') || startsWith('https://')) return this;
     return (SessionManager.instance.getSettings()?.itemBaseUrl ?? '') + this;
   }
 

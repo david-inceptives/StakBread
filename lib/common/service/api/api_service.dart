@@ -11,6 +11,7 @@ import 'package:stakBread/common/manager/logger.dart';
 import 'package:stakBread/common/manager/session_manager.dart';
 import 'package:stakBread/common/service/utils/params.dart';
 import 'package:stakBread/screen/session_expired_screen/session_expired_screen.dart';
+import 'package:stakBread/common/service/api/dummy_api.dart';
 import 'package:stakBread/utilities/const_res.dart';
 
 class CancelToken {
@@ -44,6 +45,19 @@ class ApiService {
     T Function(Map<String, dynamic> json)? fromJson,
     Function()? onError,
   }) async {
+    if (useDummyApi) {
+      try {
+        final result = await DummyApi.getResponse<T>(url, fromJson, param);
+        if (result != null) return result;
+        return fromJson != null
+            ? fromJson(DummyApi.getFallback())
+            : DummyApi.getFallback() as T;
+      } catch (e) {
+        Loggers.error('Dummy API error for $url: $e');
+        rethrow;
+      }
+    }
+
     final client = http.Client();
     if (cancelToken != null && cancelToken.isCancelled) {
       _activeClients[cancelToken] = client;
@@ -163,6 +177,19 @@ class ApiService {
     CancelToken? cancelToken,
     T Function(Map<String, dynamic> json)? fromJson,
   }) async {
+    if (useDummyApi) {
+      try {
+        final result = await DummyApi.getResponse<T>(url, fromJson, param);
+        if (result != null) return result;
+        return fromJson != null
+            ? fromJson(DummyApi.getFallback())
+            : DummyApi.getFallback() as T;
+      } catch (e) {
+        Loggers.error('Dummy API error for $url: $e');
+        rethrow;
+      }
+    }
+
     final client = http.Client();
     if (cancelToken != null) {
       _activeClients[cancelToken] = client;

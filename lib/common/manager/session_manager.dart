@@ -72,7 +72,7 @@ class SessionManager {
   void listenNotifyCount() {
     notifyCount.value = getNotifyCount;
     storage.listenKey(SessionKeys.notifyCount, (value) {
-      notifyCount.value = value;
+      notifyCount.value = value is int ? value : 0;
     });
   }
 

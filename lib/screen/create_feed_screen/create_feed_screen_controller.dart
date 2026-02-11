@@ -65,6 +65,8 @@ class CreateFeedScreenController extends BaseController {
   Rx<PostStoryContent?> content;
 
   Rx<Setting?> setting = Rx(null);
+  /// Shown on Create Feed screen when reel/upload is in progress (so user sees loader).
+  RxBool isUploading = false.obs;
 
   CreateFeedScreenController(this.onAddPost, this.createType, this.content);
 
@@ -266,10 +268,10 @@ class CreateFeedScreenController extends BaseController {
   }
 
   Future<void> _uploadPostHandler(Map<String, dynamic> postParams) async {
-    // Close any previous screens if needed
-    Get.back();
-    if (createType == CreateFeedType.reel) {
-      Get.back();
+    final isReel = createType == CreateFeedType.reel;
+    if (isReel) {
+      isUploading.value = true;
+    } else {
       Get.back();
     }
     Loggers.info('Post upload initiated...');
@@ -278,7 +280,7 @@ class CreateFeedScreenController extends BaseController {
     _lastUploadType = UploadType.uploading;
     updateUploadingProgress(progress: 0);
 
-    await Future.delayed(const Duration(seconds: 1));
+    await Future.delayed(const Duration(milliseconds: 300));
 
     try {
       // Handle post upload based on post type
@@ -317,6 +319,7 @@ class CreateFeedScreenController extends BaseController {
         Post? post = postResponse?.data;
         if (post == null) {
           failedResponseSnackBar(message: 'Post not found');
+          if (isReel) isUploading.value = false;
           return;
         }
         Loggers.success('Post uploaded successfully ✅');
@@ -335,15 +338,22 @@ class CreateFeedScreenController extends BaseController {
         _notifyMentionedUsers(post);
         _lastUploadType = UploadType.finish;
         updateUploadingProgress(progress: 100);
+        if (isReel) {
+          isUploading.value = false;
+          Get.back();
+          Get.back();
+          Get.back();
+        }
       } else {
         Loggers.error('Post upload failed ❌: ${postResponse?.message}');
-
         failedResponseSnackBar(message: postResponse?.message);
+        if (isReel) isUploading.value = false;
       }
     } catch (e, stacktrace) {
       Loggers.error('Exception during post upload: $e');
       Loggers.error(stacktrace.toString());
       failedResponseSnackBar(message: '$e');
+      if (isReel) isUploading.value = false;
     }
   }
 
@@ -472,13 +482,15 @@ class CreateFeedScreenController extends BaseController {
   Future<XFile?> _loadProfileOrThumbnailImage(String? fallbackThumb) async {
     try {
       String profileImage = myUser?.profilePhoto ?? '';
+      if (profileImage.isEmpty) return null;
 
-      if (profileImage.isEmpty) {
-        return null;
+      String url = profileImage.addBaseURL();
+      if (url.isEmpty || (!url.startsWith('http://') && !url.startsWith('https://'))) {
+        Loggers.info('Using fallback thumbnail (no valid profile URL).');
+        return fallbackThumb != null && fallbackThumb.isNotEmpty ? XFile(fallbackThumb) : null;
       }
 
-      final file =
-          await DefaultCacheManager().getSingleFile(profileImage.addBaseURL());
+      final file = await DefaultCacheManager().getSingleFile(url);
       Loggers.success('Loaded profile image from URL.');
       return XFile(file.path);
     } catch (e) {
@@ -486,7 +498,7 @@ class CreateFeedScreenController extends BaseController {
     }
 
     Loggers.info('Using fallback thumbnail.');
-    return XFile(fallbackThumb ?? '');
+    return fallbackThumb != null && fallbackThumb.isNotEmpty ? XFile(fallbackThumb) : null;
   }
 
   Future<PostModel?> _handleImageUpload(Map<String, dynamic> params) async {

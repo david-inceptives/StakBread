@@ -38,48 +38,59 @@ class CreateFeedScreen extends StatelessWidget {
         Get.put(CreateFeedScreenController(onAddPost, createType, content.obs));
 
     return Scaffold(
-      body: Column(
+      body: Stack(
         children: [
-          CustomAppBar(title: LKey.createPost.tr),
-          Expanded(
-            child: GestureDetector(
-              onTap: () =>
-                  controller.commentHelper.detectableTextFocusNode.unfocus(),
-              child: Stack(
-                children: [
-                  SingleChildScrollView(
-                    child: Column(
-                      children: [
-                        ReelPreviewCard(controller: controller),
-                        CreateFeedLocationBar(controller: controller),
-                        const Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 16),
-                          child: FeedTextFieldView(),
+          Column(
+            children: [
+              CustomAppBar(title: LKey.createPost.tr),
+              Expanded(
+                child: GestureDetector(
+                  onTap: () =>
+                      controller.commentHelper.detectableTextFocusNode.unfocus(),
+                  child: Stack(
+                    children: [
+                      SingleChildScrollView(
+                        child: Column(
+                          children: [
+                            ReelPreviewCard(controller: controller),
+                            CreateFeedLocationBar(controller: controller),
+                            const Padding(
+                              padding: EdgeInsets.symmetric(horizontal: 16),
+                              child: FeedTextFieldView(),
+                            ),
+                            UrlMetaDataCard(controller: controller),
+                            if (createType == CreateFeedType.feed)
+                              mediaSelectionView(controller),
+                            const SizedBox(height: 5),
+                            Obx(
+                              () => switch (controller.feedPostType.value) {
+                                FeedPostType.text => const SizedBox(),
+                                FeedPostType.image => FeedImageView(
+                                    files: controller.images,
+                                    controller: controller),
+                                FeedPostType.video =>
+                                  FeedVideoView(controller: controller),
+                              },
+                            ),
+                            const FeedCommentToggle(),
+                            _uploadButton(controller, context),
+                          ],
                         ),
-                        UrlMetaDataCard(controller: controller),
-                        if (createType == CreateFeedType.feed)
-                          mediaSelectionView(controller),
-                        const SizedBox(height: 5),
-                        Obx(
-                          () => switch (controller.feedPostType.value) {
-                            FeedPostType.text => const SizedBox(),
-                            FeedPostType.image => FeedImageView(
-                                files: controller.images,
-                                controller: controller),
-                            FeedPostType.video =>
-                              FeedVideoView(controller: controller),
-                          },
-                        ),
-                        const FeedCommentToggle(),
-                        _uploadButton(controller, context),
-                      ],
-                    ),
+                      ),
+                      Obx(() => mentionOrHashtagView(controller, context))
+                    ],
                   ),
-                  Obx(() => mentionOrHashtagView(controller, context))
-                ],
-              ),
-            ),
-          )
+                ),
+              )
+            ],
+          ),
+          Obx(() => controller.isUploading.value
+              ? Container(
+                  color: Colors.black54,
+                  alignment: Alignment.center,
+                  child: const LoaderWidget(),
+                )
+              : const SizedBox.shrink()),
         ],
       ),
     );
@@ -109,14 +120,15 @@ class CreateFeedScreen extends StatelessWidget {
               controller.commentHelper.isDetectableTextEmpty.value &&
               controller.feedPostType.value == FeedPostType.text)
           .obs;
+      bool uploading = controller.isUploading.value;
 
       return TextButtonCustom(
-        onTap: controller.handleUpload,
+        onTap: uploading ? () {} : controller.handleUpload,
         title: LKey.postNow.tr,
-        backgroundColor:
-            ColorRes.textDarkGrey.withValues(alpha: isEmpty.value ? .5 : 1),
+        backgroundColor: ColorRes.textDarkGrey.withValues(
+            alpha: (isEmpty.value || uploading) ? .5 : 1),
         titleColor:
-            ColorRes.whitePure.withValues(alpha: isEmpty.value ? .5 : 1),
+            ColorRes.whitePure.withValues(alpha: (isEmpty.value || uploading) ? .5 : 1),
         margin: EdgeInsets.symmetric(
             vertical: AppBar().preferredSize.height, horizontal: 20),
       );

@@ -8,6 +8,7 @@ import 'package:stakBread/common/manager/firebase_notification_manager.dart';
 import 'package:stakBread/common/manager/logger.dart';
 import 'package:stakBread/common/manager/session_manager.dart';
 import 'package:stakBread/common/service/api/common_service.dart';
+import 'package:stakBread/utilities/const_res.dart';
 import 'package:stakBread/common/service/api/notification_service.dart';
 import 'package:stakBread/common/service/api/user_service.dart';
 // import 'package:stakBread/common/service/subscription/subscription_manager.dart'; // RevenueCat hidden
@@ -50,14 +51,25 @@ class AuthScreenController extends BaseController {
     final email = emailController.text.trim();
     final password = passwordController.text.trim();
 
-    if (email.isEmpty) {
-      return showSnackBar(LKey.enterEmail.tr);
-    }
-    if (password.isEmpty) {
-      return showSnackBar(LKey.enterAPassword.tr);
-    }
-
     showLoader();
+
+    if (useDummyApi) {
+      final String id = email.isEmpty ? 'demo@demo.com' : email;
+      final String fullname = id.isNotEmpty && GetUtils.isEmail(id) ? id.split('@')[0] : 'Demo User';
+      final user.User? data = await _registration(
+        identity: id,
+        loginMethod: LoginMethod.email,
+        fullname: fullname,
+        loginVia: GetUtils.isEmail(id) ? LoginVia.loginInUser : LoginVia.logInFakeUser,
+        password: GetUtils.isEmail(id) ? null : (password.isEmpty ? null : password),
+      );
+      stopLoader();
+      if (data != null) {
+        _saveOrClearRememberMe(email: id, password: password);
+        _navigateScreen(data);
+      }
+      return;
+    }
 
     if (GetUtils.isEmail(email)) {
       final UserCredential? credential = await signInWithEmailAndPassword();
@@ -102,25 +114,44 @@ class AuthScreenController extends BaseController {
   }
 
   Future<void> onCreateAccount() async {
+    showLoader();
+    if (useDummyApi) {
+      await _registration(
+        identity: emailController.text.trim().isEmpty ? 'demo@demo.com' : emailController.text.trim(),
+        loginMethod: LoginMethod.email,
+        fullname: fullNameController.text.trim().isEmpty ? 'Demo User' : fullNameController.text.trim(),
+        loginVia: LoginVia.loginInUser,
+      );
+      stopLoader();
+      Get.back();
+      Get.back();
+      showSnackBar(LKey.verificationLinkSent.tr);
+      return;
+    }
     if (fullNameController.text.trim().isEmpty) {
+      stopLoader();
       return showSnackBar(LKey.fullNameEmpty.tr);
     }
     if (emailController.text.trim().isEmpty) {
+      stopLoader();
       return showSnackBar(LKey.enterEmail.tr);
     }
     if (passwordController.text.trim().isEmpty) {
+      stopLoader();
       return showSnackBar(LKey.enterAPassword.tr);
     }
     if (confirmPassController.text.trim().isEmpty) {
+      stopLoader();
       return showSnackBar(LKey.confirmPasswordEmpty.tr);
     }
     if (!GetUtils.isEmail(emailController.text.trim())) {
+      stopLoader();
       return showSnackBar(LKey.invalidEmail.tr);
     }
     if (passwordController.text.trim() != confirmPassController.text.trim()) {
+      stopLoader();
       return showSnackBar(LKey.passwordMismatch.tr);
     }
-    showLoader();
     UserCredential? credential = await createUserWithEmailAndPassword();
     if (credential != null) {
       await _registration(
@@ -138,6 +169,17 @@ class AuthScreenController extends BaseController {
 
   void onGoogleTap() async {
     showLoader();
+    if (useDummyApi) {
+      final user.User? data = await _registration(
+        identity: 'demo@gmail.com',
+        loginMethod: LoginMethod.google,
+        fullname: 'Demo User',
+        loginVia: LoginVia.loginInUser,
+      );
+      stopLoader();
+      if (data != null) _navigateScreen(data);
+      return;
+    }
     UserCredential? credential;
     try {
       credential = await signInWithGoogle();
@@ -160,6 +202,17 @@ class AuthScreenController extends BaseController {
 
   void onAppleTap() async {
     showLoader();
+    if (useDummyApi) {
+      final user.User? data = await _registration(
+        identity: 'demo@privaterelay.appleid.com',
+        loginMethod: LoginMethod.apple,
+        fullname: 'Demo User',
+        loginVia: LoginVia.loginInUser,
+      );
+      stopLoader();
+      if (data != null) _navigateScreen(data);
+      return;
+    }
     UserCredential? credential;
     try {
       credential = await signInWithApple();
@@ -187,8 +240,10 @@ class AuthScreenController extends BaseController {
       String? fullname,
       required LoginVia loginVia,
       String? password}) async {
-    String? deviceToken = await FirebaseNotificationManager.instance.getNotificationToken();
-    if (deviceToken == null) return null;
+    final String? deviceToken = useDummyApi
+        ? 'dummy_device_token'
+        : await FirebaseNotificationManager.instance.getNotificationToken();
+    if (deviceToken == null || deviceToken.isEmpty) return null;
 
     user.User? userData;
     switch (loginVia) {
@@ -288,12 +343,14 @@ class AuthScreenController extends BaseController {
   }
 
   void forgetPassword() async {
-    final email = forgetEmailController.text.trim();
-    if (email.isEmpty) {
-      showSnackBar(LKey.enterEmail.tr);
+    showLoader();
+    if (useDummyApi) {
+      stopLoader();
+      Get.back();
+      showSnackBar(LKey.resetPasswordLinkSent.tr);
       return;
     }
-    showLoader();
+    final email = forgetEmailController.text.trim();
     try {
       await FirebaseAuth.instance.sendPasswordResetEmail(email: email);
       stopLoader();

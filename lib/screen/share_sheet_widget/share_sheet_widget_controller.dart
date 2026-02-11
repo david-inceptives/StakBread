@@ -58,10 +58,26 @@ class ShareSheetWidgetController extends BaseController {
 
   @override
   void onReady() {
+    final watermarkUrl = setting?.watermarkImage?.addBaseURL() ?? '';
+    if (watermarkUrl.trim().isEmpty || !watermarkUrl.startsWith('http')) {
+      Future.delayed(const Duration(milliseconds: 250), () {
+        ScreenshotManager.captureScreenshot(screenShotKey).then((value) {
+          waterMarkPath.value = value?.path ?? '';
+        });
+      });
+      super.onReady();
+      return;
+    }
     DefaultCacheManager()
-        .getSingleFile(setting?.watermarkImage?.addBaseURL() ?? '')
+        .getSingleFile(watermarkUrl)
         .then((value) {
       waterMarkPath.value = value.path;
+      Future.delayed(const Duration(milliseconds: 250), () {
+        ScreenshotManager.captureScreenshot(screenShotKey).then((value) {
+          waterMarkPath.value = value?.path ?? '';
+        });
+      });
+    }).catchError((_) {
       Future.delayed(const Duration(milliseconds: 250), () {
         ScreenshotManager.captureScreenshot(screenShotKey).then((value) {
           waterMarkPath.value = value?.path ?? '';

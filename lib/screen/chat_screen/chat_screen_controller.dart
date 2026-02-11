@@ -43,6 +43,7 @@ import 'package:stakBread/screen/report_sheet/report_sheet.dart';
 import 'package:stakBread/screen/story_view_screen/story_view_screen.dart';
 import 'package:stakBread/utilities/app_res.dart';
 import 'package:stakBread/utilities/color_res.dart';
+import 'package:stakBread/utilities/const_res.dart';
 import 'package:stakBread/utilities/firebase_const.dart';
 import 'package:stakBread/utilities/style_res.dart';
 
@@ -119,8 +120,56 @@ class ChatScreenController extends BlockUserController
   void onReady() {
     super.onReady();
     _init();
-    _getChat();
-    _addUsersFirebaseFireStore();
+    if (useDummyApi) {
+      _loadDummyMessages();
+    } else {
+      _getChat();
+      _addUsersFirebaseFireStore();
+    }
+  }
+
+  /// Dummy messages when [useDummyApi] is true.
+  void _loadDummyMessages() {
+    final myId = myUser?.id ?? 1;
+    final otherId = conversationUser.value.chatUser?.userId ?? conversationUser.value.userId ?? 2;
+    final convId = conversationUser.value.conversationId ?? 'dummy_conv';
+    final noDeleteIds = [myId, otherId];
+    final baseTime = DateTime.now().millisecondsSinceEpoch;
+    final list = <MessageData>[
+      MessageData(
+        id: baseTime - 200,
+        userId: otherId,
+        conversationId: convId,
+        messageType: MessageType.text,
+        textMessage: 'Hey! This is dummy chat.',
+        noDeleteIds: noDeleteIds,
+        iAmBlocked: false,
+        iBlocked: false,
+      ),
+      MessageData(
+        id: baseTime - 100,
+        userId: myId,
+        conversationId: convId,
+        messageType: MessageType.text,
+        textMessage: 'Hi! Demo mode is on.',
+        noDeleteIds: noDeleteIds,
+        iAmBlocked: false,
+        iBlocked: false,
+      ),
+      MessageData(
+        id: baseTime,
+        userId: otherId,
+        conversationId: convId,
+        messageType: MessageType.text,
+        textMessage: 'You can send messages here — they\'ll show locally.',
+        noDeleteIds: noDeleteIds,
+        iAmBlocked: false,
+        iBlocked: false,
+      ),
+    ];
+    list.sort((a, b) => (b.id ?? 0).compareTo(a.id ?? 0));
+    chatList.assignAll(list);
+    Loggers.info('Dummy chat loaded: ${list.length} messages');
   }
 
   @override
@@ -258,6 +307,12 @@ class ChatScreenController extends BlockUserController
     );
 
     Loggers.success('FIREBASE MESSAGE : ${message.toJson()}');
+
+    if (useDummyApi) {
+      chatList.insert(0, message);
+      chatList.sort((a, b) => (b.id ?? 0).compareTo(a.id ?? 0));
+      return;
+    }
 
     // Entry chat list
     chatCollection
@@ -893,6 +948,7 @@ class ChatScreenController extends BlockUserController
   }
 
   _markAsRead() async {
+    if (useDummyApi) return;
     if ((await documentSender.get()).exists) {
       await documentSender.update({FirebaseConst.msgCount: 0});
     }

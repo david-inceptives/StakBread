@@ -54,8 +54,7 @@ class ShareManager {
   }
 
   void shareTheContent({required ShareKeys key, required int value}) {
-    final encoded = safeBase64Encode('${key.value}_$value');
-    final url = '${baseURL}s/$encoded';
+    final url = getLink(key: key, value: value);
     final context = Get.context!;
 
     final box = context.findRenderObject() as RenderBox?;
@@ -66,9 +65,9 @@ class ShareManager {
   }
 
   String getLink({required ShareKeys key, required int value}) {
+    if (useDummyApi) return dummyShareLink;
     final encoded = safeBase64Encode('${key.value}_$value');
-    final url = '${baseURL}s/$encoded';
-    return url;
+    return '${baseURL}s/$encoded';
   }
 
   String safeBase64Encode(String input) {
