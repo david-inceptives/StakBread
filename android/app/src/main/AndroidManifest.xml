@@ -25,7 +25,7 @@
 
 
     <application
-        android:label="StakBread"
+        android:label="Stakbread"
         android:name="${applicationName}"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:icon="@mipmap/ic_launcher"

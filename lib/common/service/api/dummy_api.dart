@@ -221,6 +221,14 @@ class DummyApi {
     return int.tryParse(v.toString());
   }
 
+  static int? _paramLastItemId(Map<String, dynamic>? param) {
+    if (param == null) return null;
+    final v = param['last_item_id'];
+    if (v == null) return null;
+    if (v is int) return v;
+    return int.tryParse(v.toString());
+  }
+
   static Map<String, dynamic>? _getDummyMap(String url, [Map<String, dynamic>? param]) {
     if (!useDummyApi) return null;
 
@@ -325,8 +333,11 @@ class DummyApi {
       };
     }
 
-    // Reels feed - post_type 1
+    // Reels feed - post_type 1. With last_item_id (pagination) return empty to avoid duplicates.
     if (url.contains('fetchPostsDiscover') || url.contains('fetchReelPostsByMusic')) {
+      if (_paramLastItemId(param) != null) {
+        return {'status': true, 'message': 'Success', 'data': <Map<String, dynamic>>[]};
+      }
       return {
         'status': true,
         'message': 'Success',
@@ -343,12 +354,15 @@ class DummyApi {
       };
     }
 
-    // Other post list endpoints - mixed dummy posts
+    // Other post list endpoints - mixed dummy posts. With last_item_id return empty to avoid duplicates.
     if (url.contains('fetchPostsFollowing') ||
         url.contains('fetchPostsByLocation') ||
         url.contains('fetchPostsNearBy') ||
         url.contains('fetchSavedPosts') ||
         url.contains('searchPosts')) {
+      if (_paramLastItemId(param) != null) {
+        return {'status': true, 'message': 'Success', 'data': <Map<String, dynamic>>[]};
+      }
       return {
         'status': true,
         'message': 'Success',

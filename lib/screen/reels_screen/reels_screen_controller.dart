@@ -43,26 +43,34 @@ class ReelsScreenController extends BaseController {
     initFirstPlayers();
   }
 
-  /// Initialize first two players
+  /// Initialize first two players. Do not fetch when reels empty (initial load handles that).
   Future<void> initFirstPlayers() async {
     isLoading.value = true;
+    if (reels.isEmpty) {
+      isLoading.value = false;
+      return;
+    }
     if (reels.length <= 1) {
       await onFetchMoreData?.call();
     }
-
     if (reels.length - 1 == currentIndex.value) {
       await onFetchMoreData?.call();
     }
     isLoading.value = false;
   }
 
-  /// Handle page change
+  DateTime? _lastFetchMoreAt;
+
+  /// Handle page change. Throttle so we don't trigger fetch more too often.
   Future<void> onPageChanged(int index) async {
     currentIndex.value = index;
-    // Fetch more data if near end
-    if (index >= reels.length - 3) {
-      onFetchMoreData?.call();
+    if (index < reels.length - 2) return;
+    if (_lastFetchMoreAt != null &&
+        DateTime.now().difference(_lastFetchMoreAt!).inSeconds < 3) {
+      return;
     }
+    _lastFetchMoreAt = DateTime.now();
+    onFetchMoreData?.call();
   }
 
   bool isCurrentPageVisible = true;

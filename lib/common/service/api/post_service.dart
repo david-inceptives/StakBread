@@ -61,11 +61,18 @@ class PostService {
 
   static final PostService instance = PostService._();
 
-  Future<List<Post>> fetchPostsDiscover(
-      {required String type, CancelToken? cancelToken}) async {
+  Future<List<Post>> fetchPostsDiscover({
+    required String type,
+    int? lastItemId,
+    CancelToken? cancelToken,
+  }) async {
     PostsModel model = await ApiService.instance.call(
         url: WebService.post.fetchPostsDiscover,
-        param: {Params.limit: AppRes.paginationLimit, Params.types: type},
+        param: {
+          Params.limit: AppRes.paginationLimit,
+          Params.types: type,
+          if (lastItemId != null) Params.lastItemId: lastItemId,
+        },
         fromJson: PostsModel.fromJson,
         cancelToken: cancelToken);
     return model.data ?? [];
@@ -88,28 +95,39 @@ class PostService {
     return model;
   }
 
-  Future<List<Post>> fetchPostsNearBy(
-      {required String type,
-      required double placeLat,
-      required double placeLon,
-      CancelToken? cancelToken}) async {
+  Future<List<Post>> fetchPostsNearBy({
+    required String type,
+    required double placeLat,
+    required double placeLon,
+    int? lastItemId,
+    CancelToken? cancelToken,
+  }) async {
     PostsModel model = await ApiService.instance.call(
         url: WebService.post.fetchPostsNearBy,
         param: {
           Params.placeLat: placeLat,
           Params.placeLon: placeLon,
           Params.types: type,
+          Params.limit: AppRes.paginationLimit,
+          if (lastItemId != null) Params.lastItemId: lastItemId,
         },
         fromJson: PostsModel.fromJson,
         cancelToken: cancelToken);
     return model.data ?? [];
   }
 
-  Future<List<Post>> fetchPostsFollowing(
-      {required String type, CancelToken? cancelToken}) async {
+  Future<List<Post>> fetchPostsFollowing({
+    required String type,
+    int? lastItemId,
+    CancelToken? cancelToken,
+  }) async {
     PostsModel model = await ApiService.instance.call(
         url: WebService.post.fetchPostsFollowing,
-        param: {Params.limit: AppRes.paginationLimit, Params.types: type},
+        param: {
+          Params.limit: AppRes.paginationLimit,
+          Params.types: type,
+          if (lastItemId != null) Params.lastItemId: lastItemId,
+        },
         fromJson: PostsModel.fromJson,
         cancelToken: cancelToken);
     return model.data ?? [];

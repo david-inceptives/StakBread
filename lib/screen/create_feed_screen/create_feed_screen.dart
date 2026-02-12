@@ -125,7 +125,7 @@ class CreateFeedScreen extends StatelessWidget {
       return TextButtonCustom(
         onTap: uploading ? () {} : controller.handleUpload,
         title: LKey.postNow.tr,
-        backgroundColor: ColorRes.textDarkGrey.withValues(
+        backgroundColor: ColorRes.green.withValues(
             alpha: (isEmpty.value || uploading) ? .5 : 1),
         titleColor:
             ColorRes.whitePure.withValues(alpha: (isEmpty.value || uploading) ? .5 : 1),

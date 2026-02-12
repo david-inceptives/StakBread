@@ -34,6 +34,8 @@ class HomeScreenController extends BaseController with GetSingleTickerProviderSt
   RxBool isAnimateTab = false.obs;
   StreamSubscription<Map>? streamSubscription;
   CancelToken token = CancelToken();
+  /// Prevents multiple simultaneous "load more" calls and duplicate data.
+  bool _isLoadMoreInProgress = false;
 
   Rx<User?> get myUser => Rx(SessionManager.instance.getUser());
 
@@ -163,25 +165,51 @@ class HomeScreenController extends BaseController with GetSingleTickerProviderSt
   }
 
   Future<void> fetchDiscoverPost(bool resetData) async {
+    if (!resetData && _isLoadMoreInProgress) return;
+    if (!resetData) _isLoadMoreInProgress = true;
     isLoading.value = true;
-    List<Post> newPosts = await PostService.instance.fetchPostsDiscover(type: PostType.reels, cancelToken: token);
+    final lastId = resetData ? null : (reels.isNotEmpty ? reels.last.id : null);
+    List<Post> newPosts = await PostService.instance.fetchPostsDiscover(
+      type: PostType.reels,
+      lastItemId: lastId?.toInt(),
+      cancelToken: token,
+    );
     addResponseData(newPosts, resetData);
+    if (!resetData) _isLoadMoreInProgress = false;
   }
 
   Future<void> _fetchFollowingPost(bool resetData) async {
+    if (!resetData && _isLoadMoreInProgress) return;
+    if (!resetData) _isLoadMoreInProgress = true;
     isLoading.value = true;
-    List<Post> newPosts = await PostService.instance.fetchPostsFollowing(type: PostType.reels, cancelToken: token);
-
+    final lastId = resetData ? null : (reels.isNotEmpty ? reels.last.id : null);
+    List<Post> newPosts = await PostService.instance.fetchPostsFollowing(
+      type: PostType.reels,
+      lastItemId: lastId?.toInt(),
+      cancelToken: token,
+    );
     addResponseData(newPosts, resetData);
+    if (!resetData) _isLoadMoreInProgress = false;
   }
 
   Future<void> _fetchPostsNearBy(bool resetData) async {
+    if (!resetData && _isLoadMoreInProgress) return;
+    if (!resetData) _isLoadMoreInProgress = true;
     isLoading.value = true;
     Position position = await LocationService.instance.getCurrentLocation(isPermissionDialogShow: true);
+    final lastId = resetData ? null : (reels.isNotEmpty ? reels.last.id : null);
     List<Post> newPosts = await PostService.instance.fetchPostsNearBy(
-        type: PostType.reels, placeLat: position.latitude, placeLon: position.longitude, cancelToken: token);
+      type: PostType.reels,
+      placeLat: position.latitude,
+      placeLon: position.longitude,
+      lastItemId: lastId?.toInt(),
+      cancelToken: token,
+    );
     addResponseData(newPosts, resetData);
+    if (!resetData) _isLoadMoreInProgress = false;
   }
+
+  static int? _postId(Post p) => p.id?.toInt();
 
   void addResponseData(List<Post> newPosts, bool resetData) {
     if (resetData) {
@@ -191,10 +219,30 @@ class HomeScreenController extends BaseController with GetSingleTickerProviderSt
         controller.handleRefresh(() async {});
       }
     }
-    if (newPosts.isNotEmpty) {
-      reels.addAll(newPosts);
+    if (newPosts.isEmpty) {
+      isLoading.value = false;
+      return;
     }
-
+    if (resetData) {
+      // Deduplicate by id so we never show same post twice even if API returns duplicates
+      final seenIds = <int>{};
+      for (final p in newPosts) {
+        final id = _postId(p);
+        if (id != null && !seenIds.contains(id)) {
+          seenIds.add(id);
+          reels.add(p);
+        }
+      }
+    } else {
+      final existingIds = reels.map(_postId).whereType<int>().toSet();
+      for (final p in newPosts) {
+        final id = _postId(p);
+        if (id != null && !existingIds.contains(id)) {
+          existingIds.add(id);
+          reels.add(p);
+        }
+      }
+    }
     isLoading.value = false;
   }
 
