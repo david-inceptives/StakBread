@@ -1,4 +1,7 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:get/get.dart';
 import 'package:stakBread/common/extensions/string_extension.dart';
 import 'package:stakBread/common/service/api/post_service.dart';
@@ -51,10 +54,27 @@ class _ReelPageState extends State<ReelPage> {
   VideoPlayerController? _controller;
   bool _initialized = false;
   bool _isDisposed = false;
+  bool _isBuffering = false;
   bool isPlaying = true;
   late ReelController reelController;
   Rx<TapDownDetails?> details = Rx(null);
   final dashboardController = Get.find<DashboardScreenController>();
+
+  void _videoListener() {
+    if (_controller == null || _isDisposed || !mounted) return;
+    final v = _controller!.value;
+    if (!v.isInitialized || !v.isPlaying) {
+      if (_isBuffering) setState(() => _isBuffering = false);
+      return;
+    }
+    final buffered = v.buffered;
+    final buffering = buffered.isEmpty ||
+        (buffered.isNotEmpty && v.position >= buffered.last.end - const Duration(seconds: 2));
+    if (buffering != _isBuffering) {
+      _isBuffering = buffering;
+      if (mounted) setState(() {});
+    }
+  }
 
   @override
   void initState() {
@@ -85,34 +105,56 @@ class _ReelPageState extends State<ReelPage> {
   Future<void> _initializeAndPlayVideo({int retryCount = 0}) async {
     if (_isDisposed) return;
 
+    final videoUrl = widget.reelData.video?.addBaseURL() ?? '';
+    if (videoUrl.isEmpty) return;
+
     try {
-      final url = Uri.parse(widget.reelData.video?.addBaseURL() ?? '');
-      _controller = VideoPlayerController.networkUrl(url);
+      // Try cache first so repeat plays are smooth and no stuck on network
+      File? cachedFile;
+      try {
+        cachedFile = await DefaultCacheManager()
+            .getSingleFile(videoUrl)
+            .timeout(const Duration(seconds: 20));
+        if (!await cachedFile.exists()) cachedFile = null;
+      } catch (_) {
+        cachedFile = null;
+      }
+
+      if (_isDisposed) return;
+
+      if (cachedFile != null) {
+        _controller = VideoPlayerController.file(cachedFile);
+      } else {
+        _controller = VideoPlayerController.networkUrl(Uri.parse(videoUrl));
+      }
 
       await _controller!.initialize();
 
       if (_isDisposed) return;
       _controller!.setLooping(true);
       _initialized = true;
+      _controller!.addListener(_videoListener);
 
       if (dashboardController.selectedPageIndex.value != 0 && widget.isHomePage) {
+        if (mounted) setState(() {});
         return;
       }
-      // ✅ Auto play only when visible and autoplay flag true
+      // Auto play only when visible and autoplay flag true
       if (widget.autoPlay && widget.reelsScreenController.isCurrentPageVisible) {
         await _controller!.play();
         _increaseViewsCount(widget.reelData);
         isPlaying = true;
       }
 
-      setState(() {});
+      if (mounted) setState(() {});
     } catch (e) {
       debugPrint('Video init error: $e');
 
-      // 🔁 Retry if failed (max 3 retries with small delay)
       if (retryCount < 3 && !_isDisposed) {
         await Future.delayed(const Duration(milliseconds: 500));
         _initializeAndPlayVideo(retryCount: retryCount + 1);
+      } else if (mounted) {
+        setState(() {});
       }
     }
   }
@@ -120,6 +162,7 @@ class _ReelPageState extends State<ReelPage> {
   @override
   void dispose() {
     _isDisposed = true;
+    _controller?.removeListener(_videoListener);
     _controller?.dispose();
     _controller = null;
     super.dispose();
@@ -164,8 +207,23 @@ class _ReelPageState extends State<ReelPage> {
       child: Stack(
         alignment: Alignment.bottomCenter,
         children: [
-          /// 🎬 Directly play video (no thumbnail, no loader)
+          /// 🎬 Video (with cache + buffering)
           if (_controller != null) buildContent(),
+
+          /// Single loading/buffering indicator (center only, no full overlay so seekbar stays visible)
+          if (!_initialized || _isBuffering)
+            IgnorePointer(
+              child: Center(
+                child: SizedBox(
+                  width: 48,
+                  height: 48,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2,
+                    valueColor: AlwaysStoppedAnimation<Color>(ColorRes.bgGrey),
+                  ),
+                ),
+              ),
+            ),
 
           /// 🕹 Tap Overlay (pause/play)
           InkWell(onTap: onPlayPause, child: const BlackGradientShadow()),

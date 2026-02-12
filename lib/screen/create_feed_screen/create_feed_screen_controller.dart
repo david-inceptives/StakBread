@@ -108,18 +108,31 @@ class CreateFeedScreenController extends BaseController {
     }
     final rawDescription = commentHelper.detectableTextController.text;
 
-    final postParams = await _buildPostParams(rawDescription);
+    // Show progress immediately so screen doesn't feel stuck
+    _lastUploadType = UploadType.uploading;
+    updateUploadingProgress(progress: 0);
 
-    Loggers.info('Post Data: $postParams');
-
+    // Reel: pop screens first so user sees dashboard + progress bar immediately.
+    // Location is fetched in background; otherwise user stays stuck on create screen.
     if (createType == CreateFeedType.reel) {
-      _uploadPostHandler(postParams);
-    } else {
-      runContentModerationAndUpload(
-        description: rawDescription,
-        params: postParams,
-      );
+      Get.back();
+      Get.back();
+      Get.back();
     }
+
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      final postParams = await _buildPostParams(rawDescription);
+      Loggers.info('Post Data: $postParams');
+
+      if (createType == CreateFeedType.reel) {
+        _uploadPostHandler(postParams, skipPop: true);
+      } else {
+        runContentModerationAndUpload(
+          description: rawDescription,
+          params: postParams,
+        );
+      }
+    });
   }
 
   bool _shouldAbortUpload() {
@@ -265,20 +278,20 @@ class CreateFeedScreenController extends BaseController {
     }
   }
 
-  Future<void> _uploadPostHandler(Map<String, dynamic> postParams) async {
-    // Close any previous screens if needed
-    Get.back();
-    if (createType == CreateFeedType.reel) {
+  Future<void> _uploadPostHandler(Map<String, dynamic> postParams, {bool skipPop = false}) async {
+    // Close any previous screens if needed (reel already popped in handleUpload)
+    if (!skipPop) {
       Get.back();
-      Get.back();
+      if (createType == CreateFeedType.reel) {
+        Get.back();
+        Get.back();
+      }
     }
     Loggers.info('Post upload initiated...');
 
     PostModel? postResponse;
     _lastUploadType = UploadType.uploading;
     updateUploadingProgress(progress: 0);
-
-    await Future.delayed(const Duration(seconds: 1));
 
     try {
       // Handle post upload based on post type

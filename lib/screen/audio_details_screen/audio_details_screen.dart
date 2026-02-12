@@ -73,7 +73,7 @@ class AudioDetailsProfile extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       AudioImageWidget(
                         imageSize: 81,
@@ -84,6 +84,8 @@ class AudioDetailsProfile extends StatelessWidget {
                         onPlayPauseMusic: controller.onPlayPauseMusic,
                         isPlaying: controller.isPlaying,
                       ),
+
+                      SizedBox(width: 20,),
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -99,7 +101,7 @@ class AudioDetailsProfile extends StatelessWidget {
                           ),
                         ],
                       ),
-                      TextButtonCustom(
+                     /* TextButtonCustom(
                         onTap: controller.onMakeReel,
                         title: LKey.makeReel.tr,
                         titleColor: ColorRes.whitePure,
@@ -107,7 +109,7 @@ class AudioDetailsProfile extends StatelessWidget {
                         btnHeight: 40,
                         horizontalMargin: 0,
                         padding: const EdgeInsets.symmetric(horizontal: 30),
-                      )
+                      )*/
                     ],
                   ),
                   const SizedBox(height: 10),
