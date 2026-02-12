@@ -395,7 +395,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                             ),
                             const SizedBox(height: 12),
                             Text(
-                              "Alex Was Incredibly Professional And Fixed Our Leaking Issue In No Time. Highly Recommend!",
+                              "Skincare Essentials set is Incredibly Essential And Fixed Our Skin Issues In No Time. Highly Recommend!",
                               style: TextStyleCustom.outFitRegular400(fontSize: 14, color: ColorRes.textDarkGrey),
                               maxLines: 3,
                               overflow: TextOverflow.ellipsis,
