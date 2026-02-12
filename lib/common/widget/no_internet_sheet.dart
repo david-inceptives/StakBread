@@ -16,58 +16,54 @@ class NoInternetSheet extends StatelessWidget {
     return Scaffold(
       body: Container(
         color: ColorRes.whitePure,
-        child: Stack(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.end,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          spacing: 150,
           children: [
-            const ThemeBlurBg(),
-            Column(
-              mainAxisAlignment: MainAxisAlignment.end,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              spacing: 150,
-              children: [
-                Image.asset(
-                  AssetRes.icNoInternet,
-                  width: double.infinity,
-                  fit: BoxFit.fitWidth,
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    spacing: 10,
-                    children: [
-                      Text(
-                          '${LKey.lost.tr}\n${LKey.connection.tr}'
-                              .toUpperCase(),
-                          style: TextStyleCustom.unboundedBold700(
-                              color: ColorRes.whitePure, fontSize: 35)),
-                      Text(
-                        LKey.noInternetDesc.tr,
-                        style: TextStyleCustom.outFitMedium500(
-                            color: ColorRes.whitePure,
-                            fontSize: 20,
-                            opacity: 0.8),
-                      ),
-                      SizedBox(height: AppBar().preferredSize.height * 1.5),
-                      TextButtonCustom(
-                        onTap: () async {
-                          InternetConnectionManager.instance
-                              .checkInternetConnection()
-                              .then((value) {
-                            if (value) {
-                              Get.back();
-                            }
-                          });
-                        },
-                        title: LKey.refresh.tr,
-                        titleColor: ColorRes.whitePure,
-                        backgroundColor: ColorRes.green,
-                        horizontalMargin: 0,
-                      ),
-                      SizedBox(height: AppBar().preferredSize.height * .5),
-                    ],
+            Image.asset(
+              AssetRes.icNoInternet,
+              width: double.infinity,
+              fit: BoxFit.fitWidth,
+              color: ColorRes.green1,
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                spacing: 10,
+                children: [
+                  Text(
+                      '${LKey.lost.tr}\n${LKey.connection.tr}'
+                          .toUpperCase(),
+                      style: TextStyleCustom.unboundedBold700(
+                          color: ColorRes.blackPure, fontSize: 35)),
+                  Text(
+                    LKey.noInternetDesc.tr,
+                    style: TextStyleCustom.outFitMedium500(
+                        color: ColorRes.blackPure,
+                        fontSize: 20,
+                        opacity: 0.8),
                   ),
-                ),
-              ],
+                  SizedBox(height: AppBar().preferredSize.height * 1.5),
+                  TextButtonCustom(
+                    onTap: () async {
+                      InternetConnectionManager.instance
+                          .checkInternetConnection()
+                          .then((value) {
+                        if (value) {
+                          Get.back();
+                        }
+                      });
+                    },
+                    title: LKey.refresh.tr,
+                    titleColor: ColorRes.whitePure,
+                    backgroundColor: ColorRes.green,
+                    horizontalMargin: 0,
+                  ),
+                  SizedBox(height: AppBar().preferredSize.height * .5),
+                ],
+              ),
             ),
           ],
         ),
