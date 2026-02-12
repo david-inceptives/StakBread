@@ -268,13 +268,13 @@ class StoreScreen extends StatelessWidget {
         children: [
           Text(
             title,
-            style: TextStyleCustom.unboundedBlack900(fontSize: 18, color: ColorRes.textDarkGrey),
+            style: TextStyleCustom.unboundedMedium500(fontSize: 16, color: ColorRes.textDarkGrey),
           ),
           InkWell(
             onTap: onViewAll,
             child: Text(
               viewAll,
-              style: TextStyleCustom.outFitSemiBold600(fontSize: 14, color: ColorRes.green),
+              style: TextStyleCustom.outFitRegular400(fontSize: 14, color: ColorRes.textLightGrey),
             ),
           ),
         ],
@@ -284,7 +284,7 @@ class StoreScreen extends StatelessWidget {
 
   Widget _buildTopSellingRow(StoreScreenController controller) {
     return SizedBox(
-      height: 268,
+      height: 240,
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
         padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -462,6 +462,8 @@ class _TopSellingCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: ColorRes.whitePure,
         borderRadius: BorderRadius.circular(14),
+
+        border: Border.all(color: ColorRes.borderLight),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.06),

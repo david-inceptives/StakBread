@@ -194,7 +194,7 @@ class ExploreTabScreen extends StatelessWidget {
           },
         ),
         SizedBox(
-          height: 248,
+          height: 240,
           child: ListView.builder(
             scrollDirection: Axis.horizontal,
             padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -414,6 +414,8 @@ class _ExploreProductCard extends StatelessWidget {
         decoration: BoxDecoration(
           color: ColorRes.whitePure,
           borderRadius: BorderRadius.circular(14),
+
+          border: Border.all(color: ColorRes.borderLight),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withValues(alpha: 0.06),
@@ -472,7 +474,7 @@ class _ExploreProductCard extends StatelessWidget {
               ],
             ),
             Padding(
-              padding: const EdgeInsets.fromLTRB(10, 10, 10, 12),
+              padding: const EdgeInsets.fromLTRB(10, 10, 10, 8),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -494,6 +496,30 @@ class _ExploreProductCard extends StatelessWidget {
                     ),
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
+                  ),
+                  const SizedBox(height: 10),
+                  SizedBox(
+                    width: double.infinity,
+                    child: Material(
+                      color: ColorRes.green,
+                      borderRadius: BorderRadius.circular(10),
+                      child: InkWell(
+                        onTap: () => Get.to(() => ProductDetailScreen(product: product)),
+                        borderRadius: BorderRadius.circular(10),
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 8),
+                          child: Center(
+                            child: Text(
+                              LKey.viewProduct.tr,
+                              style: TextStyleCustom.outFitSemiBold600(
+                                fontSize: 12,
+                                color: ColorRes.whitePure,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
                   ),
                 ],
               ),
