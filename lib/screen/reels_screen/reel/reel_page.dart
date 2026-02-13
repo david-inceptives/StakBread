@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:flick_video_player/flick_video_player.dart';
@@ -56,6 +57,8 @@ class _ReelPageState extends State<ReelPage> {
   late ReelController reelController;
   Rx<TapDownDetails?> details = Rx(null);
   final dashboardController = Get.find<DashboardScreenController>();
+  bool _showBufferingIndicator = false;
+  Timer? _bufferingTimer;
 
   VideoPlayerController? get _controller =>
       _flickManager?.flickVideoManager?.videoPlayerController;
@@ -63,9 +66,6 @@ class _ReelPageState extends State<ReelPage> {
   bool get _initialized =>
       _flickManager != null &&
       (_flickManager!.flickVideoManager?.isVideoInitialized ?? false);
-
-  bool get _isBuffering =>
-      _flickManager?.flickVideoManager?.isBuffering ?? false;
 
   @override
   void initState() {
@@ -92,6 +92,9 @@ class _ReelPageState extends State<ReelPage> {
     _initializeAndPlayVideo();
   }
 
+  /// Don't block play: quick cache check (500ms). Miss → stream from network + cache in background.
+  static const Duration _cacheWaitTimeout = Duration(milliseconds: 500);
+
   Future<void> _initializeAndPlayVideo({int retryCount = 0}) async {
     if (_isDisposed) return;
 
@@ -103,7 +106,7 @@ class _ReelPageState extends State<ReelPage> {
       try {
         cachedFile = await DefaultCacheManager()
             .getSingleFile(videoUrl)
-            .timeout(const Duration(seconds: 20));
+            .timeout(_cacheWaitTimeout);
         if (!await cachedFile.exists()) cachedFile = null;
       } catch (_) {
         cachedFile = null;
@@ -114,6 +117,10 @@ class _ReelPageState extends State<ReelPage> {
       final VideoPlayerController videoController = cachedFile != null
           ? VideoPlayerController.file(cachedFile)
           : VideoPlayerController.networkUrl(Uri.parse(videoUrl));
+
+      if (cachedFile == null) {
+        DefaultCacheManager().getSingleFile(videoUrl);
+      }
 
       await videoController.initialize();
       if (_isDisposed) {
@@ -132,6 +139,8 @@ class _ReelPageState extends State<ReelPage> {
         flickManager.dispose();
         return;
       }
+
+      flickManager.flickVideoManager?.addListener(_onBufferingChanged);
 
       if (dashboardController.selectedPageIndex.value != 0 && widget.isHomePage) {
         if (mounted) setState(() => _flickManager = flickManager);
@@ -155,9 +164,30 @@ class _ReelPageState extends State<ReelPage> {
     }
   }
 
+  void _onBufferingChanged() {
+    if (!mounted || _isDisposed) return;
+    final buffering = _flickManager?.flickVideoManager?.isBuffering ?? false;
+    if (buffering) {
+      _bufferingTimer?.cancel();
+      _bufferingTimer = Timer(const Duration(milliseconds: 800), () {
+        if (!mounted || _isDisposed) return;
+        if (_flickManager?.flickVideoManager?.isBuffering ?? false) {
+          setState(() => _showBufferingIndicator = true);
+        }
+      });
+    } else {
+      _bufferingTimer?.cancel();
+      _bufferingTimer = null;
+      if (_showBufferingIndicator) setState(() => _showBufferingIndicator = false);
+    }
+  }
+
   @override
   void dispose() {
     _isDisposed = true;
+    _bufferingTimer?.cancel();
+    _bufferingTimer = null;
+    _flickManager?.flickVideoManager?.removeListener(_onBufferingChanged);
     _flickManager?.dispose();
     _flickManager = null;
     super.dispose();
@@ -192,16 +222,7 @@ class _ReelPageState extends State<ReelPage> {
         details.value = value;
       },
       child: _flickManager == null
-          ? const Center(
-              child: SizedBox(
-                width: 48,
-                height: 48,
-                child: CircularProgressIndicator(
-                  strokeWidth: 2,
-                  valueColor: AlwaysStoppedAnimation<Color>(ColorRes.bgGrey),
-                ),
-              ),
-            )
+          ? const ColoredBox(color: ColorRes.blackPure)
           : FlickVideoPlayer(
               flickManager: _flickManager!,
               flickVideoWithControls: Stack(
@@ -219,12 +240,12 @@ class _ReelPageState extends State<ReelPage> {
                       ),
                     ),
                   ),
-                  if (_isBuffering)
+                  if (_showBufferingIndicator)
                     const IgnorePointer(
                       child: Center(
                         child: SizedBox(
-                          width: 48,
-                          height: 48,
+                          width: 40,
+                          height: 40,
                           child: CircularProgressIndicator(
                             strokeWidth: 2,
                             valueColor:

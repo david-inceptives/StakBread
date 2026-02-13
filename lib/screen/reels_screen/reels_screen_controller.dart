@@ -44,7 +44,7 @@ class ReelsScreenController extends BaseController {
     initFirstPlayers();
   }
 
-  /// Initialize first two players and preload next 5 reels (TikTok-style).
+  /// Load initial data and start preloading first 20 + next 10 reels in background.
   Future<void> initFirstPlayers() async {
     isLoading.value = true;
     if (reels.length <= 1) {
@@ -55,10 +55,11 @@ class ReelsScreenController extends BaseController {
       await onFetchMoreData?.call();
     }
     isLoading.value = false;
+    ReelPreloadService.preloadInitialReels(reels);
     ReelPreloadService.preloadNextReels(reels, currentIndex.value);
   }
 
-  /// Handle page change + preload next 5 videos for instant play.
+  /// Handle page change + preload next 10 videos for instant play.
   Future<void> onPageChanged(int index) async {
     currentIndex.value = index;
     ReelPreloadService.preloadNextReels(reels, index);
