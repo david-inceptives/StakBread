@@ -34,6 +34,8 @@ class HomeScreenController extends BaseController with GetSingleTickerProviderSt
   RxBool isAnimateTab = false.obs;
   StreamSubscription<Map>? streamSubscription;
   CancelToken token = CancelToken();
+  /// Prevents multiple simultaneous fetch-more calls (pagination).
+  bool isReelsLoadingMore = false;
 
   Rx<User?> get myUser => Rx(SessionManager.instance.getUser());
 
@@ -121,6 +123,8 @@ class HomeScreenController extends BaseController with GetSingleTickerProviderSt
   Future<void> onRefreshPage({bool reset = true}) async {
     if (reset) {
       isLoading.value = true;
+    } else {
+      if (isReelsLoadingMore) return;
     }
     switch (selectedReelCategory.value) {
       case TabType.discover:
@@ -163,24 +167,63 @@ class HomeScreenController extends BaseController with GetSingleTickerProviderSt
   }
 
   Future<void> fetchDiscoverPost(bool resetData) async {
-    isLoading.value = true;
-    List<Post> newPosts = await PostService.instance.fetchPostsDiscover(type: PostType.reels, cancelToken: token);
-    addResponseData(newPosts, resetData);
+    if (resetData) {
+      isLoading.value = true;
+    } else {
+      isReelsLoadingMore = true;
+    }
+    try {
+      final lastId = resetData ? null : reels.lastOrNull?.id?.toInt();
+      List<Post> newPosts = await PostService.instance.fetchPostsDiscover(
+          type: PostType.reels,
+          lastItemId: lastId,
+          limit: AppRes.paginationLimitReels,
+          cancelToken: token);
+      addResponseData(newPosts, resetData);
+    } finally {
+      if (!resetData) isReelsLoadingMore = false;
+    }
   }
 
   Future<void> _fetchFollowingPost(bool resetData) async {
-    isLoading.value = true;
-    List<Post> newPosts = await PostService.instance.fetchPostsFollowing(type: PostType.reels, cancelToken: token);
-
-    addResponseData(newPosts, resetData);
+    if (resetData) {
+      isLoading.value = true;
+    } else {
+      isReelsLoadingMore = true;
+    }
+    try {
+      final lastId = resetData ? null : reels.lastOrNull?.id?.toInt();
+      List<Post> newPosts = await PostService.instance.fetchPostsFollowing(
+          type: PostType.reels,
+          lastItemId: lastId,
+          limit: AppRes.paginationLimitReels,
+          cancelToken: token);
+      addResponseData(newPosts, resetData);
+    } finally {
+      if (!resetData) isReelsLoadingMore = false;
+    }
   }
 
   Future<void> _fetchPostsNearBy(bool resetData) async {
-    isLoading.value = true;
-    Position position = await LocationService.instance.getCurrentLocation(isPermissionDialogShow: true);
-    List<Post> newPosts = await PostService.instance.fetchPostsNearBy(
-        type: PostType.reels, placeLat: position.latitude, placeLon: position.longitude, cancelToken: token);
-    addResponseData(newPosts, resetData);
+    if (resetData) {
+      isLoading.value = true;
+    } else {
+      isReelsLoadingMore = true;
+    }
+    try {
+      Position position = await LocationService.instance.getCurrentLocation(isPermissionDialogShow: true);
+      final lastId = resetData ? null : reels.lastOrNull?.id?.toInt();
+      List<Post> newPosts = await PostService.instance.fetchPostsNearBy(
+          type: PostType.reels,
+          placeLat: position.latitude,
+          placeLon: position.longitude,
+          lastItemId: lastId,
+          limit: AppRes.paginationLimitReels,
+          cancelToken: token);
+      addResponseData(newPosts, resetData);
+    } finally {
+      if (!resetData) isReelsLoadingMore = false;
+    }
   }
 
   void addResponseData(List<Post> newPosts, bool resetData) {
@@ -192,10 +235,17 @@ class HomeScreenController extends BaseController with GetSingleTickerProviderSt
       }
     }
     if (newPosts.isNotEmpty) {
-      reels.addAll(newPosts);
+      if (resetData) {
+        reels.addAll(newPosts);
+      } else {
+        final existingIds = reels.map((r) => r.id).toSet();
+        final toAdd = newPosts.where((p) => p.id != null && !existingIds.contains(p.id)).toList();
+        reels.addAll(toAdd);
+      }
     }
 
     isLoading.value = false;
+    if (!resetData) isReelsLoadingMore = false;
   }
 
   Future<void> _fetchLocation() async {

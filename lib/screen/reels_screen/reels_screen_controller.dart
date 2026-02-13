@@ -12,6 +12,7 @@ import 'package:stakBread/screen/dashboard_screen/dashboard_screen_controller.da
 import 'package:stakBread/screen/profile_screen/profile_screen_controller.dart';
 import 'package:stakBread/screen/profile_screen/widget/post_options_sheet.dart';
 import 'package:stakBread/screen/reels_screen/reel/reel_page_controller.dart';
+import 'package:stakBread/screen/reels_screen/reel/reel_preload_service.dart';
 import 'package:stakBread/screen/report_sheet/report_sheet.dart';
 
 class ReelsScreenController extends BaseController {
@@ -43,7 +44,7 @@ class ReelsScreenController extends BaseController {
     initFirstPlayers();
   }
 
-  /// Initialize first two players
+  /// Initialize first two players and preload next 5 reels (TikTok-style).
   Future<void> initFirstPlayers() async {
     isLoading.value = true;
     if (reels.length <= 1) {
@@ -54,12 +55,13 @@ class ReelsScreenController extends BaseController {
       await onFetchMoreData?.call();
     }
     isLoading.value = false;
+    ReelPreloadService.preloadNextReels(reels, currentIndex.value);
   }
 
-  /// Handle page change
+  /// Handle page change + preload next 5 videos for instant play.
   Future<void> onPageChanged(int index) async {
     currentIndex.value = index;
-    // Fetch more data if near end
+    ReelPreloadService.preloadNextReels(reels, index);
     if (index >= reels.length - 3) {
       onFetchMoreData?.call();
     }

@@ -31,6 +31,7 @@ class AppRes {
 
   // Pagination limit
   static const int paginationLimit = 20;
+  static const int paginationLimitReels = 5;
   static const int chatPaginationLimit = 40;
   static const int paginationLimitDetectWord =
       5; // For mention user and hashtag

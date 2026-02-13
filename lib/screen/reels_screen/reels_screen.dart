@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/physics.dart';
 import 'package:get/get.dart';
 import 'package:stakBread/common/widget/my_refresh_indicator.dart';
 import 'package:stakBread/common/widget/no_data_widget.dart';
@@ -125,14 +126,53 @@ class _ReelsScreenState extends State<ReelsScreen> {
   }
 }
 
-class CustomPageViewScrollPhysics extends ScrollPhysics {
+/// TikTok-style: halka swipe pe bhi next/previous video pe snap (low velocity threshold).
+class CustomPageViewScrollPhysics extends PageScrollPhysics {
   const CustomPageViewScrollPhysics({super.parent});
+
+  /// Halka swipe bhi page change trigger kare (default threshold zyada high hota hai).
+  static const double _minVelocityForPageChange = 15.0;
 
   @override
   CustomPageViewScrollPhysics applyTo(ScrollPhysics? ancestor) {
-    return CustomPageViewScrollPhysics(parent: buildParent(ancestor)!);
+    return CustomPageViewScrollPhysics(parent: buildParent(ancestor));
   }
 
   @override
-  SpringDescription get spring => const SpringDescription(mass: 1, stiffness: 1000, damping: 60);
+  SpringDescription get spring =>
+      const SpringDescription(mass: 0.8, stiffness: 2000, damping: 52);
+
+  double _pageFromPixels(ScrollMetrics position) {
+    return position.pixels / position.viewportDimension;
+  }
+
+  double _pixelsFromPage(ScrollMetrics position, double page) {
+    return page * position.viewportDimension;
+  }
+
+  @override
+  Simulation? createBallisticSimulation(ScrollMetrics position, double velocity) {
+    if ((velocity <= 0.0 && position.pixels <= position.minScrollExtent) ||
+        (velocity >= 0.0 && position.pixels >= position.maxScrollExtent)) {
+      return super.createBallisticSimulation(position, velocity);
+    }
+    double page = _pageFromPixels(position);
+    // Low threshold: halka swipe = next/prev page
+    if (velocity < -_minVelocityForPageChange) {
+      page = (page - 0.5).roundToDouble();
+    } else if (velocity > _minVelocityForPageChange) {
+      page = (page + 0.5).roundToDouble();
+    } else {
+      page = page.roundToDouble();
+    }
+    final double target = _pixelsFromPage(position, page);
+    if ((target - position.pixels).abs() < 0.5) return null;
+    return ScrollSpringSimulation(
+      spring,
+      position.pixels,
+      target,
+      velocity,
+      tolerance: toleranceFor(position),
+    );
+  }
 }
