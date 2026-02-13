@@ -25,6 +25,7 @@ import 'package:stakBread/screen/post_screen/single_post_screen.dart';
 import 'package:stakBread/screen/reels_screen/reels_screen.dart';
 import 'package:stakBread/screen/reels_screen/reels_screen_controller.dart';
 import 'package:stakBread/utilities/app_res.dart';
+import 'package:stakBread/utilities/color_res.dart';
 
 class HomeScreenController extends BaseController with GetSingleTickerProviderStateMixin {
   Rx<TabType> selectedReelCategory = TabType.values.first.obs;
@@ -36,6 +37,7 @@ class HomeScreenController extends BaseController with GetSingleTickerProviderSt
   CancelToken token = CancelToken();
   /// Prevents multiple simultaneous fetch-more calls (pagination).
   bool isReelsLoadingMore = false;
+  bool _hasShownAllReelsToast = false;
 
   Rx<User?> get myUser => Rx(SessionManager.instance.getUser());
 
@@ -229,6 +231,7 @@ class HomeScreenController extends BaseController with GetSingleTickerProviderSt
   void addResponseData(List<Post> newPosts, bool resetData) {
     if (resetData) {
       reels.clear();
+      _hasShownAllReelsToast = false;
       if (Get.isRegistered<ReelsScreenController>(tag: ReelsScreenController.tag)) {
         var controller = Get.find<ReelsScreenController>(tag: ReelsScreenController.tag);
         controller.handleRefresh(() async {});
@@ -242,6 +245,16 @@ class HomeScreenController extends BaseController with GetSingleTickerProviderSt
         final toAdd = newPosts.where((p) => p.id != null && !existingIds.contains(p.id)).toList();
         reels.addAll(toAdd);
       }
+    } else if (!resetData && reels.isNotEmpty && !_hasShownAllReelsToast) {
+      _hasShownAllReelsToast = true;
+      Get.snackbar(
+        '',
+        'You\'ve seen all reels',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: ColorRes.textDarkGrey,
+        colorText: ColorRes.whitePure,
+        duration: const Duration(seconds: 2),
+      );
     }
 
     isLoading.value = false;

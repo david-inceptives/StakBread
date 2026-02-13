@@ -222,7 +222,7 @@ class _ReelPageState extends State<ReelPage> {
         details.value = value;
       },
       child: _flickManager == null
-          ? const ColoredBox(color: ColorRes.blackPure)
+          ? _buildLoadingPlaceholder()
           : FlickVideoPlayer(
               flickManager: _flickManager!,
               flickVideoWithControls: Stack(
@@ -310,6 +310,23 @@ class _ReelPageState extends State<ReelPage> {
                 ],
               ),
             ),
+    );
+  }
+
+  Widget _buildLoadingPlaceholder() {
+    final thumbUrl = widget.reelData.thumbnail?.addBaseURL();
+    if (thumbUrl == null || thumbUrl.isEmpty) {
+      return const ColoredBox(color: ColorRes.blackPure);
+    }
+    return ColoredBox(
+      color: ColorRes.blackPure,
+      child: Image.network(
+        thumbUrl,
+        fit: BoxFit.cover,
+        width: double.infinity,
+        height: double.infinity,
+        errorBuilder: (_, __, ___) => const ColoredBox(color: ColorRes.blackPure),
+      ),
     );
   }
 

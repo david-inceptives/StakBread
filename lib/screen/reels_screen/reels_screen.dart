@@ -88,28 +88,37 @@ class _ReelsScreenState extends State<ReelsScreen> {
                           return NoDataWidgetWithScroll(
                               title: LKey.reelsEmptyTitle.tr, description: LKey.reelsEmptyDescription.tr);
                         }
-                        return PageView.builder(
-                          controller: controller.pageController,
-                          physics: const CustomPageViewScrollPhysics(),
-                          scrollDirection: Axis.vertical,
-                          itemCount: reels.length,
-                          onPageChanged: controller.onPageChanged,
-                          itemBuilder: (context, index) {
-                            return Obx(
-                              () {
-                                bool isLoading = controller.isLoading.value;
-                                return isLoading
-                                    ? Center(child: CupertinoActivityIndicator(color: ColorRes.textLightGrey))
-                                    : ReelPage(
-                                        reelData: reels[index],
-                                        autoPlay: index == controller.currentIndex.value,
-                                        likeKey: GlobalKey(),
-                                        reelsScreenController: controller,
-                                        onUpdateReelData: controller.onUpdateReelData,
-                                        isHomePage: widget.isHomePage);
-                              },
-                            );
+                        return NotificationListener<ScrollEndNotification>(
+                          onNotification: (_) {
+                            if (reels.isEmpty) return false;
+                            if (controller.currentIndex.value == reels.length - 1) {
+                              controller.maybeShowLastReelToastOnSwipe();
+                            }
+                            return false;
                           },
+                          child: PageView.builder(
+                            controller: controller.pageController,
+                            physics: const CustomPageViewScrollPhysics(),
+                            scrollDirection: Axis.vertical,
+                            itemCount: reels.length,
+                            onPageChanged: controller.onPageChanged,
+                            itemBuilder: (context, index) {
+                              return Obx(
+                                () {
+                                  bool isLoading = controller.isLoading.value;
+                                  return isLoading
+                                      ? Center(child: CupertinoActivityIndicator(color: ColorRes.textLightGrey))
+                                      : ReelPage(
+                                          reelData: reels[index],
+                                          autoPlay: index == controller.currentIndex.value,
+                                          likeKey: GlobalKey(),
+                                          reelsScreenController: controller,
+                                          onUpdateReelData: controller.onUpdateReelData,
+                                          isHomePage: widget.isHomePage);
+                                },
+                              );
+                            },
+                          ),
                         );
                       }),
                       HashTagAndMentionUserView(helper: controller.commentHelper),

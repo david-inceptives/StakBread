@@ -14,6 +14,7 @@ import 'package:stakBread/screen/profile_screen/widget/post_options_sheet.dart';
 import 'package:stakBread/screen/reels_screen/reel/reel_page_controller.dart';
 import 'package:stakBread/screen/reels_screen/reel/reel_preload_service.dart';
 import 'package:stakBread/screen/report_sheet/report_sheet.dart';
+import 'package:stakBread/utilities/color_res.dart';
 
 class ReelsScreenController extends BaseController {
   static const String tag = "REEL";
@@ -26,11 +27,14 @@ class ReelsScreenController extends BaseController {
 
   final RxBool isRefreshing = false.obs;
   CommentHelper commentHelper = CommentHelper();
+  bool _hasShownLastReelToast = false;
 
   ReelsScreenController({required this.reels,
     required this.currentIndex,
     this.onFetchMoreData,
     this.isHomePage = false});
+
+  VoidCallback? _scrollEndListener;
 
   @override
   void onInit() {
@@ -42,6 +46,23 @@ class ReelsScreenController extends BaseController {
   void onReady() {
     super.onReady();
     initFirstPlayers();
+    _attachScrollEndListener();
+  }
+
+  void _attachScrollEndListener() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!pageController.hasClients) return;
+      final position = pageController.position;
+      void onScrollEnd() {
+        if (!position.isScrollingNotifier.value &&
+            reels.isNotEmpty &&
+            currentIndex.value == reels.length - 1) {
+          maybeShowLastReelToastOnSwipe();
+        }
+      }
+      _scrollEndListener = onScrollEnd;
+      position.isScrollingNotifier.addListener(onScrollEnd);
+    });
   }
 
   /// Load initial data and start preloading first 20 + next 10 reels in background.
@@ -68,12 +89,27 @@ class ReelsScreenController extends BaseController {
     }
   }
 
+  /// Call when user swipes on last video (tried to go next). Shows toast once.
+  void maybeShowLastReelToastOnSwipe() {
+    if (reels.isEmpty || currentIndex.value != reels.length - 1 || _hasShownLastReelToast) return;
+    _hasShownLastReelToast = true;
+    Get.snackbar(
+      '',
+      'You\'ve seen all reels',
+      snackPosition: SnackPosition.BOTTOM,
+      backgroundColor: ColorRes.textDarkGrey,
+      colorText: ColorRes.whitePure,
+      duration: const Duration(seconds: 2),
+    );
+  }
+
   bool isCurrentPageVisible = true;
 
   /// Handle refresh logic
   Future<void> handleRefresh(Future<void> Function()? onRefresh) async {
     if (isRefreshing.value) return;
     isRefreshing.value = true;
+    _hasShownLastReelToast = false;
 
     await Future.delayed(const Duration(milliseconds: 100));
     await onRefresh?.call();
@@ -90,6 +126,9 @@ class ReelsScreenController extends BaseController {
 
   @override
   void onClose() {
+    if (pageController.hasClients && _scrollEndListener != null) {
+      pageController.position.isScrollingNotifier.removeListener(_scrollEndListener!);
+    }
     pageController.dispose();
     super.onClose();
   }

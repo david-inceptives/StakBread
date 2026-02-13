@@ -13,7 +13,7 @@ class BlackGradientShadow extends StatelessWidget {
       height: height ?? 300,
       decoration: const BoxDecoration(
         gradient: LinearGradient(
-            colors: [Colors.transparent, ColorRes.blackPure],
+            colors: [Colors.transparent, Colors.transparent,ColorRes.blackPure],
             begin: Alignment.topCenter,
             end: AlignmentDirectional.bottomCenter),
       ),
