@@ -35,15 +35,12 @@ enum UserRequestAction {
 
 
 enum ChatAction {
-  gift,
   audio,
   sticker,
   media;
 
   String get image {
     switch (this) {
-      case ChatAction.gift:
-        return AssetRes.icGift_2;
       case ChatAction.audio:
         return AssetRes.icVoice;
       case ChatAction.sticker:

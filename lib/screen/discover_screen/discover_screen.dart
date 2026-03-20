@@ -113,7 +113,7 @@ class DiscoverScreen extends StatelessWidget {
               child: InkWell(
                 onTap: () => controller.onTabChanged(0),
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 14),
+                  padding: const EdgeInsets.symmetric(vertical: 15),
                   child: Obx(() {
                     final selected = controller.selectedTabIndex.value == 0;
                     return Column(
@@ -127,9 +127,9 @@ class DiscoverScreen extends StatelessWidget {
                                 : ColorRes.textLightGrey,
                           ),
                         ),
+                        const SizedBox(height: 15,),
                         Container(
                           height: selected ? 3 : 0,
-                          margin: const EdgeInsets.only(top: 6),
                           color: ColorRes.textDarkGrey,
                         ),
                       ],
@@ -142,7 +142,7 @@ class DiscoverScreen extends StatelessWidget {
               child: InkWell(
                 onTap: () => Get.to(() => const HomeScreen()),
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 14),
+                  padding: const EdgeInsets.symmetric(vertical: 15),
                   child: Column(
                     children: [
                       Text(

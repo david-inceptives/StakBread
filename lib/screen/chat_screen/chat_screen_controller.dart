@@ -511,9 +511,6 @@ class ChatScreenController extends BlockUserController
     }
     FocusManager.instance.primaryFocus?.unfocus();
     switch (action) {
-      case ChatAction.gift:
-        pickGift();
-        break;
       case ChatAction.audio:
         _pickAudio();
         break;

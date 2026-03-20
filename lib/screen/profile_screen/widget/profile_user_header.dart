@@ -234,12 +234,7 @@ class _ProfileStatsRowState extends State<ProfileStatsRow> {
                           ),
                         ),
                       ),
-                      if (index != stats.length - 1)
-                        Container(
-                          height: 32,
-                          width: 1,
-                          color: ColorRes.borderLight,
-                        ),
+
                     ],
                   ),
                 ),
