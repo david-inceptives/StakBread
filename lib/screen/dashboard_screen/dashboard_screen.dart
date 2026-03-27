@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:proste_indexed_stack/proste_indexed_stack.dart';
+import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:stakBread/common/widget/banner_ads_custom.dart';
 import 'package:stakBread/languages/languages_keys.dart';
 import 'package:stakBread/model/user_model/user_model.dart';
@@ -151,7 +152,7 @@ class DashboardScreen extends StatelessWidget {
             ),
           ],
         ),
-        margin: const EdgeInsets.fromLTRB(140, 0, 140, 100),
+        margin:   EdgeInsets.fromLTRB(14.h, 0, 14.h, 10.h),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.center,
@@ -162,17 +163,17 @@ class DashboardScreen extends StatelessWidget {
                 Get.to(() => CreateFeedScreen(createType: CreateFeedType.feed));
               },
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                padding: EdgeInsets.symmetric(horizontal: 2.h, vertical: 1.6.h),
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(Icons.article_outlined, size: 24, color: ColorRes.textDarkGrey),
+                    Icon(Icons.article_outlined, size: 2.4.h, color: ColorRes.textDarkGrey),
                     const SizedBox(width: 5),
                     Text(
                       LKey.feed.tr,
                       style: TextStyleCustom.outFitRegular400(
-                        fontSize: 16,
+                        fontSize: 16.sp,
                         color: ColorRes.textDarkGrey,
                       ),
                     ),
@@ -187,17 +188,17 @@ class DashboardScreen extends StatelessWidget {
                 Get.to(() => const CameraScreen(cameraType: CameraScreenType.post));
               },
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                padding: EdgeInsets.symmetric(horizontal: 2.h, vertical: 1.6.h),
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(Icons.add_circle_outline, size: 24, color: ColorRes.textDarkGrey),
+                    Icon(Icons.add_circle_outline, size: 2.4.h, color: ColorRes.textDarkGrey),
                     const SizedBox(width: 5),
                     Text(
                       LKey.reels.tr,
                       style: TextStyleCustom.outFitRegular400(
-                        fontSize: 16,
+                        fontSize: 16.sp,
                         color: ColorRes.textDarkGrey,
                       ),
                     ),
