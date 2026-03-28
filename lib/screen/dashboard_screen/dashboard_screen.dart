@@ -14,6 +14,7 @@ import 'package:stakBread/screen/discover_screen/discover_screen.dart';
 import 'package:stakBread/screen/explore_screen/explore_tab_screen.dart';
 import 'package:stakBread/screen/profile_screen/profile_screen.dart';
 import 'package:stakBread/screen/store_screen/store_screen.dart';
+import 'package:stakBread/screen/upload_product_screen/upload_product_screen.dart';
 import 'package:stakBread/utilities/style_res.dart';
 import 'package:stakBread/utilities/text_style_custom.dart';
 import 'package:stakBread/utilities/color_res.dart';
@@ -157,6 +158,31 @@ class DashboardScreen extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
+            InkWell(
+              onTap: () {
+                Get.back();
+                Get.to(() => const UploadProductScreen());
+              },
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 2.h, vertical: 1.6.h),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(Icons.shopping_cart_outlined, size: 2.4.h, color: ColorRes.textDarkGrey),
+                    const SizedBox(width: 5),
+                    Text(
+                      LKey.menuProduct.tr,
+                      style: TextStyleCustom.outFitRegular400(
+                        fontSize: 16.sp,
+                        color: ColorRes.textDarkGrey,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            Divider(height: 1, color: ColorRes.borderLight),
             InkWell(
               onTap: () {
                 Get.back();

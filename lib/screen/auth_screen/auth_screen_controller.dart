@@ -189,6 +189,9 @@ class AuthScreenController extends BaseController {
       String? password}) async {
     String? deviceToken = await FirebaseNotificationManager.instance.getNotificationToken();
     if (deviceToken == null) return null;
+    if (deviceToken == null) return null;
+    if (deviceToken == null) return null;
+    if (deviceToken == null) return null;
 
     user.User? userData;
     switch (loginVia) {

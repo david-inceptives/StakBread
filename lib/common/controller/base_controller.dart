@@ -44,6 +44,50 @@ class BaseController extends FullLifeCycleController {
     );
   }
 
+  /// Compact white pill, centered, rounded border — for subtle confirmations (e.g. refreshed).
+  void showSmallCenterToast(String? message, {int second = 1}) {
+    if (Get.isSnackbarOpen) {
+      Get.back();
+    }
+    final ctx = Get.context;
+    final topInset = ctx != null ? MediaQuery.paddingOf(ctx).top + 8 : 48.0;
+
+    Get.rawSnackbar(
+      backgroundColor: Colors.transparent,
+      margin: EdgeInsets.only(top: topInset, left: 24, right: 24),
+      padding: EdgeInsets.zero,
+      isDismissible: true,
+      duration: Duration(seconds: second),
+      snackPosition: SnackPosition.TOP,
+      messageText: Center(
+        child: Container(
+          constraints: const BoxConstraints(maxWidth: 220),
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
+          decoration: BoxDecoration(
+            color: ColorRes.whitePure,
+            borderRadius: BorderRadius.circular(22),
+            border: Border.all(color: ColorRes.borderLight, width: 1),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.07),
+                blurRadius: 8,
+                offset: const Offset(0, 2),
+              ),
+            ],
+          ),
+          child: Text(
+            message?.capitalizeFirst?.tr ?? '',
+            textAlign: TextAlign.center,
+            style: TextStyleCustom.outFitRegular400(
+              color: ColorRes.textDarkGrey,
+              fontSize: 12,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
   void stopSnackBar() {
     if (Get.isSnackbarOpen) {
       Get.back();

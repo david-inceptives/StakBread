@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:get/get.dart';
 import 'package:stakBread/screen/store_screen/store_screen_controller.dart';
 
@@ -5,8 +7,18 @@ class CartItem {
   final StoreProduct product;
   int quantity;
   final String? variantText; // e.g. "Size: M", "Color: Black"
+  /// Server cart row id from add-to-cart API (for [StoreService.updateCart]).
+  int? serverCartId;
+  /// Matches API `variant_id` on the cart line (null = no variant row).
+  final int? variantId;
 
-  CartItem({required this.product, this.quantity = 1, this.variantText});
+  CartItem({
+    required this.product,
+    this.quantity = 1,
+    this.variantText,
+    this.serverCartId,
+    this.variantId,
+  });
 
   double get linePrice {
     final p = _parsePrice(product.price);
@@ -23,53 +35,99 @@ class CartItem {
 class CartController extends GetxController {
   final RxList<CartItem> items = <CartItem>[].obs;
 
+  /// From [StoreService.applyCoupon] — subtracted in [total].
+  final RxDouble couponDiscountAmount = 0.0.obs;
+  final RxString appliedCouponCode = ''.obs;
+
   static const double deliveryFee = 10.0;
 
   int get totalItemCount => items.fold(0, (sum, e) => sum + e.quantity);
 
   double get subtotal => items.fold(0.0, (sum, e) => sum + e.linePrice);
 
-  double get total => subtotal + deliveryFee;
+  double get total =>
+      math.max(0.0, subtotal + deliveryFee - couponDiscountAmount.value);
 
-  void addItem(StoreProduct product, {int quantity = 1, String? variantText}) {
-    final existing = items.indexWhere((e) => e.product.id == product.id);
+  void setAppliedCoupon(String code, double discountAmount) {
+    appliedCouponCode.value = code;
+    couponDiscountAmount.value = discountAmount;
+  }
+
+  void clearCoupon() {
+    appliedCouponCode.value = '';
+    couponDiscountAmount.value = 0.0;
+  }
+
+  int _indexOf(String productId, int? variantId) {
+    return items.indexWhere(
+      (e) => e.product.id == productId && e.variantId == variantId,
+    );
+  }
+
+  /// Replaces in-memory cart with server state from [fetchCart].
+  void replaceAllFromServer(List<CartItem> newItems) {
+    clearCoupon();
+    items.assignAll(newItems);
+    items.refresh();
+  }
+
+  void addItem(
+    StoreProduct product, {
+    int quantity = 1,
+    String? variantText,
+    int? serverCartId,
+    int? variantId,
+  }) {
+    final vid = variantId ?? product.variantId;
+    final existing = _indexOf(product.id, vid);
     if (existing >= 0) {
       items[existing].quantity += quantity;
+      if (serverCartId != null) {
+        items[existing].serverCartId = serverCartId;
+      }
       items.refresh();
     } else {
-      items.add(CartItem(product: product, quantity: quantity, variantText: variantText));
+      items.add(CartItem(
+        product: product,
+        quantity: quantity,
+        variantText: variantText,
+        serverCartId: serverCartId,
+        variantId: vid,
+      ));
     }
   }
 
-  void removeItem(String productId) {
-    items.removeWhere((e) => e.product.id == productId);
+  void removeItem(String productId, {int? variantId}) {
+    items.removeWhere(
+      (e) => e.product.id == productId && e.variantId == variantId,
+    );
   }
 
-  void updateQuantity(String productId, int quantity) {
+  void updateQuantity(String productId, int quantity, {int? variantId}) {
     if (quantity <= 0) {
-      removeItem(productId);
+      removeItem(productId, variantId: variantId);
       return;
     }
-    final i = items.indexWhere((e) => e.product.id == productId);
+    final i = _indexOf(productId, variantId);
     if (i >= 0) {
       items[i].quantity = quantity;
       items.refresh();
     }
   }
 
-  void incrementQuantity(String productId) {
-    final i = items.indexWhere((e) => e.product.id == productId);
+  void incrementQuantity(String productId, {int? variantId}) {
+    final i = _indexOf(productId, variantId);
     if (i >= 0) {
       items[i].quantity++;
       items.refresh();
     }
   }
 
-  void decrementQuantity(String productId) {
-    final i = items.indexWhere((e) => e.product.id == productId);
+  void decrementQuantity(String productId, {int? variantId}) {
+    final i = _indexOf(productId, variantId);
     if (i >= 0) {
       if (items[i].quantity <= 1) {
-        removeItem(productId);
+        removeItem(productId, variantId: variantId);
       } else {
         items[i].quantity--;
         items.refresh();

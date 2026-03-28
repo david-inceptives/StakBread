@@ -136,6 +136,7 @@ dependencies:
     git:
       url: https://gitlab.com/jeelkhokhariya59/retrytech_plugin.git
       ref: master
+  flutter_colorpicker: ^1.1.0
 
 
 dev_dependencies:

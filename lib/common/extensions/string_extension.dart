@@ -12,11 +12,16 @@ import 'package:stakBread/common/manager/session_manager.dart';
 import 'package:stakBread/common/widget/dominant_color.dart';
 import 'package:stakBread/languages/languages_keys.dart';
 import 'package:stakBread/model/general/status_model.dart';
+import 'package:stakBread/utilities/const_res.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 extension StringExtention on String {
   String addBaseURL() {
-    return (SessionManager.instance.getSettings()?.itemBaseUrl ?? '') + this;
+    final fromSettings = SessionManager.instance.getSettings()?.itemBaseUrl;
+    if (fromSettings != null && fromSettings.isNotEmpty) {
+      return fromSettings + this;
+    }
+    return baseURL + this;
   }
 
   Future<StatusModel> get lunchUrlWithHttps async {

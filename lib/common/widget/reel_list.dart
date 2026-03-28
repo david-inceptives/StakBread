@@ -14,6 +14,14 @@ import 'package:stakBread/utilities/asset_res.dart';
 import 'package:stakBread/utilities/text_style_custom.dart';
 import 'package:stakBread/utilities/color_res.dart';
 
+String? postThumbnailUrl(Post? post) {
+  final t = post?.thumbnail;
+  if (t == null || t.isEmpty) return null;
+  final s = t.trim();
+  if (s.startsWith('http://') || s.startsWith('https://')) return s;
+  return s.addBaseURL();
+}
+
 class ReelList extends StatelessWidget {
   final RxList<Post> reels;
   final ScrollController? controller;
@@ -110,7 +118,7 @@ class ReelGridCardView extends StatelessWidget {
             CustomImage(
                 size: const Size(172, 172),
                 strokeWidth: 0,
-                image: post?.thumbnail?.addBaseURL(),
+                image: postThumbnailUrl(post),
                 radius: 0,
                 isShowPlaceHolder: true),
             if (post?.isPinned == 1 && isPinShow)

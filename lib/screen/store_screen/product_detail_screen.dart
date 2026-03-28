@@ -1,6 +1,13 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
+import 'package:shimmer/shimmer.dart';
+import 'package:stakBread/common/controller/base_controller.dart';
+import 'package:stakBread/common/extensions/string_extension.dart';
 import 'package:stakBread/languages/languages_keys.dart';
+import 'package:stakBread/common/service/api/store_service.dart';
+import 'package:stakBread/model/store/product_review_model.dart';
 import 'package:stakBread/screen/store_screen/cart_controller.dart';
 import 'package:stakBread/screen/store_screen/cart_screen.dart';
 import 'package:stakBread/screen/store_screen/store_screen_controller.dart';
@@ -20,22 +27,185 @@ class ProductDetailScreen extends StatefulWidget {
 }
 
 class _ProductDetailScreenState extends State<ProductDetailScreen> {
+  late StoreProduct _product;
+  bool _loadingDetail = false;
+  /// Full-screen shimmer until detail + reviews + cart APIs finish (network products only).
+  late bool _initialDataLoading;
+  List<ProductReview> _reviews = [];
+  bool _loadingReviews = false;
   int selectedThumbIndex = 0;
   bool hasAddedToCart = false;
+  bool _addingToCart = false;
   int cartQuantity = 1;
 
-  void _syncCartQuantity() {
+  static const Color _shimmerBase = Color(0xFFE8E8E8);
+  static const Color _shimmerHighlight = Color(0xFFF5F6F8);
+
+  @override
+  void initState() {
+    super.initState();
+    _product = widget.product;
+    _initialDataLoading = _product.isNetworkImage;
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      if (!mounted) return;
+      final cart = Get.isRegistered<CartController>() ? Get.find<CartController>() : Get.put(CartController());
+      _syncFromCartIfNeeded();
+      if (_product.isNetworkImage) {
+        try {
+          await _loadProductDetail(showProgressBar: false);
+          await _loadReviews();
+          if (!mounted) return;
+          try {
+            final list = await StoreService.instance.fetchCartItems();
+            cart.replaceAllFromServer(list);
+          } catch (_) {}
+          if (!mounted) return;
+          _syncFromCartIfNeeded();
+        } finally {
+          if (mounted) setState(() => _initialDataLoading = false);
+        }
+      }
+    });
+  }
+
+  void _syncFromCartIfNeeded() {
     if (!Get.isRegistered<CartController>()) return;
-    Get.find<CartController>().updateQuantity(widget.product.id, cartQuantity);
+    final cart = Get.find<CartController>();
+    final idx = cart.items.indexWhere(
+      (e) => e.product.id == _product.id && e.variantId == _product.variantId,
+    );
+    if (idx >= 0 && mounted) {
+      setState(() {
+        hasAddedToCart = true;
+        cartQuantity = cart.items[idx].quantity;
+      });
+    } else if (mounted) {
+      setState(() {
+        hasAddedToCart = false;
+        cartQuantity = 1;
+      });
+    }
+  }
+
+  Future<void> _loadReviews() async {
+    if (!_product.isNetworkImage) return;
+    setState(() => _loadingReviews = true);
+    try {
+      final list = await StoreService.instance.fetchProductReviews(_product.id);
+      if (!mounted) return;
+      setState(() => _reviews = list);
+    } catch (_) {
+      if (mounted) setState(() => _reviews = []);
+    } finally {
+      if (mounted) setState(() => _loadingReviews = false);
+    }
+  }
+
+  String _formatReviewDate(String? iso) {
+    if (iso == null || iso.isEmpty) return '';
+    try {
+      return DateFormat('dd-MMM-yyyy').format(DateTime.parse(iso));
+    } catch (_) {
+      return '';
+    }
+  }
+
+  Future<void> _loadProductDetail({bool showProgressBar = true}) async {
+    if (showProgressBar) setState(() => _loadingDetail = true);
+    try {
+      final detail = await StoreService.instance.fetchProductDetail(_product.id);
+      if (!mounted) return;
+      if (detail != null) {
+        setState(() {
+          _product = detail;
+          selectedThumbIndex = 0;
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(e.toString().replaceFirst('Exception: ', ''))),
+        );
+      }
+    } finally {
+      if (showProgressBar && mounted) setState(() => _loadingDetail = false);
+    }
+  }
+
+  Future<void> _syncCartQuantity() async {
+    if (!Get.isRegistered<CartController>()) return;
+    final cart = Get.find<CartController>();
+    final i = cart.items.indexWhere(
+      (e) => e.product.id == _product.id && e.variantId == _product.variantId,
+    );
+    if (i < 0) return;
+    final serverId = cart.items[i].serverCartId;
+    cart.updateQuantity(_product.id, cartQuantity, variantId: _product.variantId);
+    if (!_product.isNetworkImage || serverId == null) return;
+    try {
+      await StoreService.instance.updateCart(cartId: serverId, quantity: cartQuantity);
+    } catch (e) {
+      if (mounted) {
+        BaseController.share.showSnackBar(
+          e.toString().replaceFirst('Exception: ', ''),
+        );
+      }
+    }
+  }
+
+  /// Removes this product line from cart (server + local). Used when quantity goes to 0.
+  Future<void> _removeProductFromCart() async {
+    if (!Get.isRegistered<CartController>()) return;
+    final cart = Get.find<CartController>();
+    final i = cart.items.indexWhere(
+      (e) => e.product.id == _product.id && e.variantId == _product.variantId,
+    );
+    if (i < 0) {
+      if (mounted) {
+        setState(() {
+          hasAddedToCart = false;
+          cartQuantity = 1;
+        });
+      }
+      return;
+    }
+    final serverId = cart.items[i].serverCartId;
+    if (_product.isNetworkImage && serverId != null) {
+      try {
+        await StoreService.instance.deleteFromCart(cartId: serverId);
+      } catch (e) {
+        if (mounted) {
+          BaseController.share.showSnackBar(
+            e.toString().replaceFirst('Exception: ', ''),
+          );
+        }
+        return;
+      }
+    }
+    cart.removeItem(_product.id, variantId: _product.variantId);
+    if (mounted) {
+      setState(() {
+        hasAddedToCart = false;
+        cartQuantity = 1;
+      });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    final product = widget.product;
-    final mainImage = product.imagePath ?? '';
-    final thumbnails = product.thumbnailPaths ?? [mainImage, mainImage, mainImage, mainImage].where((e) => e.isNotEmpty).toList();
-    if (thumbnails.isEmpty) thumbnails.add(mainImage);
-    final displayImage = selectedThumbIndex < thumbnails.length ? thumbnails[selectedThumbIndex] : mainImage;
+    final product = _product;
+    var thumbnails = product.effectiveThumbnailSources;
+    if (thumbnails.isEmpty) {
+      final mainImage = product.imagePath ?? '';
+      if (mainImage.isNotEmpty) {
+        thumbnails = [mainImage, mainImage, mainImage, mainImage];
+      } else {
+        thumbnails = [''];
+      }
+    }
+    final displayImage = selectedThumbIndex < thumbnails.length
+        ? thumbnails[selectedThumbIndex]
+        : (thumbnails.isNotEmpty ? thumbnails.first : '');
     final descriptionText = product.id == '1'
         ? LKey.productDetailDescription.tr
         : (product.detailDescription ?? product.description);
@@ -49,14 +219,36 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
             CustomAppBar(
               title: LKey.productDetails.tr,
               titleStyle: TextStyleCustom.unboundedSemiBold600(fontSize: 15, color: ColorRes.textDarkGrey),
-              rowWidget: IconButton(
-                icon: Icon(Icons.more_horiz, color: ColorRes.textDarkGrey, size: 24),
-                onPressed: () {},
-              ),
+
             ),
+            if (!_initialDataLoading && _loadingDetail)
+              const LinearProgressIndicator(
+                minHeight: 2,
+                color: ColorRes.green,
+                backgroundColor: Color(0xFFF5F6F8),
+              ),
             Expanded(
-              child: SingleChildScrollView(
-                child:  Column(
+              child: _initialDataLoading
+                  ? _buildProductDetailShimmer()
+                  : RefreshIndicator(
+                color: ColorRes.green,
+                onRefresh: () async {
+                  if (_product.isNetworkImage) {
+                    final cart = Get.isRegistered<CartController>() ? Get.find<CartController>() : Get.put(CartController());
+                    await Future.wait([
+                      _loadProductDetail(showProgressBar: false),
+                      _loadReviews(),
+                    ]);
+                    try {
+                      final list = await StoreService.instance.fetchCartItems();
+                      cart.replaceAllFromServer(list);
+                    } catch (_) {}
+                    if (mounted) _syncFromCartIfNeeded();
+                  }
+                },
+                child: SingleChildScrollView(
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     // Main product image
@@ -64,13 +256,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                       padding: const EdgeInsets.symmetric(horizontal: 0),
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(18),
-                        child: displayImage.isNotEmpty
-                            ? Image.asset(
-                          displayImage,
-                          fit: BoxFit.contain,
-                          width: double.infinity,
-                        )
-                            : _placeholder(),
+                        child: _detailHeroImage(product, displayImage),
                       ),
                     ),
                     const SizedBox(height: 14),
@@ -105,11 +291,19 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                                           ),
                                           child: ClipRRect(
                                             borderRadius: BorderRadius.circular(11),
-                                            child: Image.asset(
-                                              thumbnails[i],
-                                              fit: BoxFit.cover,
-                                              errorBuilder: (_, __, ___) => Icon(Icons.image, size: 32, color: ColorRes.textLightGrey),
-                                            ),
+                                            child: product.isNetworkImage
+                                                ? CachedNetworkImage(
+                                                    imageUrl: thumbnails[i].addBaseURL(),
+                                                    fit: BoxFit.cover,
+                                                    width: 44,
+                                                    height: 44,
+                                                    errorWidget: (_, __, ___) => Icon(Icons.image, size: 32, color: ColorRes.textLightGrey),
+                                                  )
+                                                : Image.asset(
+                                                    thumbnails[i],
+                                                    fit: BoxFit.cover,
+                                                    errorBuilder: (_, __, ___) => Icon(Icons.image, size: 32, color: ColorRes.textLightGrey),
+                                                  ),
                                           ),
                                         ),
                                       );
@@ -187,12 +381,12 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                       children: [
                                         InkWell(
-                                          onTap: () {
-                                            if (cartQuantity > 1) {
-                                              setState(() {
-                                                cartQuantity--;
-                                                _syncCartQuantity();
-                                              });
+                                          onTap: () async {
+                                            if (cartQuantity <= 1) {
+                                              await _removeProductFromCart();
+                                            } else {
+                                              setState(() => cartQuantity--);
+                                              await _syncCartQuantity();
                                             }
                                           },
                                           customBorder: const CircleBorder(),
@@ -212,10 +406,10 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                                           style: TextStyleCustom.unboundedBold700(fontSize: 16, color: ColorRes.green),
                                         ),
                                         InkWell(
-                                          onTap: () => setState(() {
-                                            cartQuantity++;
-                                            _syncCartQuantity();
-                                          }),
+                                          onTap: () async {
+                                            setState(() => cartQuantity++);
+                                            await _syncCartQuantity();
+                                          },
                                           customBorder: const CircleBorder(),
                                           child: Container(
                                             width: 24,
@@ -264,14 +458,60 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                               color: ColorRes.green,
                               borderRadius: BorderRadius.circular(15),
                               child: InkWell(
-                                onTap: () {
-                                  final cart = Get.put(CartController());
-                                  cart.addItem(product, quantity: 1, variantText: product.id == '2' ? '${LKey.sizeLabel.tr}: M' : '${LKey.colorLabel.tr}: Black');
-                                  setState(() {
-                                    hasAddedToCart = true;
-                                    cartQuantity = 1;
-                                  });
-                                },
+                                onTap: _addingToCart
+                                    ? null
+                                    : () async {
+                                        final cart = Get.put(CartController());
+                                        if (product.isNetworkImage) {
+                                          final vid = product.variantId;
+                                          if (vid == null) {
+                                            BaseController.share.showSnackBar(
+                                              LKey.somethingWentWrong.tr,
+                                            );
+                                            return;
+                                          }
+                                          setState(() => _addingToCart = true);
+                                          try {
+                                            final cartId = await StoreService.instance.addToCart(
+                                              productId: product.id,
+                                              quantity: 1,
+                                              variantId: vid,
+                                            );
+                                            if (!mounted) return;
+                                            cart.addItem(
+                                              product,
+                                              quantity: 1,
+                                              variantText: 'Standard',
+                                              serverCartId: cartId,
+                                              variantId: vid,
+                                            );
+                                            setState(() {
+                                              hasAddedToCart = true;
+                                              cartQuantity = 1;
+                                              _addingToCart = false;
+                                            });
+                                          } catch (e) {
+                                            if (mounted) {
+                                              setState(() => _addingToCart = false);
+                                              BaseController.share.showSnackBar(
+                                                e.toString().replaceFirst('Exception: ', ''),
+                                              );
+                                            }
+                                          }
+                                        } else {
+                                          cart.addItem(
+                                            product,
+                                            quantity: 1,
+                                            variantText: product.id == '2'
+                                                ? '${LKey.sizeLabel.tr}: M'
+                                                : '${LKey.colorLabel.tr}: Black',
+                                          );
+                                          setState(() {
+                                            hasAddedToCart = true;
+                                            cartQuantity = 1;
+                                          });
+                                        }
+                                      },
                                 borderRadius: BorderRadius.circular(15),
                                 child: Padding(
                                   padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 18),
@@ -320,98 +560,280 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                             ],
                           ),
                           Text(
-                            '${LKey.allReviews.tr} (125)',
+                            '${LKey.allReviews.tr} (${product.isNetworkImage ? _reviews.length : 1})',
                             style: TextStyleCustom.outFitRegular400(fontSize: 15, color: ColorRes.textLightGrey),
                           ),
                         ],
                       ),
                     ),
                     const SizedBox(height: 20),
-                    // Review card
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 20),
-                      child: Container(
-                        padding: const EdgeInsets.all(18),
-                        decoration: BoxDecoration(
-                          color: ColorRes.whitePure,
-                          border: Border.all(color: ColorRes.borderLight),
-                          borderRadius: BorderRadius.circular(16),
+                    if (product.isNetworkImage) ...[
+                      if (_loadingReviews && _reviews.isEmpty)
+                        const Padding(
+                          padding: EdgeInsets.symmetric(vertical: 24),
+                          child: Center(
+                            child: CircularProgressIndicator(color: ColorRes.green),
+                          ),
+                        )
+                      else if (!_loadingReviews && _reviews.isEmpty)
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 20),
+                          child: Text(
+                            LKey.noData.tr,
+                            textAlign: TextAlign.center,
+                            style: TextStyleCustom.outFitRegular400(fontSize: 14, color: ColorRes.textLightGrey),
+                          ),
+                        )
+                      else
+                        ..._reviews.map(
+                          (r) => Padding(
+                            key: ValueKey(r.id),
+                            padding: const EdgeInsets.fromLTRB(20, 0, 20, 12),
+                            child: _ApiReviewCard(
+                              review: r,
+                              formattedDate: _formatReviewDate(r.displayDateRaw),
+                            ),
+                          ),
                         ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              children: [
-                                CircleAvatar(
-                                  radius: 24,
-                                  backgroundColor: ColorRes.borderLight,
-                                  child: Icon(Icons.person, size: 28, color: ColorRes.textLightGrey),
-                                ),
-                                const SizedBox(width: 14),
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                    ] else
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 20),
+                        child: Container(
+                          padding: const EdgeInsets.all(18),
+                          decoration: BoxDecoration(
+                            color: ColorRes.whitePure,
+                            border: Border.all(color: ColorRes.borderLight),
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                children: [
+                                  CircleAvatar(
+                                    radius: 24,
+                                    backgroundColor: ColorRes.borderLight,
+                                    child: Icon(Icons.person, size: 28, color: ColorRes.textLightGrey),
+                                  ),
+                                  const SizedBox(width: 14),
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          'Lisa Lin',
+                                          style: TextStyleCustom.outFitSemiBold600(fontSize: 17, color: ColorRes.textDarkGrey),
+                                        ),
+                                        const SizedBox(height: 6),
+                                        Container(
+                                          padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
+                                          decoration: BoxDecoration(
+                                            color: ColorRes.green.withValues(alpha: 0.2),
+                                            borderRadius: BorderRadius.circular(5),
+                                          ),
+                                          child: Row(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              Icon(Icons.check_circle_rounded, size: 13, color: ColorRes.green),
+                                              const SizedBox(width: 5),
+                                              Text(
+                                                LKey.verifiedCustomer.tr,
+                                                style: TextStyleCustom.outFitSemiBold600(fontSize: 12, color: ColorRes.green),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  Column(
+                                    crossAxisAlignment: CrossAxisAlignment.end,
                                     children: [
-                                      Text(
-                                        'Lisa Lin',
-                                        style: TextStyleCustom.outFitSemiBold600(fontSize: 17, color: ColorRes.textDarkGrey),
+                                      Row(
+                                        children: List.generate(4, (_) => Icon(Icons.star_rounded, size: 18, color: const Color(0xFFFFC107))),
                                       ),
-                                      const SizedBox(height: 6),
-                                      Container(
-                                        padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
-                                        decoration: BoxDecoration(
-                                          color: ColorRes.green.withValues(alpha: 0.2),
-                                          borderRadius: BorderRadius.circular(5),
-                                        ),
-                                        child: Row(
-                                          mainAxisSize: MainAxisSize.min,
-                                          children: [
-                                            Icon(Icons.check_circle_rounded, size: 13, color: ColorRes.green),
-                                            const SizedBox(width: 5),
-                                            Text(
-                                              LKey.verifiedCustomer.tr,
-                                              style: TextStyleCustom.outFitSemiBold600(fontSize: 12, color: ColorRes.green),
-                                            ),
-                                          ],
-                                        ),
+                                      const SizedBox(height: 4),
+                                      Text(
+                                        '18-Feb-2022',
+                                        style: TextStyleCustom.outFitRegular400(fontSize: 12, color: ColorRes.textLightGrey),
                                       ),
                                     ],
                                   ),
-                                ),
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.end,
-                                  children: [
-                                    Row(
-                                      children: List.generate(4, (_) => Icon(Icons.star_rounded, size: 18, color: const Color(0xFFFFC107))),
-                                    ),
-                                    const SizedBox(height: 4),
-                                    Text(
-                                      '18-Feb-2022',
-                                      style: TextStyleCustom.outFitRegular400(fontSize: 12, color: ColorRes.textLightGrey),
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
-                            const SizedBox(height: 12),
-                            Text(
-                              "Alex Was Incredibly Professional And Fixed Our Leaking Issue In No Time. Highly Recommend!",
-                              style: TextStyleCustom.outFitRegular400(fontSize: 14, color: ColorRes.textDarkGrey),
-                              maxLines: 3,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ],
+                                ],
+                              ),
+                              const SizedBox(height: 12),
+                              Text(
+                                "Alex Was Incredibly Professional And Fixed Our Leaking Issue In No Time. Highly Recommend!",
+                                style: TextStyleCustom.outFitRegular400(fontSize: 14, color: ColorRes.textDarkGrey),
+                                maxLines: 3,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ],
+                          ),
                         ),
                       ),
-                    ),
                     const SizedBox(height: 36),
                   ],
-                )
+                ),
               ),
             ),
+          ),
           ],
         ),
       ),
+    );
+  }
+
+  Widget _buildProductDetailShimmer() {
+    Widget bar(double w, double h, [double radius = 8]) {
+      return Container(
+        width: w,
+        height: h,
+        decoration: BoxDecoration(
+          color: ColorRes.whitePure,
+          borderRadius: BorderRadius.circular(radius),
+        ),
+      );
+    }
+
+    return Shimmer.fromColors(
+      baseColor: _shimmerBase,
+      highlightColor: _shimmerHighlight,
+      child: SingleChildScrollView(
+        physics: const AlwaysScrollableScrollPhysics(),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const SizedBox(height: 4),
+              ClipRRect(
+                borderRadius: BorderRadius.circular(18),
+                child: bar(double.infinity, 280, 18),
+              ),
+              const SizedBox(height: 16),
+              Row(
+                children: [
+                  Expanded(
+                    child: SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: Row(
+                        children: List.generate(
+                          4,
+                          (i) => Padding(
+                            padding: EdgeInsets.only(right: i < 3 ? 10 : 0),
+                            child: bar(44, 44, 12),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      Row(
+                        children: List.generate(5, (_) => bar(18, 18, 4)),
+                      ),
+                      const SizedBox(height: 6),
+                      bar(52, 14, 4),
+                    ],
+                  ),
+                ],
+              ),
+              const SizedBox(height: 22),
+              bar(MediaQuery.sizeOf(context).width * 0.65, 18, 6),
+              const SizedBox(height: 10),
+              bar(double.infinity, 12, 4),
+              const SizedBox(height: 8),
+              bar(double.infinity, 12, 4),
+              const SizedBox(height: 8),
+              bar(MediaQuery.sizeOf(context).width * 0.45, 12, 4),
+              const SizedBox(height: 22),
+              bar(double.infinity, 56, 15),
+              const SizedBox(height: 28),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Row(
+                    children: [
+                      bar(42, 42, 10),
+                      const SizedBox(width: 8),
+                      bar(160, 18, 6),
+                    ],
+                  ),
+                  bar(120, 14, 4),
+                ],
+              ),
+              const SizedBox(height: 20),
+              ...List.generate(
+                3,
+                (_) => Padding(
+                  padding: const EdgeInsets.only(bottom: 12),
+                  child: Container(
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: ColorRes.whitePure,
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(color: ColorRes.borderLight),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            bar(48, 48, 24),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  bar(120, 14, 4),
+                                  const SizedBox(height: 8),
+                                  bar(90, 12, 4),
+                                ],
+                              ),
+                            ),
+                            bar(72, 14, 4),
+                          ],
+                        ),
+                        const SizedBox(height: 12),
+                        bar(double.infinity, 12, 4),
+                        const SizedBox(height: 6),
+                        bar(double.infinity, 12, 4),
+                        const SizedBox(height: 6),
+                        bar(200, 12, 4),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 24),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _detailHeroImage(StoreProduct product, String displaySrc) {
+    if (displaySrc.isEmpty) return _placeholder();
+    if (product.isNetworkImage) {
+      return CachedNetworkImage(
+        imageUrl: displaySrc.addBaseURL(),
+        fit: BoxFit.contain,
+        width: double.infinity,
+        placeholder: (_, __) => Container(
+          height: 280,
+          alignment: Alignment.center,
+          child: const CircularProgressIndicator(color: ColorRes.green),
+        ),
+        errorWidget: (_, __, ___) => _placeholder(),
+      );
+    }
+    return Image.asset(
+      displaySrc,
+      fit: BoxFit.contain,
+      width: double.infinity,
     );
   }
 
@@ -419,6 +841,128 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
     return Container(
       color: const Color(0xFFE8E0F0),
       child: Icon(Icons.image_outlined, size: 72, color: ColorRes.textLightGrey),
+    );
+  }
+}
+
+class _ApiReviewCard extends StatelessWidget {
+  final ProductReview review;
+  final String formattedDate;
+
+  const _ApiReviewCard({
+    required this.review,
+    required this.formattedDate,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final u = review.user;
+    final fn = u?.fullname?.trim();
+    final un = u?.username?.trim();
+    final displayName = (fn != null && fn.isNotEmpty)
+        ? fn
+        : (un != null && un.isNotEmpty)
+            ? un
+            : 'User';
+    final photo = u?.profilePhoto;
+
+    final starCount = review.rating.clamp(0, 5);
+
+    return Container(
+      padding: const EdgeInsets.all(18),
+      decoration: BoxDecoration(
+        color: ColorRes.whitePure,
+        border: Border.all(color: ColorRes.borderLight),
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              ClipOval(
+                child: photo != null && photo.isNotEmpty
+                    ? CachedNetworkImage(
+                        imageUrl: photo.addBaseURL(),
+                        width: 48,
+                        height: 48,
+                        fit: BoxFit.cover,
+                        errorWidget: (_, __, ___) => _reviewAvatarFallback(),
+                      )
+                    : _reviewAvatarFallback(),
+              ),
+              const SizedBox(width: 14),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      displayName,
+                      style: TextStyleCustom.outFitSemiBold600(fontSize: 17, color: ColorRes.textDarkGrey),
+                    ),
+                    const SizedBox(height: 6),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
+                      decoration: BoxDecoration(
+                        color: ColorRes.green.withValues(alpha: 0.2),
+                        borderRadius: BorderRadius.circular(5),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(Icons.check_circle_rounded, size: 13, color: ColorRes.green),
+                          const SizedBox(width: 5),
+                          Text(
+                            LKey.verifiedCustomer.tr,
+                            style: TextStyleCustom.outFitSemiBold600(fontSize: 12, color: ColorRes.green),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Row(
+                    children: List.generate(5, (i) {
+                      return Icon(
+                        i < starCount ? Icons.star_rounded : Icons.star_outline_rounded,
+                        size: 18,
+                        color: const Color(0xFFFFC107),
+                      );
+                    }),
+                  ),
+                  if (formattedDate.isNotEmpty) ...[
+                    const SizedBox(height: 4),
+                    Text(
+                      formattedDate,
+                      style: TextStyleCustom.outFitRegular400(fontSize: 12, color: ColorRes.textLightGrey),
+                    ),
+                  ],
+                ],
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          Text(
+            review.review,
+            style: TextStyleCustom.outFitRegular400(fontSize: 14, color: ColorRes.textDarkGrey),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _reviewAvatarFallback() {
+    return Container(
+      width: 48,
+      height: 48,
+      color: ColorRes.borderLight,
+      alignment: Alignment.center,
+      child: Icon(Icons.person, size: 28, color: ColorRes.textLightGrey),
     );
   }
 }

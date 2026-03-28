@@ -11,6 +11,33 @@ class WebService {
   static var search = _Search();
   static var moderation = _Moderation();
   static var common = _Common();
+  static var store = _Store();
+}
+
+class _Store {
+  String productForYou = "${apiURL}productForYou";
+
+  String productDetail(String productId) => "${apiURL}productDetail/$productId";
+
+  String get topSellingProducts => "${apiURL}products/topSelling";
+
+  String productReviews(String productId) => "${apiURL}productReviews/$productId";
+
+  String get addToCart => "${apiURL}addToCart";
+
+  String get updateCart => "${apiURL}updateCart";
+
+  String get fetchCart => "${apiURL}fetchCart";
+
+  String get deleteFromCart => "${apiURL}deleteFromCart";
+
+  String get applyCoupon => "${apiURL}applyCoupon";
+
+  String get featureProducts => "${apiURL}featureProducts";
+
+  String get productCategories => "${apiURL}productCategories";
+
+  String productsByCategory(String categoryId) => "${apiURL}productsByCategory/$categoryId";
 }
 
 class _Common {
@@ -60,6 +87,7 @@ class _User {
   String reportUser = "${apiURL}misc/reportUser";
   String fetchMyBlockedUsers = "${apiURL}user/fetchMyBlockedUsers";
   String updateLastUsedAt = "${apiURL}user/updateLastUsedAt";
+  String fetchTrendingCreators = "${apiURL}user/fetchTrendingCreators";
 }
 
 class _AddPostStory {
@@ -111,6 +139,7 @@ class _Post {
   String fetchStory = "${apiURL}post/fetchStory";
   String fetchStoryByID = "${apiURL}post/fetchStoryByID";
   String fetchExplorePageData = "${apiURL}post/fetchExplorePageData";
+  String fetchMostViewedReels = "${apiURL}post/fetchMostViewedReels";
 }
 
 class _Setting {

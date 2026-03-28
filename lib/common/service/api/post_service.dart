@@ -553,4 +553,17 @@ class PostService {
       return null;
     }
   }
+
+  /// Most viewed / trending reels for Explore. Requires [Params.limit] (form POST).
+  Future<List<Post>> fetchMostViewedReels({int limit = 100}) async {
+    PostsModel model = await ApiService.instance.call(
+      url: WebService.post.fetchMostViewedReels,
+      param: {Params.limit: limit},
+      fromJson: PostsModel.fromJson,
+    );
+    if (model.status == true && model.data != null) {
+      return model.data!;
+    }
+    return [];
+  }
 }

@@ -1,6 +1,8 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:figma_squircle_updated/figma_squircle.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:stakBread/common/extensions/string_extension.dart';
 import 'package:stakBread/languages/languages_keys.dart';
 import 'package:stakBread/screen/dashboard_screen/dashboard_screen_controller.dart';
 import 'package:stakBread/screen/notification_screen/notification_screen.dart';
@@ -30,34 +32,91 @@ class StoreScreen extends StatelessWidget {
       backgroundColor: ColorRes.whitePure,
       body: SafeArea(
         bottom: false,
-        child: CustomScrollView(
-          slivers: [
-            SliverToBoxAdapter(child: _buildTopBar(notifCount, controller, cartController)),
-            SliverToBoxAdapter(child: _buildBanner()),
-            SliverToBoxAdapter(child: _buildCategories(controller)),
-            SliverToBoxAdapter(child: _buildSectionHeader(
-              LKey.productsForYou.tr,
-              LKey.viewAll.tr,
-              onViewAll: () => Get.to(() => ProductListingScreen(title: LKey.productsForYou.tr, products: controller.productsForYou)),
-            )),
-            SliverList(
-              delegate: SliverChildBuilderDelegate(
-                (context, index) {
-                  final product = controller.productsForYou[index];
-                  return _ProductCard(product: product);
-                },
-                childCount: controller.productsForYou.length,
-              ),
+        child: Obx(() {
+          final preview = controller.productsForYouPreview;
+          final loading = controller.isLoadingProductsForYou.value;
+          final topPreview = controller.topSellingPreview;
+          final topLoading = controller.isLoadingTopSelling.value;
+          return RefreshIndicator(
+            color: ColorRes.green,
+            onRefresh: () => controller.refreshStoreHome(),
+            child: CustomScrollView(
+              physics: const AlwaysScrollableScrollPhysics(),
+              slivers: [
+              SliverToBoxAdapter(child: _buildTopBar(notifCount, controller, cartController)),
+              SliverToBoxAdapter(child: _buildBanner()),
+              SliverToBoxAdapter(child: _buildCategories(controller)),
+              SliverToBoxAdapter(child: _buildSectionHeader(
+                LKey.productsForYou.tr,
+                LKey.viewAll.tr,
+                onViewAll: () => Get.to(() => ProductListingScreen(
+                      title: LKey.productsForYou.tr,
+                      products: controller.productsForYou.toList(),
+                      useStoreProductsForYou: true,
+                    )),
+              )),
+              if (loading)
+                const SliverToBoxAdapter(
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(vertical: 24),
+                    child: Center(child: CircularProgressIndicator(color: ColorRes.green)),
+                  ),
+                )
+              else if (preview.isEmpty)
+                SliverToBoxAdapter(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+                    child: Text(
+                      LKey.noData.tr,
+                      textAlign: TextAlign.center,
+                      style: TextStyleCustom.outFitRegular400(fontSize: 14, color: ColorRes.textLightGrey),
+                    ),
+                  ),
+                )
+              else
+                SliverList(
+                  delegate: SliverChildBuilderDelegate(
+                    (context, index) {
+                      final product = preview[index];
+                      return _ProductCard(product: product);
+                    },
+                    childCount: preview.length,
+                  ),
+                ),
+              SliverToBoxAdapter(child: _buildSectionHeader(
+                LKey.topSellingProducts.tr,
+                LKey.viewAll.tr,
+                onViewAll: () => Get.to(() => ProductListingScreen(
+                      title: LKey.topSellingProducts.tr,
+                      products: controller.topSelling.toList(),
+                      useStoreTopSelling: true,
+                    )),
+              )),
+              if (topLoading && controller.topSelling.isEmpty)
+                const SliverToBoxAdapter(
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(vertical: 24),
+                    child: Center(child: CircularProgressIndicator(color: ColorRes.green)),
+                  ),
+                )
+              else if (topPreview.isEmpty)
+                SliverToBoxAdapter(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+                    child: Text(
+                      LKey.noData.tr,
+                      textAlign: TextAlign.center,
+                      style: TextStyleCustom.outFitRegular400(fontSize: 14, color: ColorRes.textLightGrey),
+                    ),
+                  ),
+                )
+              else
+                SliverToBoxAdapter(child: _buildTopSellingRow(topPreview)),
+              const SliverToBoxAdapter(child: SizedBox(height: 24)),
+            ],
             ),
-            SliverToBoxAdapter(child: _buildSectionHeader(
-              LKey.topSellingProducts.tr,
-              LKey.viewAll.tr,
-              onViewAll: () => Get.to(() => ProductListingScreen(title: LKey.topSellingProducts.tr, products: controller.topSelling)),
-            )),
-            SliverToBoxAdapter(child: _buildTopSellingRow(controller)),
-            const SliverToBoxAdapter(child: SizedBox(height: 24)),
-          ],
-        ),
+          );
+        }),
       ),
     );
   }
@@ -203,17 +262,36 @@ class StoreScreen extends StatelessWidget {
   }
 
   Widget _buildCategories(StoreScreenController controller) {
+    if (controller.isLoadingCategories.value && controller.productCategories.isEmpty) {
+      return const SizedBox(
+        height: 100,
+        child: Center(
+          child: Padding(
+            padding: EdgeInsets.symmetric(vertical: 16),
+            child: CircularProgressIndicator(color: ColorRes.green),
+          ),
+        ),
+      );
+    }
+    if (controller.productCategories.isEmpty) {
+      return const SizedBox.shrink();
+    }
     return SizedBox(
       height: 100,
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        itemCount: controller.categories.length,
+        itemCount: controller.productCategories.length,
         itemBuilder: (context, index) {
-          final cat = controller.categories[index];
+          final cat = controller.productCategories[index];
+          final url = cat.imageUrl;
           return GestureDetector(
-            onTap: (){
-              Get.to(() => ProductListingScreen(title: controller.categories[index].name, products: controller.productsForYou));
+            onTap: () {
+              Get.to(() => ProductListingScreen(
+                    title: cat.title,
+                    products: const [],
+                    categoryId: cat.id,
+                  ));
             },
             child: Padding(
               padding: const EdgeInsets.only(right: 16),
@@ -228,23 +306,29 @@ class StoreScreen extends StatelessWidget {
                       border: Border.all(color: ColorRes.green, width: 2),
                     ),
                     child: ClipOval(
-                      child: Image.asset(
-                        cat.imagePath,
-                        fit: BoxFit.cover,
-                        width: 56,
-                        height: 56,
-                        errorBuilder: (_, __, ___) => Container(
-                          color: ColorRes.borderLight,
-                          child: Icon(Icons.category, color: ColorRes.textLightGrey, size: 28),
-                        ),
-                      ),
+                      child: url != null && url.isNotEmpty
+                          ? CachedNetworkImage(
+                              imageUrl: url,
+                              fit: BoxFit.cover,
+                              width: 56,
+                              height: 56,
+                              placeholder: (_, __) => Container(color: ColorRes.borderLight),
+                              errorWidget: (_, __, ___) => Container(
+                                color: ColorRes.borderLight,
+                                child: Icon(Icons.category, color: ColorRes.textLightGrey, size: 28),
+                              ),
+                            )
+                          : Container(
+                              color: ColorRes.borderLight,
+                              child: Icon(Icons.category, color: ColorRes.textLightGrey, size: 28),
+                            ),
                     ),
                   ),
                   const SizedBox(height: 6),
                   SizedBox(
                     width: 64,
                     child: Text(
-                      cat.name,
+                      cat.title,
                       style: TextStyleCustom.outFitRegular400(fontSize: 12, color: ColorRes.textDarkGrey),
                       textAlign: TextAlign.center,
                       maxLines: 1,
@@ -282,15 +366,15 @@ class StoreScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildTopSellingRow(StoreScreenController controller) {
+  Widget _buildTopSellingRow(List<StoreProduct> products) {
     return SizedBox(
       height: 268,
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
         padding: const EdgeInsets.symmetric(horizontal: 16),
-        itemCount: controller.topSelling.length,
+        itemCount: products.length,
         itemBuilder: (context, index) {
-          final product = controller.topSelling[index];
+          final product = products[index];
           return _TopSellingCard(product: product);
         },
       ),
@@ -339,6 +423,62 @@ class _IconWithBadge extends StatelessWidget {
   }
 }
 
+Widget _productListThumb(StoreProduct product) {
+  if (product.isNetworkImage && product.imageUrl != null && product.imageUrl!.isNotEmpty) {
+    return CachedNetworkImage(
+      imageUrl: product.imageUrl!.addBaseURL(),
+      fit: BoxFit.cover,
+      width: 60,
+      height: 60,
+      placeholder: (_, __) => Container(color: ColorRes.borderLight),
+      errorWidget: (_, __, ___) => _productThumbPlaceholder(),
+    );
+  }
+  if (product.imagePath != null && product.imagePath!.isNotEmpty) {
+    return Image.asset(product.imagePath!, fit: BoxFit.cover);
+  }
+  return _productThumbPlaceholder();
+}
+
+Widget _productThumbPlaceholder() {
+  return Container(
+    color: ColorRes.borderLight,
+    child: Image.asset(AssetRes.icStoreFill, fit: BoxFit.cover),
+  );
+}
+
+Widget _topSellingCardImage(StoreProduct product) {
+  if (product.isNetworkImage && product.imageUrl != null && product.imageUrl!.isNotEmpty) {
+    return CachedNetworkImage(
+      imageUrl: product.imageUrl!.addBaseURL(),
+      width: 160,
+      height: 130,
+      fit: BoxFit.cover,
+      placeholder: (_, __) => Container(
+        width: 160,
+        height: 130,
+        color: ColorRes.borderLight,
+      ),
+      errorWidget: (_, __, ___) => Container(
+        width: 160,
+        height: 130,
+        color: ColorRes.borderLight,
+        child: Icon(Icons.image_outlined, size: 40, color: ColorRes.textLightGrey),
+      ),
+    );
+  }
+  final imagePath = product.imagePath ?? '';
+  if (imagePath.isNotEmpty) {
+    return Image.asset(imagePath, width: 160, height: 130, fit: BoxFit.cover);
+  }
+  return Container(
+    width: 160,
+    height: 130,
+    color: ColorRes.borderLight,
+    child: Icon(Icons.image_outlined, size: 40, color: ColorRes.textLightGrey),
+  );
+}
+
 class _ProductCard extends StatelessWidget {
   final StoreProduct product;
 
@@ -367,12 +507,7 @@ class _ProductCard extends StatelessWidget {
             child: SizedBox(
               width: 60,
               height: 60,
-              child: product.imagePath != null
-                  ? Image.asset(
-                      product.imagePath!,
-                      fit: BoxFit.cover,
-                    )
-                  : _buildProductPlaceholder(),
+              child: _productListThumb(product),
             ),
           ),
           const SizedBox(width: 12),
@@ -437,15 +572,6 @@ class _ProductCard extends StatelessWidget {
     );
   }
 
-  Widget _buildProductPlaceholder() {
-    return Container(
-      color: ColorRes.borderLight,
-      child: Image.asset(
-        AssetRes.icStoreFill,
-        fit: BoxFit.cover,
-      )
-    );
-  }
 }
 
 class _TopSellingCard extends StatelessWidget {
@@ -455,7 +581,6 @@ class _TopSellingCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final imagePath = product.imagePath ?? '';
     return Container(
       width: 160,
       margin: const EdgeInsets.only(right: 14),
@@ -478,14 +603,7 @@ class _TopSellingCard extends StatelessWidget {
             children: [
               ClipRRect(
                 borderRadius: const BorderRadius.vertical(top: Radius.circular(14)),
-                child: imagePath.isNotEmpty
-                    ? Image.asset(imagePath, width: 160, height: 130, fit: BoxFit.cover)
-                    : Container(
-                        width: 160,
-                        height: 130,
-                        color: ColorRes.borderLight,
-                        child: Icon(Icons.image_outlined, size: 40, color: ColorRes.textLightGrey),
-                      ),
+                child: _topSellingCardImage(product),
               ),
               Positioned(
                 top: 8,

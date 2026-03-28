@@ -155,6 +155,95 @@ class ApiService {
     return jsonDecode(response.body);
   }
 
+  /// GET with [apiKey] and [AUTHTOKEN] headers (same as [call]).
+  Future<T> callGetAuthenticated<T>({
+    required String url,
+    CancelToken? cancelToken,
+    bool cancelAuthToken = false,
+    T Function(Map<String, dynamic> json)? fromJson,
+    Function()? onError,
+  }) async {
+    final client = http.Client();
+    if (cancelToken != null && cancelToken.isCancelled) {
+      _activeClients[cancelToken] = client;
+    }
+
+    final requestHeaders = <String, String>{
+      Params.apikey: apiKey,
+      'Accept': 'application/json',
+    };
+    if (!cancelAuthToken) {
+      requestHeaders[Params.authToken] = SessionManager.instance.getAuthToken();
+    }
+    Loggers.info("URL: $url");
+    Loggers.info("header: $requestHeaders");
+    try {
+      final response =
+          await client.get(Uri.parse(url), headers: requestHeaders);
+      Loggers.success(response.statusCode);
+      if (cancelToken?.isCancelled ?? false) {
+        if (kDebugMode) {
+          print("Request cancelled: $url");
+        }
+        throw Exception('Request was cancelled');
+      }
+
+      if (response.statusCode >= 200 && response.statusCode < 300) {
+        final decodedResponse =
+            jsonDecode(response.body) as Map<String, dynamic>;
+
+        if (decodedResponse['message'] == 'this user is freezed!') {
+          DebounceAction.shared.call(() {
+            Get.offAll(
+                () => const SessionExpiredScreen(type: SessionType.freeze));
+          });
+          return decodedResponse as T;
+        }
+
+        if (decodedResponse['status'] == false) {
+          Loggers.error('API RESPONSE : ${decodedResponse['message']}');
+          onError?.call();
+        }
+
+        var prettyString =
+            const JsonEncoder.withIndent('  ').convert(decodedResponse);
+        Loggers.info(prettyString);
+
+        if (fromJson != null) {
+          return fromJson(decodedResponse);
+        }
+
+        return decodedResponse as T;
+      } else if (response.statusCode == 401) {
+        Loggers.error('Unauthorized Error 401: ${response.statusCode}');
+        DebounceAction.shared.call(() {
+          Get.offAll(
+              () => const SessionExpiredScreen(type: SessionType.unauthorized));
+        });
+        throw Exception("Unauthorized Error: ${response.statusCode}");
+      } else if (response.statusCode == 404) {
+        Loggers.error('Please check baseURL in const.dart file');
+        throw Exception("URL Error: ${response.statusCode} - $url");
+      } else {
+        final errorBody = response.body;
+        final errorMessage = _extractErrorMessage(errorBody);
+        Loggers.error('HTTP Error: $errorMessage');
+        throw Exception(
+            "HTTP Error: ${response.statusCode} - ${response.reasonPhrase}");
+      }
+    } on HttpException {
+      throw Exception('Could not connect to the server');
+    } on FormatException catch (e) {
+      Loggers.error("Invalid JSON format: ${e.message}");
+      throw Exception("Invalid JSON format: ${e.message}");
+    } on Exception catch (e) {
+      Loggers.error("Unexpected error : $e");
+      rethrow;
+    } finally {
+      _cleanupClient(cancelToken);
+    }
+  }
+
   Future<T> multiPartCallApi<T>({
     required String url,
     Map<String, dynamic>? param,

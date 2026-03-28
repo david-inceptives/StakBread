@@ -12,6 +12,7 @@ import 'package:stakBread/model/user_model/block_user_model.dart';
 import 'package:stakBread/model/user_model/follower_model.dart';
 import 'package:stakBread/model/user_model/following_model.dart';
 import 'package:stakBread/model/user_model/links_model.dart';
+import 'package:stakBread/model/user_model/trending_creator_model.dart';
 import 'package:stakBread/model/user_model/user_model.dart';
 import 'package:stakBread/model/user_model/users_model.dart';
 import 'package:stakBread/screen/edit_profile_screen/widget/add_edit_link_sheet.dart';
@@ -117,6 +118,26 @@ class UserService {
       SessionManager.instance.setUser(userModel.data);
     }
     return userModel.data;
+  }
+
+  /// POST [WebService.user.fetchTrendingCreators] — trending creators for Explore.
+  /// Backend requires [Params.limit].
+  Future<List<TrendingCreatorModel>> fetchTrendingCreators({int limit = 100}) async {
+    final decoded = await ApiService.instance.call<Map<String, dynamic>>(
+      url: WebService.user.fetchTrendingCreators,
+      param: {Params.limit: limit},
+      fromJson: (json) => json,
+    );
+    if (decoded['status'] != true) return [];
+    final raw = decoded['data'];
+    if (raw is! List) return [];
+    final list = <TrendingCreatorModel>[];
+    for (final item in raw) {
+      if (item is Map<String, dynamic>) {
+        list.add(TrendingCreatorModel.fromJson(item));
+      }
+    }
+    return list;
   }
 
   Future<User?> updateUserDetails(

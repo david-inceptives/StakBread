@@ -10,6 +10,7 @@ import 'package:stakBread/common/controller/firebase_firestore_controller.dart';
 import 'package:stakBread/common/manager/firebase_notification_manager.dart';
 import 'package:stakBread/common/manager/logger.dart';
 import 'package:stakBread/common/manager/session_manager.dart';
+import 'package:stakBread/common/service/api/store_service.dart';
 import 'package:stakBread/common/service/api/user_service.dart';
 import 'package:stakBread/common/service/subscription/subscription_manager.dart';
 import 'package:stakBread/common/widget/restart_widget.dart';
@@ -18,6 +19,7 @@ import 'package:stakBread/model/chat/chat_thread.dart';
 import 'package:stakBread/model/general/settings_model.dart';
 import 'package:stakBread/model/user_model/user_model.dart';
 import 'package:stakBread/screen/camera_screen/camera_screen.dart';
+import 'package:stakBread/screen/store_screen/cart_controller.dart';
 import 'package:stakBread/screen/feed_screen/feed_screen_controller.dart';
 import 'package:stakBread/screen/gif_sheet/gif_sheet_controller.dart';
 import 'package:stakBread/utilities/asset_res.dart';
@@ -81,6 +83,8 @@ class DashboardScreenController extends BaseController with GetSingleTickerProvi
     super.onReady();
     SubscriptionManager.shared.subscriptionListener();
 
+    _syncCartFromServer();
+
     // Run below in parallel
     _createZegoEngine();
     if (kTranslationFeatureEnabled) _fetchLanguageFromUser();
@@ -88,6 +92,16 @@ class DashboardScreenController extends BaseController with GetSingleTickerProvi
     startCacheCleanupScheduler();
     _subscribeFollowUserIds();
     updateDummyUsers();
+  }
+
+  /// Refresh local cart from POST [fetchCart] when home (dashboard) is ready.
+  Future<void> _syncCartFromServer() async {
+    try {
+      final list = await StoreService.instance.fetchCartItems();
+      final cart =
+          Get.isRegistered<CartController>() ? Get.find<CartController>() : Get.put(CartController());
+      cart.replaceAllFromServer(list);
+    } catch (_) {}
   }
 
   void startCacheCleanupScheduler() {

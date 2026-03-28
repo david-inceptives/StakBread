@@ -139,6 +139,11 @@ class LKey {
   static const String mastercard = "Mastercard";
   static const String cardholderName = "Cardholder Name";
   static const String couponCode = "Coupon code";
+  static const String applyCouponButton = "Apply";
+  static const String couponApplied = "Coupon applied";
+  static const String enterCouponCode = "Enter a coupon code";
+  static const String discount = "Discount";
+  static const String retry = "Retry";
   static const String yourCode = "Your code";
   static const String totalPrice = "Total Price";
   static const String includeTaxes = "Include taxes";
@@ -146,6 +151,23 @@ class LKey {
   static const String checkOut = "Check Out";
   static const String sizeLabel = "Size";
   static const String colorLabel = "Color";
+  static const String uploadProduct = "Upload Product";
+  static const String uploadProductPictures = "Upload Product Pictures";
+  static const String productName = "Product Name";
+  static const String productDescription = "Product Description";
+  static const String productPrice = "Product Price";
+  static const String productSizes = "Product Sizes";
+  static const String productColors = "Product Colors";
+  static const String productSizeEu = "Product Size";
+  static const String pickColor = "Pick a color";
+  static const String addColor = "Add";
+  static const String menuProduct = "Product";
+  static const String uploadProductValidation =
+      "Add at least one photo, name, and valid price";
+  static const String uploadProductPending =
+      "Product details saved (upload API pending)";
+  static const String fieldRequired = "Required";
+  static const String clearForm = "Clear form";
   static const String yourCartIsEmpty = "Your Cart Is Empty!";
   static const String yourCartIsEmptySubtext = "Looks Like You Haven't Added Anything To Your Cart Yet";
   static const String startShopping = "Start Shopping";
@@ -664,6 +686,7 @@ class LKey {
   static const String maxUserLinkAddDescription =
       "You can add only @limit links in the profile.";
   static const String refresh = "Refresh";
+  static const String refreshed = "Refreshed";
   static const String lost = "Lost";
   static const String connection = "Connection";
   static const String noInternetDesc =

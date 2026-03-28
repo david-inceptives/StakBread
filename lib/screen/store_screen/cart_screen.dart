@@ -1,6 +1,10 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:stakBread/common/controller/base_controller.dart';
+import 'package:stakBread/common/extensions/string_extension.dart';
 import 'package:stakBread/languages/languages_keys.dart';
+import 'package:stakBread/common/service/api/store_service.dart';
 import 'package:stakBread/screen/store_screen/cart_controller.dart';
 import 'package:stakBread/screen/store_screen/order_confirmed_screen.dart';
 import 'package:stakBread/screen/store_screen/product_detail_screen.dart';
@@ -11,8 +15,153 @@ import 'package:stakBread/utilities/text_style_custom.dart';
 
 import '../../common/widget/custom_app_bar.dart';
 
-class CartScreen extends StatelessWidget {
+Widget _cartProductImage(StoreProduct product, double width, double height) {
+  if (product.isNetworkImage && product.imageUrl != null && product.imageUrl!.isNotEmpty) {
+    return CachedNetworkImage(
+      imageUrl: product.imageUrl!.addBaseURL(),
+      width: width,
+      height: height,
+      fit: BoxFit.cover,
+      placeholder: (_, __) => Container(width: width, height: height, color: ColorRes.borderLight),
+      errorWidget: (_, __, ___) => Container(width: width, height: height, color: ColorRes.borderLight),
+    );
+  }
+  final imagePath = product.imagePath ?? '';
+  if (imagePath.isNotEmpty) {
+    return Image.asset(imagePath, width: width, height: height, fit: BoxFit.cover);
+  }
+  return Container(width: width, height: height, color: ColorRes.borderLight);
+}
+
+class CartScreen extends StatefulWidget {
   const CartScreen({super.key});
+
+  @override
+  State<CartScreen> createState() => _CartScreenState();
+}
+
+class _CartScreenState extends State<CartScreen> {
+  final TextEditingController _couponController = TextEditingController();
+  bool _applyingCoupon = false;
+  List<StoreProduct> _featureProducts = [];
+  bool _loadingFeatureProducts = false;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await Future.wait([
+        _refreshCartFromServer(),
+        _loadFeatureProducts(),
+      ]);
+    });
+  }
+
+  @override
+  void dispose() {
+    _couponController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _refreshCartFromServer() async {
+    Get.put(CartController());
+    try {
+      final list = await StoreService.instance.fetchCartItems();
+      Get.find<CartController>().replaceAllFromServer(list);
+    } catch (_) {}
+  }
+
+  Future<void> _loadFeatureProducts() async {
+    if (!mounted) return;
+    setState(() => _loadingFeatureProducts = true);
+    try {
+      final list = await StoreService.instance.fetchFeatureProducts();
+      if (mounted) setState(() => _featureProducts = list);
+    } catch (_) {
+      if (mounted) setState(() => _featureProducts = []);
+    } finally {
+      if (mounted) setState(() => _loadingFeatureProducts = false);
+    }
+  }
+
+  Future<void> _onIncrementQuantity(CartController cart, String productId, int? variantId) async {
+    final i = cart.items.indexWhere(
+      (e) => e.product.id == productId && e.variantId == variantId,
+    );
+    if (i < 0) return;
+    final serverId = cart.items[i].serverCartId;
+    final isNet = cart.items[i].product.isNetworkImage;
+    cart.incrementQuantity(productId, variantId: variantId);
+    if (!isNet || serverId == null) return;
+    final j = cart.items.indexWhere(
+      (e) => e.product.id == productId && e.variantId == variantId,
+    );
+    if (j < 0) return;
+    try {
+      await StoreService.instance.updateCart(
+        cartId: serverId,
+        quantity: cart.items[j].quantity,
+      );
+    } catch (e) {
+      BaseController.share.showSnackBar(
+        e.toString().replaceFirst('Exception: ', ''),
+      );
+    }
+  }
+
+  Future<void> _onDecrementQuantity(CartController cart, String productId, int? variantId) async {
+    final i = cart.items.indexWhere(
+      (e) => e.product.id == productId && e.variantId == variantId,
+    );
+    if (i < 0) return;
+    final serverId = cart.items[i].serverCartId;
+    final isNet = cart.items[i].product.isNetworkImage;
+    final nextQty = cart.items[i].quantity - 1;
+    cart.decrementQuantity(productId, variantId: variantId);
+    if (!isNet || serverId == null) return;
+    try {
+      if (nextQty <= 0) {
+        await StoreService.instance.deleteFromCart(cartId: serverId);
+      } else {
+        await StoreService.instance.updateCart(
+          cartId: serverId,
+          quantity: nextQty,
+        );
+      }
+    } catch (e) {
+      BaseController.share.showSnackBar(
+        e.toString().replaceFirst('Exception: ', ''),
+      );
+    }
+  }
+
+  Future<void> _applyCoupon(CartController cart) async {
+    final code = _couponController.text.trim();
+    if (code.isEmpty) {
+      BaseController.share.showSnackBar(LKey.enterCouponCode.tr);
+      return;
+    }
+    setState(() => _applyingCoupon = true);
+    try {
+      final r = await StoreService.instance.applyCoupon(code: code);
+      if (!mounted) return;
+      if (!r.success) {
+        BaseController.share.showSnackBar(r.message ?? LKey.somethingWentWrong.tr);
+        return;
+      }
+      cart.setAppliedCoupon(code, r.discountAmount);
+      BaseController.share.showSnackBar(
+        r.message ?? LKey.couponApplied.tr,
+        second: 2,
+      );
+    } catch (e) {
+      BaseController.share.showSnackBar(
+        e.toString().replaceFirst('Exception: ', ''),
+      );
+    } finally {
+      if (mounted) setState(() => _applyingCoupon = false);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -26,10 +175,7 @@ class CartScreen extends StatelessWidget {
               title: LKey.cart.tr,
               titleStyle: TextStyleCustom.unboundedSemiBold600(fontSize: 15, color: ColorRes.textDarkGrey),
               bgColor: const Color(0xFFF5F6F8),
-              rowWidget: IconButton(
-                icon: Icon(Icons.more_horiz, color: ColorRes.textDarkGrey, size: 24),
-                onPressed: () {},
-              ),
+
             ),
             Expanded(
               child: Obx(() {
@@ -51,7 +197,7 @@ class CartScreen extends StatelessWidget {
                       _buildPayment(),
                       _buildDivider(),
                       const SizedBox(height: 12),
-                      _buildCoupon(),
+                      _buildCoupon(cart),
                       const SizedBox(height: 20),
                       _buildTotal(cart),
                       const SizedBox(height: 16),
@@ -135,16 +281,22 @@ class CartScreen extends StatelessWidget {
   }
 
   Widget _buildProductsYouMayLike() {
-    final store = Get.isRegistered<StoreScreenController>() ? Get.find<StoreScreenController>() : null;
-    final products = store?.productsForYou ?? [];
-    if (products.isEmpty) return const SizedBox.shrink();
+    if (_loadingFeatureProducts) {
+      return const SizedBox(
+        height: 268,
+        child: Center(
+          child: CircularProgressIndicator(color: ColorRes.green),
+        ),
+      );
+    }
+    if (_featureProducts.isEmpty) return const SizedBox.shrink();
     return SizedBox(
       height: 268,
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
-        itemCount: products.length,
+        itemCount: _featureProducts.length,
         itemBuilder: (context, index) {
-          final product = products[index];
+          final product = _featureProducts[index];
           return _EmptyCartProductCard(product: product);
         },
       ),
@@ -165,8 +317,10 @@ class CartScreen extends StatelessWidget {
         itemBuilder: (context, index) {
           final item = cart.items[index];
           final product = item.product;
-          final imagePath = product.imagePath ?? '';
-          final variant = item.variantText ?? (product.id == '2' ? '${LKey.sizeLabel.tr}: M' : '${LKey.colorLabel.tr}: Black');
+          final variant = item.variantText ??
+              (product.isNetworkImage
+                  ? 'Standard'
+                  : (product.id == '2' ? '${LKey.sizeLabel.tr}: M' : '${LKey.colorLabel.tr}: Black'));
           final price = product.price ?? '\$0';
           return Padding(
             padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 12),
@@ -175,9 +329,7 @@ class CartScreen extends StatelessWidget {
               children: [
                 ClipRRect(
                   borderRadius: BorderRadius.circular(10),
-                  child: imagePath.isNotEmpty
-                      ? Image.asset(imagePath, width: 72, height: 72, fit: BoxFit.cover)
-                      : Container(width: 72, height: 72, color: ColorRes.borderLight),
+                  child: _cartProductImage(product, 72, 72),
                 ),
                 const SizedBox(width: 12),
                 Expanded(
@@ -203,7 +355,7 @@ class CartScreen extends StatelessWidget {
                             price,
                             style: TextStyleCustom.outFitSemiBold600(fontSize: 15, color: ColorRes.textDarkGrey),
                           ),
-                          _quantityControl(cart, product.id, item.quantity),
+                          _quantityControl(cart, product.id, item.quantity, item.variantId),
                         ],
                       ),
                     ],
@@ -217,7 +369,7 @@ class CartScreen extends StatelessWidget {
     );
   }
 
-  Widget _quantityControl(CartController cart, String productId, int quantity) {
+  Widget _quantityControl(CartController cart, String productId, int quantity, int? variantId) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
       decoration: BoxDecoration(
@@ -229,7 +381,7 @@ class CartScreen extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           InkWell(
-            onTap: () => cart.decrementQuantity(productId),
+            onTap: () => _onDecrementQuantity(cart, productId, variantId),
             customBorder: const CircleBorder(),
             child: Container(
               width: 26,
@@ -247,7 +399,7 @@ class CartScreen extends StatelessWidget {
             ),
           ),
           InkWell(
-            onTap: () => cart.incrementQuantity(productId),
+            onTap: () => _onIncrementQuantity(cart, productId, variantId),
             customBorder: const CircleBorder(),
             child: Container(
               width: 26,
@@ -395,69 +547,159 @@ class CartScreen extends StatelessWidget {
     return Divider(height: 1, color: ColorRes.borderLight, thickness: 1);
   }
 
-  Widget _buildCoupon() {
+  Widget _buildCoupon(CartController cart) {
+    final applied = cart.appliedCouponCode.value.isNotEmpty;
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
       decoration: BoxDecoration(
         color: ColorRes.whitePure,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(color: ColorRes.borderLight),
       ),
-      child: Row(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             LKey.couponCode.tr,
-            style: TextStyleCustom.outFitRegular400(fontSize: 14, color: ColorRes.textDarkGrey),
+            style: TextStyleCustom.outFitSemiBold600(fontSize: 14, color: ColorRes.textDarkGrey),
           ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Text(
-              LKey.yourCode.tr,
-              style: TextStyleCustom.outFitRegular400(fontSize: 14, color: ColorRes.textLightGrey),
+          const SizedBox(height: 10),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Expanded(
+                child: TextField(
+                  controller: _couponController,
+                  enabled: !_applyingCoupon,
+                  textCapitalization: TextCapitalization.characters,
+                  style: TextStyleCustom.outFitRegular400(fontSize: 14, color: ColorRes.textDarkGrey),
+                  decoration: InputDecoration(
+                    hintText: LKey.yourCode.tr,
+                    hintStyle: TextStyleCustom.outFitRegular400(fontSize: 14, color: ColorRes.textLightGrey),
+                    contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                    filled: true,
+                    fillColor: const Color(0xFFF5F6F8),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                      borderSide: BorderSide.none,
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 8),
+              TextButton(
+                onPressed: _applyingCoupon ? null : () => _applyCoupon(cart),
+                style: TextButton.styleFrom(
+                  backgroundColor: ColorRes.green,
+                  foregroundColor: ColorRes.whitePure,
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                ),
+                child: _applyingCoupon
+                    ? const SizedBox(
+                        width: 18,
+                        height: 18,
+                        child: CircularProgressIndicator(strokeWidth: 2, color: ColorRes.whitePure),
+                      )
+                    : Text(
+                        LKey.applyCouponButton.tr,
+                        style: TextStyleCustom.outFitSemiBold600(fontSize: 14, color: ColorRes.whitePure),
+                      ),
+              ),
+            ],
+          ),
+          if (applied) ...[
+            const SizedBox(height: 8),
+            Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    '${LKey.couponApplied.tr}: ${cart.appliedCouponCode.value}',
+                    style: TextStyleCustom.outFitRegular400(fontSize: 12, color: ColorRes.green),
+                  ),
+                ),
+                TextButton(
+                  onPressed: () {
+                    cart.clearCoupon();
+                    _couponController.clear();
+                  },
+                  style: TextButton.styleFrom(
+                    padding: EdgeInsets.zero,
+                    minimumSize: Size.zero,
+                    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                  ),
+                  child: Text(
+                    LKey.cancel.tr,
+                    style: TextStyleCustom.outFitRegular400(fontSize: 12, color: ColorRes.textLightGrey),
+                  ),
+                ),
+              ],
             ),
-          ),
+          ],
         ],
       ),
     );
   }
 
   Widget _buildTotal(CartController cart) {
+    final discount = cart.couponDiscountAmount.value;
     final totalStr = '\$${cart.total.toStringAsFixed(0)}';
     return Container(
       color: Colors.transparent,
-      child: Row(
+      child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+          if (discount > 0) ...[
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  LKey.totalPrice.tr,
-                  style: TextStyleCustom.outFitSemiBold600(fontSize: 16, color: ColorRes.textDarkGrey),
+                  LKey.discount.tr,
+                  style: TextStyleCustom.outFitRegular400(fontSize: 14, color: ColorRes.textDarkGrey),
                 ),
-                const SizedBox(height: 4),
                 Text(
-                  LKey.includeTaxes.tr,
-                  style: TextStyleCustom.outFitRegular400(fontSize: 13, color: ColorRes.textLightGrey),
+                  '-\$${discount.toStringAsFixed(0)}',
+                  style: TextStyleCustom.outFitSemiBold600(fontSize: 14, color: ColorRes.green),
                 ),
               ],
             ),
-          ),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
+            const SizedBox(height: 12),
+          ],
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                totalStr,
-                style: TextStyleCustom.outFitSemiBold600(fontSize: 20, color: ColorRes.textDarkGrey),
-              ),
-              const SizedBox(height: 4),
-              InkWell(
-                onTap: () {},
-                child: Text(
-                  LKey.paymentDetails.tr,
-                  style: TextStyleCustom.outFitRegular400(fontSize: 13, color: ColorRes.green),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      LKey.totalPrice.tr,
+                      style: TextStyleCustom.outFitSemiBold600(fontSize: 16, color: ColorRes.textDarkGrey),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      LKey.includeTaxes.tr,
+                      style: TextStyleCustom.outFitRegular400(fontSize: 13, color: ColorRes.textLightGrey),
+                    ),
+                  ],
                 ),
+              ),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Text(
+                    totalStr,
+                    style: TextStyleCustom.outFitSemiBold600(fontSize: 20, color: ColorRes.textDarkGrey),
+                  ),
+                  const SizedBox(height: 4),
+                  InkWell(
+                    onTap: () {},
+                    child: Text(
+                      LKey.paymentDetails.tr,
+                      style: TextStyleCustom.outFitRegular400(fontSize: 13, color: ColorRes.green),
+                    ),
+                  ),
+                ],
               ),
             ],
           ),
@@ -501,7 +743,6 @@ class _EmptyCartProductCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final imagePath = product.imagePath ?? '';
     return Container(
       width: 160,
       margin: const EdgeInsets.only(right: 14),
@@ -524,9 +765,7 @@ class _EmptyCartProductCard extends StatelessWidget {
             children: [
               ClipRRect(
                 borderRadius: const BorderRadius.vertical(top: Radius.circular(14)),
-                child: imagePath.isNotEmpty
-                    ? Image.asset(imagePath, width: 160, height: 130, fit: BoxFit.cover)
-                    : Container(width: 160, height: 130, color: ColorRes.borderLight, child: const Icon(Icons.image_outlined, size: 40, color: ColorRes.textLightGrey)),
+                child: _cartProductImage(product, 160, 130),
               ),
               Positioned(
                 top: 8,
