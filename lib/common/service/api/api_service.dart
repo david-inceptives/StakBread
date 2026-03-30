@@ -298,7 +298,9 @@ class ApiService {
   Future<T> multiPartCallApi<T>({
     required String url,
     Map<String, dynamic>? param,
-    required Map<String, List<XFile?>> filesMap,
+    Map<String, List<XFile?>> filesMap = const {},
+    /// Repeated keys (e.g. `attribute_value_ids[]`) — sent as multipart parts via [http.MultipartFile.fromString].
+    List<MapEntry<String, String>>? multipartStringParts,
     Function(double percentage)? onProgress,
     CancelToken? cancelToken,
     T Function(Map<String, dynamic> json)? fromJson,
@@ -335,6 +337,12 @@ class ApiService {
 
         request.fields.addAll(Map<String, String>.from(params));
         request.headers.addAll(headerCopy);
+
+        if (multipartStringParts != null) {
+          for (final e in multipartStringParts) {
+            request.files.add(http.MultipartFile.fromString(e.key, e.value));
+          }
+        }
 
         filesMap.forEach((keyName, files) {
           for (var xFile in files) {

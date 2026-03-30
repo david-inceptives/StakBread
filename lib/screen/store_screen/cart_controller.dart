@@ -1,7 +1,7 @@
 import 'dart:math' as math;
 
 import 'package:get/get.dart';
-import 'package:stakBread/screen/store_screen/store_screen_controller.dart';
+import 'package:stakBread/model/store/store_product_model.dart';
 
 class CartItem {
   final StoreProduct product;

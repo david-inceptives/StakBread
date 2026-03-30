@@ -97,7 +97,8 @@ class _SessionExpiredScreenState extends State<SessionExpiredScreen> {
                     backgroundColor: ColorRes.green,
                     titleColor: ColorRes.whitePure,
                     margin: const EdgeInsets.only(top: 20),
-                  )
+                  ),
+                  const SizedBox(height: 10,)
                 ],
               ),
             ),

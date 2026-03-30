@@ -1,10 +1,14 @@
+import 'package:image_picker/image_picker.dart';
 import 'package:stakBread/common/manager/logger.dart';
 import 'package:stakBread/common/service/api/api_service.dart';
+import 'package:stakBread/common/service/utils/params.dart';
 import 'package:stakBread/common/service/utils/web_service.dart';
+import 'package:stakBread/model/general/status_model.dart';
+import 'package:stakBread/model/store/product_attribute_model.dart';
 import 'package:stakBread/model/store/product_review_model.dart';
 import 'package:stakBread/model/store/store_product_category.dart';
+import 'package:stakBread/model/store/store_product_model.dart';
 import 'package:stakBread/screen/store_screen/cart_controller.dart';
-import 'package:stakBread/screen/store_screen/store_screen_controller.dart';
 
 /// Result of POST [WebService.store.applyCoupon].
 class CouponApplyResult {
@@ -77,6 +81,27 @@ class StoreService {
     return out;
   }
 
+  /// GET `productAttributes` — attribute groups with `values` for add-product UI.
+  Future<List<ProductAttribute>> fetchProductAttributes() async {
+    final decoded = await ApiService.instance.callGetAuthenticated<Map<String, dynamic>>(
+      url: WebService.store.productAttributes,
+      fromJson: (json) => json,
+    );
+    if (decoded['status'] != true) {
+      throw Exception(decoded['message']?.toString() ?? 'Failed to load attributes');
+    }
+    final raw = decoded['data'];
+    if (raw is! List) return [];
+    final out = <ProductAttribute>[];
+    for (final item in raw) {
+      if (item is Map<String, dynamic>) {
+        final a = ProductAttribute.fromJson(item);
+        if (a.id > 0 && a.name.isNotEmpty) out.add(a);
+      }
+    }
+    return out;
+  }
+
   /// GET `productsByCategory/:categoryId` — same product shape as [fetchProductForYou].
   Future<List<StoreProduct>> fetchProductsByCategory(String categoryId) async {
     final id = categoryId.trim();
@@ -139,6 +164,43 @@ class StoreService {
       }
     }
     return list;
+  }
+
+  /// POST `addProduct` — multipart: name, category_id, price, stock, description, is_featured (0/1), `images[]`, optional repeated `attribute_value_ids[]`.
+  Future<StatusModel> addProduct({
+    required String name,
+    required String categoryId,
+    required String price,
+    required String stock,
+    required String description,
+    bool isFeatured = false,
+    List<XFile> images = const <XFile>[],
+    List<String> attributeValueIds = const [],
+  }) async {
+    final stringParts = <MapEntry<String, String>>[];
+    for (final id in attributeValueIds) {
+      final t = id.trim();
+      if (t.isNotEmpty) {
+        stringParts.add(MapEntry(Params.addProductAttributeValueIds, t));
+      }
+    }
+
+    return ApiService.instance.multiPartCallApi<StatusModel>(
+      url: WebService.store.addProduct,
+      param: {
+        Params.addProductName: name,
+        Params.categoryId: categoryId,
+        Params.addProductPrice: price,
+        Params.addProductStock: stock,
+        Params.description: description,
+        Params.addProductIsFeatured: isFeatured ? 1 : 0,
+      },
+      multipartStringParts: stringParts.isEmpty ? null : stringParts,
+      filesMap: {
+        Params.addProductImages: [...images],
+      },
+      fromJson: StatusModel.fromJson,
+    );
   }
 
   static int? _parseCartIdFromResponse(Map<String, dynamic> decoded) {

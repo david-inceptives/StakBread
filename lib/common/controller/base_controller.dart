@@ -19,9 +19,22 @@ class BaseController extends FullLifeCycleController {
     isLoading.value = false;
   }
 
+  /// Pops only the loader dialog. Avoids [Get.back] here so we don’t hit GetX snackbar
+  /// assertions when a snackbar was just shown or disposed.
   void stopLoader() {
+    if (Get.isDialogOpen != true) return;
+    try {
+      final ctx = Get.overlayContext;
+      if (ctx != null) {
+        final nav = Navigator.of(ctx, rootNavigator: true);
+        if (nav.canPop()) {
+          nav.pop();
+          return;
+        }
+      }
+    } catch (_) {}
     if (Get.isDialogOpen == true) {
-      Get.back();
+      Get.back(closeOverlays: false);
     }
   }
 

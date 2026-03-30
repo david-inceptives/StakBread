@@ -4,10 +4,12 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:stakBread/common/controller/base_controller.dart';
+import 'package:stakBread/common/manager/session_manager.dart';
 import 'package:stakBread/common/extensions/string_extension.dart';
 import 'package:stakBread/languages/languages_keys.dart';
 import 'package:stakBread/common/service/api/store_service.dart';
 import 'package:stakBread/model/store/product_review_model.dart';
+import 'package:stakBread/model/store/store_product_model.dart';
 import 'package:stakBread/screen/store_screen/cart_controller.dart';
 import 'package:stakBread/screen/store_screen/cart_screen.dart';
 import 'package:stakBread/screen/store_screen/store_screen_controller.dart';
@@ -41,10 +43,20 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
   static const Color _shimmerBase = Color(0xFFE8E8E8);
   static const Color _shimmerHighlight = Color(0xFFF5F6F8);
 
+  /// API product listed by the logged-in user — hide add-to-cart.
+  bool get _isOwnListing {
+    if (!_product.isNetworkImage) return false;
+    final me = SessionManager.instance.getUserID();
+    if (me <= 0) return false;
+    final sid = _product.sellerUserId;
+    return sid != null && sid == me;
+  }
+
   @override
   void initState() {
     super.initState();
     _product = widget.product;
+    _reviews = List<ProductReview>.from(_product.reviews);
     _initialDataLoading = _product.isNetworkImage;
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       if (!mounted) return;
@@ -69,6 +81,15 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
   }
 
   void _syncFromCartIfNeeded() {
+    if (_isOwnListing) {
+      if (mounted) {
+        setState(() {
+          hasAddedToCart = false;
+          cartQuantity = 1;
+        });
+      }
+      return;
+    }
     if (!Get.isRegistered<CartController>()) return;
     final cart = Get.find<CartController>();
     final idx = cart.items.indexWhere(
@@ -77,7 +98,9 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
     if (idx >= 0 && mounted) {
       setState(() {
         hasAddedToCart = true;
-        cartQuantity = cart.items[idx].quantity;
+        final q = cart.items[idx].quantity;
+        final s = _product.stock;
+        cartQuantity = (s != null && s > 0 && q > s) ? s : q;
       });
     } else if (mounted) {
       setState(() {
@@ -95,7 +118,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
       if (!mounted) return;
       setState(() => _reviews = list);
     } catch (_) {
-      if (mounted) setState(() => _reviews = []);
+      // Keep reviews from list/detail payload if dedicated reviews API fails.
     } finally {
       if (mounted) setState(() => _loadingReviews = false);
     }
@@ -110,6 +133,56 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
     }
   }
 
+  Color? _parseHexColor(String input) {
+    var s = input.trim();
+    if (!s.startsWith('#')) return null;
+    s = s.substring(1);
+    if (s.length == 3) {
+      s = s.split('').map((c) => '$c$c').join();
+    }
+    if (s.length != 6 && s.length != 8) return null;
+    final v = int.tryParse(s, radix: 16);
+    if (v == null) return null;
+    if (s.length == 6) return Color(0xFF000000 | v);
+    return Color(v);
+  }
+
+  Widget _attributeValueChip(StoreProductAttributeValue av) {
+    final hex = _parseHexColor(av.value);
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+      decoration: BoxDecoration(
+        color: ColorRes.whitePure,
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: ColorRes.textLightGrey.withValues(alpha: 0.35)),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          if (hex != null) ...[
+            Container(
+              width: 18,
+              height: 18,
+              decoration: BoxDecoration(
+                color: hex,
+                shape: BoxShape.circle,
+                border: Border.all(color: Colors.black12),
+              ),
+            ),
+            const SizedBox(width: 8),
+          ],
+          Text(
+            av.value,
+            style: TextStyleCustom.outFitRegular400(
+              fontSize: 13,
+              color: ColorRes.textDarkGrey,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   Future<void> _loadProductDetail({bool showProgressBar = true}) async {
     if (showProgressBar) setState(() => _loadingDetail = true);
     try {
@@ -119,6 +192,9 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
         setState(() {
           _product = detail;
           selectedThumbIndex = 0;
+          if (detail.reviews.isNotEmpty) {
+            _reviews = List<ProductReview>.from(detail.reviews);
+          }
         });
       }
     } catch (e) {
@@ -210,6 +286,9 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
         ? LKey.productDetailDescription.tr
         : (product.detailDescription ?? product.description);
     final price = product.price ?? '\$0';
+    final isOwnListing = _isOwnListing;
+    final stock = product.stock;
+    final isOutOfStock = stock != null && stock <= 0;
 
     return Scaffold(
       backgroundColor: ColorRes.whitePure,
@@ -273,7 +352,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                                 scrollDirection: Axis.horizontal,
                                 child: Row(
                                   children: List.generate(
-                                    thumbnails.length > 4 ? 4 : thumbnails.length,
+                                    thumbnails.length,
                                         (i) {
                                       final isSelected = selectedThumbIndex == i;
                                       return GestureDetector(
@@ -341,6 +420,43 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                       ),
                     ),
                     const SizedBox(height: 20),
+                    if (product.isNetworkImage && product.attributeValues.isNotEmpty) ...[
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 20),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              LKey.productAttributes.tr,
+                              style: TextStyleCustom.unboundedBold700(
+                                fontSize: 15,
+                                color: ColorRes.textDarkGrey,
+                              ),
+                            ),
+                            const SizedBox(height: 10),
+                            ...product.attributeValuesByGroup.entries.expand((e) {
+                              return [
+                                Text(
+                                  e.key,
+                                  style: TextStyleCustom.outFitMedium500(
+                                    fontSize: 13,
+                                    color: ColorRes.textLightGrey,
+                                  ),
+                                ),
+                                const SizedBox(height: 6),
+                                Wrap(
+                                  spacing: 8,
+                                  runSpacing: 8,
+                                  children: e.value.map(_attributeValueChip).toList(),
+                                ),
+                                const SizedBox(height: 14),
+                              ];
+                            }),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                    ],
                     // Title
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -360,12 +476,59 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                         overflow: TextOverflow.ellipsis,
                       ),
                     ),
+                    if (stock != null) ...[
+                      const SizedBox(height: 10),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 20),
+                        child: Text(
+                          isOutOfStock
+                              ? LKey.outOfStock.tr
+                              : LKey.inStockCount.trParams({'count': '$stock'}),
+                          style: TextStyleCustom.outFitMedium500(
+                            fontSize: 13,
+                            color: isOutOfStock ? ColorRes.likeRed : ColorRes.green,
+                          ),
+                        ),
+                      ),
+                    ],
                     const SizedBox(height: 20),
                     // Price + Add to Cart
                     // Add to Cart / Quantity + View Cart
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 20),
-                      child: hasAddedToCart
+                      child: isOwnListing
+                          ? Container(
+                              width: double.infinity,
+                              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
+                              decoration: BoxDecoration(
+                                color: ColorRes.disabledGrey.withValues(alpha: 0.25),
+                                borderRadius: BorderRadius.circular(15),
+                                border: Border.all(color: ColorRes.borderLight),
+                              ),
+                              child: Row(
+                                children: [
+                                  Text(
+                                    price,
+                                    style: TextStyleCustom.unboundedBold700(
+                                      fontSize: 18,
+                                      color: ColorRes.textDarkGrey,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 12),
+                                  Expanded(
+                                    child: Text(
+                                      LKey.ownProductNoAddToCart.tr,
+                                      textAlign: TextAlign.end,
+                                      style: TextStyleCustom.outFitMedium500(
+                                        fontSize: 14,
+                                        color: ColorRes.textLightGrey,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            )
+                          : hasAddedToCart
                           ? Row(
                               children: [
                                 // Quantity selector: light green bg, dark green border
@@ -407,6 +570,12 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                                         ),
                                         InkWell(
                                           onTap: () async {
+                                            if (stock != null && stock > 0 && cartQuantity >= stock) {
+                                              BaseController.share.showSnackBar(
+                                                LKey.stockLimitReached.trParams({'count': '$stock'}),
+                                              );
+                                              return;
+                                            }
                                             setState(() => cartQuantity++);
                                             await _syncCartQuantity();
                                           },
@@ -461,6 +630,10 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                                 onTap: _addingToCart
                                     ? null
                                     : () async {
+                                        if (isOutOfStock) {
+                                          BaseController.share.showSnackBar(LKey.outOfStock.tr);
+                                          return;
+                                        }
                                         final cart = Get.put(CartController());
                                         if (product.isNetworkImage) {
                                           final vid = product.variantId;

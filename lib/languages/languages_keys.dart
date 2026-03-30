@@ -129,6 +129,10 @@ class LKey {
   static const String skincare = "Skincare";
   static const String photography = "Photography";
   static const String addToCart = "Add To Cart";
+  static const String ownProductNoAddToCart = "You can't add your own product";
+  static const String outOfStock = "Out of stock";
+  static const String inStockCount = "In stock: @count";
+  static const String stockLimitReached = "Only @count in stock";
   static const String viewCart = "View Cart";
   static const String cart = "Cart";
   static const String delivery = "Delivery";
@@ -166,6 +170,14 @@ class LKey {
       "Add at least one photo, name, and valid price";
   static const String uploadProductPending =
       "Product details saved (upload API pending)";
+  static const String uploadProductSuccess = "Product uploaded successfully.";
+  static const String productCategory = "Category";
+  static const String productStock = "Stock quantity";
+  static const String productFeatured = "Featured product";
+  static const String selectCategory = "Select category";
+  static const String loadingCategories = "Loading categories…";
+  static const String loadingProductAttributes = "Loading attributes…";
+  static const String productAttributes = "Attributes";
   static const String fieldRequired = "Required";
   static const String clearForm = "Clear form";
   static const String yourCartIsEmpty = "Your Cart Is Empty!";

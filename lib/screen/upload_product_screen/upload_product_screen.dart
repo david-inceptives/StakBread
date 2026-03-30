@@ -2,25 +2,17 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:stakBread/common/controller/base_controller.dart';
+import 'package:stakBread/common/service/api/store_service.dart';
 import 'package:stakBread/common/widget/custom_app_bar.dart';
 import 'package:stakBread/languages/languages_keys.dart';
+import 'package:stakBread/model/store/product_attribute_model.dart';
+import 'package:stakBread/model/store/store_product_category.dart';
 import 'package:stakBread/utilities/color_res.dart';
 import 'package:stakBread/utilities/text_style_custom.dart';
-
-const List<String> _kClothingSizes = ['XS', 'S', 'M', 'L', 'XL', 'XXL'];
-
-const List<Color> _kPresetColors = [
-  Color(0xFF00B01D),
-  Color(0xFFE53935),
-  Color(0xFF1E88E5),
-  Color(0xFFE91E63),
-  Color(0xFFCDDC39),
-];
 
 class UploadProductScreen extends StatefulWidget {
   const UploadProductScreen({super.key});
@@ -34,21 +26,86 @@ class _UploadProductScreenState extends State<UploadProductScreen> {
   final _nameController = TextEditingController();
   final _descController = TextEditingController();
   final _priceController = TextEditingController();
+  final _stockController = TextEditingController();
   final _picker = ImagePicker();
 
   final List<XFile> _images = [];
-  final Set<String> _selectedClothing = {};
-  final Set<int> _selectedShoeEu = {};
-  final List<Color> _selectedColors = [];
+  final Set<int> _selectedAttributeValueIds = {};
 
-  static List<int> get _shoeSizes => List.generate(10, (i) => 36 + i);
+  List<StoreProductCategory> _categories = [];
+  String? _selectedCategoryId;
+  bool _loadingCategories = true;
+  bool _categoriesLoadFailed = false;
+
+  List<ProductAttribute> _attributes = [];
+  bool _loadingAttributes = true;
+  bool _attributesLoadFailed = false;
+
+  bool _isFeatured = false;
+  bool _submitting = false;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _loadCategories();
+      _loadAttributes();
+    });
+  }
 
   @override
   void dispose() {
     _nameController.dispose();
     _descController.dispose();
     _priceController.dispose();
+    _stockController.dispose();
     super.dispose();
+  }
+
+  Future<void> _loadCategories() async {
+    setState(() {
+      _loadingCategories = true;
+      _categoriesLoadFailed = false;
+    });
+    try {
+      final list = await StoreService.instance.fetchProductCategories();
+      if (!mounted) return;
+      setState(() {
+        _categories = list;
+        _loadingCategories = false;
+      });
+    } catch (e) {
+      if (!mounted) return;
+      setState(() {
+        _categories = [];
+        _loadingCategories = false;
+        _categoriesLoadFailed = true;
+      });
+      BaseController.share.showSnackBar(e.toString().replaceFirst('Exception: ', ''));
+    }
+  }
+
+  Future<void> _loadAttributes() async {
+    setState(() {
+      _loadingAttributes = true;
+      _attributesLoadFailed = false;
+    });
+    try {
+      final list = await StoreService.instance.fetchProductAttributes();
+      if (!mounted) return;
+      setState(() {
+        _attributes = list;
+        _loadingAttributes = false;
+      });
+    } catch (e) {
+      if (!mounted) return;
+      setState(() {
+        _attributes = [];
+        _loadingAttributes = false;
+        _attributesLoadFailed = true;
+      });
+      BaseController.share.showSnackBar(e.toString().replaceFirst('Exception: ', ''));
+    }
   }
 
   Future<void> _pickImages() async {
@@ -71,100 +128,75 @@ class _UploadProductScreenState extends State<UploadProductScreen> {
     setState(() => _images.removeAt(index));
   }
 
-  void _toggleClothing(String size) {
+  void _toggleAttributeValue(int valueId) {
     setState(() {
-      if (_selectedClothing.contains(size)) {
-        _selectedClothing.remove(size);
+      if (_selectedAttributeValueIds.contains(valueId)) {
+        _selectedAttributeValueIds.remove(valueId);
       } else {
-        _selectedClothing.add(size);
+        _selectedAttributeValueIds.add(valueId);
       }
     });
   }
 
-  void _toggleShoe(int eu) {
-    setState(() {
-      if (_selectedShoeEu.contains(eu)) {
-        _selectedShoeEu.remove(eu);
-      } else {
-        _selectedShoeEu.add(eu);
-      }
-    });
-  }
-
-  void _togglePresetColor(Color c) {
-    setState(() {
-      final i = _selectedColors.indexWhere((e) => e == c);
-      if (i >= 0) {
-        _selectedColors.removeAt(i);
-      } else {
-        _selectedColors.add(c);
-      }
-    });
-  }
-
-  void _openCustomColorPicker() {
-    Color pickerColor = ColorRes.themeAccentSolid;
-    showDialog<void>(
-      context: context,
-      builder: (ctx) {
-        final mq = MediaQuery.of(ctx);
-        final w = (mq.size.width - 48).clamp(260.0, 360.0);
-        return AlertDialog(
-          title: Text(LKey.pickColor.tr),
-          content: SingleChildScrollView(
-            child: StatefulBuilder(
-              builder: (context, setDialogState) {
-                return ColorPicker(
-                  pickerColor: pickerColor,
-                  onColorChanged: (c) => setDialogState(() => pickerColor = c),
-                  enableAlpha: false,
-                  labelTypes: const [],
-                  paletteType: PaletteType.hsvWithHue,
-                  colorPickerWidth: w,
-                  pickerAreaHeightPercent: 0.65,
-                  displayThumbColor: true,
-                );
-              },
-            ),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(ctx).pop(),
-              child: Text(LKey.cancel.tr),
-            ),
-            TextButton(
-              onPressed: () {
-                setState(() {
-                  if (!_selectedColors.contains(pickerColor)) {
-                    _selectedColors.add(pickerColor);
-                  }
-                });
-                Navigator.of(ctx).pop();
-              },
-              child: Text(LKey.addColor.tr),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  void _submit() {
+  Future<void> _submit() async {
+    if (_submitting) return;
     if (!_formKey.currentState!.validate()) return;
+    if (_selectedCategoryId == null || _selectedCategoryId!.isEmpty) {
+      BaseController.share.showSnackBar(LKey.selectCategory.tr);
+      return;
+    }
     if (_images.isEmpty) {
       BaseController.share.showSnackBar(LKey.uploadProductValidation.tr);
       return;
     }
-    final price = double.tryParse(_priceController.text.trim().replaceAll(',', '.'));
+    final priceRaw = _priceController.text.trim().replaceAll(',', '.');
+    final price = double.tryParse(priceRaw);
     if (price == null || price <= 0) {
       BaseController.share.showSnackBar(LKey.uploadProductValidation.tr);
       return;
     }
-    // TODO: POST multipart when backend endpoint is available.
-    BaseController.share.showSnackBar(LKey.uploadProductPending.tr, second: 3);
-    Future<void>.delayed(const Duration(milliseconds: 400), () {
-      if (mounted) Get.back();
-    });
+    final stock = int.tryParse(_stockController.text.trim());
+    if (stock == null || stock < 1) {
+      BaseController.share.showSnackBar(LKey.fieldRequired.tr);
+      return;
+    }
+
+    final attributeValueIds =
+        _selectedAttributeValueIds.map((id) => '$id').toList();
+
+    setState(() => _submitting = true);
+    BaseController.share.showLoader();
+    try {
+      final model = await StoreService.instance.addProduct(
+        name: _nameController.text.trim(),
+        categoryId: _selectedCategoryId!,
+        price: price.toStringAsFixed(2),
+        stock: '$stock',
+        description: _descController.text.trim(),
+        isFeatured: _isFeatured,
+        images: List<XFile>.from(_images),
+        attributeValueIds: attributeValueIds,
+      );
+      BaseController.share.stopLoader();
+      if (!mounted) return;
+      if (model.status == true) {
+        BaseController.share.showSnackBar(
+          (model.message != null && model.message!.isNotEmpty)
+              ? model.message
+              : LKey.uploadProductSuccess.tr,
+        );
+        Get.back();
+      } else {
+        BaseController.share.showSnackBar(model.message ?? LKey.somethingWentWrong.tr);
+      }
+    } catch (e) {
+      BaseController.share.stopLoader();
+      if (mounted) {
+        BaseController.share.showSnackBar(e.toString().replaceFirst('Exception: ', ''));
+      }
+    } finally {
+      if (mounted) setState(() => _submitting = false);
+    }
   }
 
   void _onMorePressed() {
@@ -185,12 +217,13 @@ class _UploadProductScreenState extends State<UploadProductScreen> {
                 Navigator.pop(ctx);
                 setState(() {
                   _images.clear();
-                  _selectedClothing.clear();
-                  _selectedShoeEu.clear();
-                  _selectedColors.clear();
+                  _selectedAttributeValueIds.clear();
                   _nameController.clear();
                   _descController.clear();
                   _priceController.clear();
+                  _stockController.clear();
+                  _selectedCategoryId = null;
+                  _isFeatured = false;
                 });
               },
             ),
@@ -222,6 +255,9 @@ class _UploadProductScreenState extends State<UploadProductScreen> {
       suffixIcon: suffix,
     );
   }
+
+  List<ProductAttribute> get _visibleAttributes =>
+      _attributes.where((a) => a.values.isNotEmpty).toList();
 
   @override
   Widget build(BuildContext context) {
@@ -265,6 +301,80 @@ class _UploadProductScreenState extends State<UploadProductScreen> {
                           },
                         ),
                         SizedBox(height: 1.2.h),
+                        if (_loadingCategories)
+                          Padding(
+                            padding: EdgeInsets.symmetric(vertical: 1.h),
+                            child: Row(
+                              children: [
+                                SizedBox(
+                                  width: 20,
+                                  height: 20,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                    color: ColorRes.themeAccentSolid,
+                                  ),
+                                ),
+                                SizedBox(width: 2.w),
+                                Expanded(
+                                  child: Text(
+                                    LKey.loadingCategories.tr,
+                                    style: TextStyleCustom.outFitRegular400(
+                                      color: ColorRes.textLightGrey,
+                                      fontSize: 13.sp,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          )
+                        else ...[
+                          if (_categoriesLoadFailed && _categories.isEmpty)
+                            Padding(
+                              padding: EdgeInsets.only(bottom: 1.h),
+                              child: TextButton.icon(
+                                onPressed: _loadCategories,
+                                icon: const Icon(Icons.refresh_rounded),
+                                label: Text(LKey.retry.tr),
+                              ),
+                            ),
+                          DropdownButtonFormField<String>(
+                            value: _selectedCategoryId,
+                            decoration: _fieldDecoration(LKey.productCategory.tr),
+                            hint: Text(
+                              LKey.selectCategory.tr,
+                              style: TextStyleCustom.outFitRegular400(
+                                color: ColorRes.textLightGrey,
+                                fontSize: 14.sp,
+                              ),
+                            ),
+                            isExpanded: true,
+                            items: _categories
+                                .map(
+                                  (c) => DropdownMenuItem<String>(
+                                    value: c.id,
+                                    child: Text(
+                                      c.title,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: TextStyleCustom.outFitRegular400(
+                                        color: ColorRes.textDarkGrey,
+                                        fontSize: 15.sp,
+                                      ),
+                                    ),
+                                  ),
+                                )
+                                .toList(),
+                            onChanged: _categories.isEmpty
+                                ? null
+                                : (v) => setState(() => _selectedCategoryId = v),
+                            validator: (v) {
+                              if (v == null || v.isEmpty) {
+                                return LKey.selectCategory.tr;
+                              }
+                              return null;
+                            },
+                          ),
+                        ],
+                        SizedBox(height: 1.2.h),
                         TextFormField(
                           controller: _descController,
                           maxLines: 3,
@@ -281,13 +391,7 @@ class _UploadProductScreenState extends State<UploadProductScreen> {
                             FilteringTextInputFormatter.allow(RegExp(r'[0-9.,]')),
                           ],
                           style: TextStyleCustom.outFitRegular400(color: ColorRes.textDarkGrey, fontSize: 15.sp),
-                          decoration: _fieldDecoration(
-                            LKey.productPrice.tr,
-                            suffix: Padding(
-                              padding: EdgeInsets.only(right: 2.w),
-                              child: Icon(Icons.euro, size: 2.h, color: ColorRes.textLightGrey),
-                            ),
-                          ),
+                          decoration: _fieldDecoration(LKey.productPrice.tr),
                           validator: (v) {
                             if (v == null || v.trim().isEmpty) {
                               return LKey.fieldRequired.tr;
@@ -299,34 +403,115 @@ class _UploadProductScreenState extends State<UploadProductScreen> {
                             return null;
                           },
                         ),
-                        SizedBox(height: 2.h),
-                        _sectionLabel(LKey.productSizes.tr),
-                        SizedBox(height: 0.8.h),
-                        Wrap(
-                          spacing: 8,
-                          runSpacing: 8,
-                          children: _kClothingSizes.map((s) => _clothingChip(s)).toList(),
+                        SizedBox(height: 1.2.h),
+                        TextFormField(
+                          controller: _stockController,
+                          keyboardType: TextInputType.number,
+                          inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                          style: TextStyleCustom.outFitRegular400(
+                            color: ColorRes.textDarkGrey,
+                            fontSize: 15.sp,
+                          ),
+                          decoration: _fieldDecoration(LKey.productStock.tr),
+                          validator: (v) {
+                            if (v == null || v.trim().isEmpty) {
+                              return LKey.fieldRequired.tr;
+                            }
+                            final n = int.tryParse(v.trim());
+                            if (n == null || n < 1) {
+                              return LKey.fieldRequired.tr;
+                            }
+                            return null;
+                          },
+                        ),
+                        SizedBox(height: 0.6.h),
+                        SwitchListTile(
+                          contentPadding: EdgeInsets.zero,
+                          title: Text(
+                            LKey.productFeatured.tr,
+                            style: TextStyleCustom.outFitRegular400(
+                              color: ColorRes.textDarkGrey,
+                              fontSize: 15.sp,
+                            ),
+                          ),
+                          value: _isFeatured,
+                          onChanged: (v) => setState(() => _isFeatured = v),
+                          thumbColor: WidgetStateProperty.resolveWith((states) {
+                            if (states.contains(WidgetState.selected)) {
+                              return ColorRes.whitePure;
+                            }
+                            return ColorRes.disabledGrey;
+                          }),
+                          trackColor: WidgetStateProperty.resolveWith((states) {
+                            if (states.contains(WidgetState.selected)) {
+                              return ColorRes.themeAccentSolid
+                                  .withValues(alpha: 0.55);
+                            }
+                            return ColorRes.borderLight;
+                          }),
+                          trackOutlineColor: WidgetStateProperty.resolveWith(
+                            (states) {
+                              if (states.contains(WidgetState.selected)) {
+                                return Colors.transparent;
+                              }
+                              return ColorRes.textLightGrey
+                                  .withValues(alpha: 0.35);
+                            },
+                          ),
                         ),
                         SizedBox(height: 2.h),
-                        _sectionLabel(LKey.productColors.tr),
-                        SizedBox(height: 0.8.h),
-                        Wrap(
-                          spacing: 10,
-                          runSpacing: 10,
-                          crossAxisAlignment: WrapCrossAlignment.center,
-                          children: [
-                            ..._kPresetColors.map(_colorSwatch),
-                            _customColorButton(),
-                          ],
-                        ),
-                        SizedBox(height: 2.h),
-                        _sectionLabel(LKey.productSizeEu.tr),
-                        SizedBox(height: 0.8.h),
-                        Wrap(
-                          spacing: 8,
-                          runSpacing: 8,
-                          children: _shoeSizes.map(_shoeChip).toList(),
-                        ),
+                        if (_loadingAttributes)
+                          Padding(
+                            padding: EdgeInsets.symmetric(vertical: 1.h),
+                            child: Row(
+                              children: [
+                                SizedBox(
+                                  width: 20,
+                                  height: 20,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                    color: ColorRes.themeAccentSolid,
+                                  ),
+                                ),
+                                SizedBox(width: 2.w),
+                                Expanded(
+                                  child: Text(
+                                    LKey.loadingProductAttributes.tr,
+                                    style: TextStyleCustom.outFitRegular400(
+                                      color: ColorRes.textLightGrey,
+                                      fontSize: 13.sp,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          )
+                        else ...[
+                          if (_attributesLoadFailed && _attributes.isEmpty)
+                            Padding(
+                              padding: EdgeInsets.only(bottom: 1.h),
+                              child: TextButton.icon(
+                                onPressed: _loadAttributes,
+                                icon: const Icon(Icons.refresh_rounded),
+                                label: Text(LKey.retry.tr),
+                              ),
+                            ),
+                          ..._visibleAttributes.expand((attr) {
+                            return [
+                              _sectionLabel(attr.name),
+                              SizedBox(height: 0.8.h),
+                              Wrap(
+                                spacing: 8,
+                                runSpacing: 8,
+                                children: attr.values
+                                    .where((v) => v.id > 0)
+                                    .map((v) => _attributeValueChip(v))
+                                    .toList(),
+                              ),
+                              SizedBox(height: 2.h),
+                            ];
+                          }),
+                        ],
                         SizedBox(height: 10.h),
                       ],
                     ),
@@ -348,7 +533,7 @@ class _UploadProductScreenState extends State<UploadProductScreen> {
               child: SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
-                  onPressed: _submit,
+                  onPressed: _submitting ? null : _submit,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: ColorRes.themeAccentSolid,
                     foregroundColor: ColorRes.whitePure,
@@ -373,6 +558,63 @@ class _UploadProductScreenState extends State<UploadProductScreen> {
     return Text(
       text,
       style: TextStyleCustom.outFitMedium500(color: ColorRes.textDarkGrey, fontSize: 14.sp),
+    );
+  }
+
+  /// Parses `#RGB`, `#RRGGBB`, `#AARRGGBB` for attribute values stored as hex codes.
+  Color? _parseHexColorCode(String input) {
+    var s = input.trim();
+    if (!s.startsWith('#')) return null;
+    s = s.substring(1);
+    if (s.length == 3) {
+      s = s.split('').map((c) => '$c$c').join();
+    }
+    if (s.length != 6 && s.length != 8) return null;
+    final v = int.tryParse(s, radix: 16);
+    if (v == null) return null;
+    if (s.length == 6) return Color(0xFF000000 | v);
+    return Color(v);
+  }
+
+  Widget _attributeValueChip(ProductAttributeValue v) {
+    final selected = _selectedAttributeValueIds.contains(v.id);
+    final swatch = _parseHexColorCode(v.value);
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: () => _toggleAttributeValue(v.id),
+        borderRadius: BorderRadius.circular(8),
+        child: Container(
+          padding: EdgeInsets.symmetric(horizontal: 3.w, vertical: 1.h),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(8),
+            border: Border.all(
+              color: selected ? ColorRes.themeAccentSolid : ColorRes.borderLight,
+              width: 2,
+            ),
+            color: swatch,
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              if (swatch != null) ...[
+                const SizedBox(
+                  width: 15,
+                  height: 15,
+
+                ),
+              ],
+              swatch == null?Text(
+                v.value,
+                style: TextStyleCustom.outFitMedium500(
+                  color: selected ? ColorRes.themeAccentSolid : ColorRes.textDarkGrey,
+                  fontSize: 14.sp,
+                ),
+              ):SizedBox(),
+            ],
+          ),
+        ),
+      ),
     );
   }
 
@@ -447,112 +689,6 @@ class _UploadProductScreenState extends State<UploadProductScreen> {
           ),
         ),
       ],
-    );
-  }
-
-  Widget _clothingChip(String size) {
-    final selected = _selectedClothing.contains(size);
-    return Material(
-      color: Colors.transparent,
-      child: InkWell(
-        onTap: () => _toggleClothing(size),
-        borderRadius: BorderRadius.circular(8),
-        child: Container(
-          padding: EdgeInsets.symmetric(horizontal: 3.2.w, vertical: 1.h),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(8),
-            border: Border.all(
-              color: selected ? ColorRes.themeAccentSolid : ColorRes.borderLight,
-              width: selected ? 2 : 1,
-            ),
-            color: ColorRes.whitePure,
-          ),
-          child: Text(
-            size,
-            style: TextStyleCustom.outFitMedium500(
-              color: selected ? ColorRes.themeAccentSolid : ColorRes.textDarkGrey,
-              fontSize: 14.sp,
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _colorSwatch(Color c) {
-    final selected = _selectedColors.contains(c);
-    return GestureDetector(
-      onTap: () => _togglePresetColor(c),
-      child: Container(
-        width: 11.w.clamp(36.0, 48.0),
-        height: 11.w.clamp(36.0, 48.0),
-        decoration: BoxDecoration(
-          color: c,
-          borderRadius: BorderRadius.circular(8),
-          border: Border.all(
-            color: selected ? ColorRes.themeAccentSolid : ColorRes.borderLight,
-            width: selected ? 3 : 1,
-          ),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.08),
-              blurRadius: 4,
-              offset: const Offset(0, 2),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _customColorButton() {
-    return Material(
-      color: ColorRes.whitePure,
-      borderRadius: BorderRadius.circular(8),
-      child: InkWell(
-        onTap: _openCustomColorPicker,
-        borderRadius: BorderRadius.circular(8),
-        child: Container(
-          width: 11.w.clamp(36.0, 48.0),
-          height: 11.w.clamp(36.0, 48.0),
-          alignment: Alignment.center,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(8),
-            border: Border.all(color: ColorRes.borderLight),
-          ),
-          child: Icon(Icons.palette_outlined, color: ColorRes.textDarkGrey, size: 2.2.h),
-        ),
-      ),
-    );
-  }
-
-  Widget _shoeChip(int eu) {
-    final selected = _selectedShoeEu.contains(eu);
-    final label = '$eu EU';
-    return Material(
-      color: Colors.transparent,
-      child: InkWell(
-        onTap: () => _toggleShoe(eu),
-        borderRadius: BorderRadius.circular(8),
-        child: Container(
-          padding: EdgeInsets.symmetric(horizontal: 2.8.w, vertical: 1.h),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(8),
-            border: Border.all(
-              color: selected ? ColorRes.themeAccentSolid : ColorRes.borderLight,
-              width: selected ? 2 : 1,
-            ),
-            color: ColorRes.whitePure,
-          ),
-          child: Text(
-            label,
-            style: TextStyleCustom.outFitMedium500(
-              color: selected ? ColorRes.themeAccentSolid : ColorRes.textDarkGrey,
-              fontSize: 13.sp,
-            ),
-          ),
-        ),
-      ),
     );
   }
 }

@@ -96,4 +96,12 @@ class Params {
   static const String resumeCaption = 'caption';
   static const String resumePdfFile = 'pdf_file';
   static const String resumeVideoFile = 'video_file';
+
+  /// POST [addProduct] multipart — scalar fields + [addProductImages] + repeated [addProductAttributeValueIds].
+  static const String addProductName = 'name';
+  static const String addProductPrice = 'price';
+  static const String addProductStock = 'stock';
+  static const String addProductIsFeatured = 'is_featured';
+  static const String addProductImages = 'images[]';
+  static const String addProductAttributeValueIds = 'attribute_value_ids[]';
 }

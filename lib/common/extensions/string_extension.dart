@@ -17,11 +17,17 @@ import 'package:url_launcher/url_launcher.dart';
 
 extension StringExtention on String {
   String addBaseURL() {
+    final v = trim();
+    if (v.isEmpty) return v;
+    // If backend already returns a full URL, don't prefix baseURL again.
+    if (v.startsWith('http://') || v.startsWith('https://')) {
+      return v;
+    }
     final fromSettings = SessionManager.instance.getSettings()?.itemBaseUrl;
     if (fromSettings != null && fromSettings.isNotEmpty) {
-      return fromSettings + this;
+      return fromSettings + v;
     }
-    return baseURL + this;
+    return baseURL + v;
   }
 
   Future<StatusModel> get lunchUrlWithHttps async {

@@ -42,7 +42,12 @@ class _Store {
 
   String get productCategories => "${apiURL}productCategories";
 
+  String get productAttributes => "${apiURL}productAttributes";
+
   String productsByCategory(String categoryId) => "${apiURL}productsByCategory/$categoryId";
+
+  /// POST `form-data`: name, category_id, price, stock, description, is_featured, `images[]`, `attribute_value_ids[]`.
+  String get addProduct => "${apiURL}addProduct";
 }
 
 class _Common {
