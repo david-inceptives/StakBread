@@ -3,6 +3,8 @@ import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:stakBread/common/controller/base_controller.dart';
+import 'package:stakBread/common/service/api/resume_service.dart';
 import 'package:stakBread/languages/languages_keys.dart';
 import 'package:stakBread/utilities/color_res.dart';
 import 'package:stakBread/utilities/text_style_custom.dart';
@@ -27,6 +29,7 @@ class _ResumeVideoDetailsScreenState extends State<ResumeVideoDetailsScreen> {
   final TextEditingController _captionController = TextEditingController();
   String? _attachedFilePath;
   String? _attachedFileName;
+  bool _isUploading = false;
 
   @override
   void dispose() {
@@ -48,10 +51,39 @@ class _ResumeVideoDetailsScreenState extends State<ResumeVideoDetailsScreen> {
     }
   }
 
-  void _onAddToResume() {
-    // TODO: Upload video (widget.videoPath), caption, and _attachedFilePath to backend
-    Get.back();
-    Get.snackbar('', _attachedFilePath != null ? 'Resume video and document added' : 'Resume video added');
+  Future<void> _onAddToResume() async {
+    if (_isUploading) return;
+    if (!File(widget.videoPath).existsSync()) {
+      BaseController.share.showSnackBar(LKey.uploadingFailed.tr);
+      return;
+    }
+    setState(() => _isUploading = true);
+    BaseController.share.showLoader();
+    try {
+      final model = await ResumeService.instance.addResume(
+        caption: _captionController.text.trim(),
+        videoPath: widget.videoPath,
+        pdfPath: _attachedFilePath,
+      );
+      if (!mounted) return;
+      if (model.status == true) {
+        Get.back();
+        BaseController.share.showSnackBar(
+          (model.message != null && model.message!.isNotEmpty)
+              ? model.message
+              : LKey.postUploadSuccessfully.tr,
+        );
+      } else {
+        BaseController.share.showSnackBar(model.message ?? LKey.uploadingFailed.tr);
+      }
+    } catch (e) {
+      if (mounted) {
+        BaseController.share.showSnackBar(e.toString().replaceFirst('Exception: ', ''));
+      }
+    } finally {
+      BaseController.share.stopLoader();
+      if (mounted) setState(() => _isUploading = false);
+    }
   }
 
   Widget _placeholderThumbnail() {
@@ -185,7 +217,7 @@ class _ResumeVideoDetailsScreenState extends State<ResumeVideoDetailsScreen> {
               width: double.infinity,
               height: 50,
               child: ElevatedButton(
-                onPressed: _onAddToResume,
+                onPressed: _isUploading ? null : _onAddToResume,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: ColorRes.themeAccentSolid,
                   foregroundColor: ColorRes.whitePure,

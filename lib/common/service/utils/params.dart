@@ -26,6 +26,7 @@ class Params {
   static const String commentId = 'comment_id';
   static const String replyId = 'reply_id';
   static const String authToken = 'AUTHTOKEN';
+  static const String accept = 'Accept';
   static const String canComment = 'can_comment';
   static const String description = 'description';
   static const String video = 'video';
@@ -90,4 +91,9 @@ class Params {
   static const String regionName = 'regionName';
   static const String timezone = 'timezone';
   static const String metadata = 'metadata';
+
+  /// POST [resume/addResume] multipart fields.
+  static const String resumeCaption = 'caption';
+  static const String resumePdfFile = 'pdf_file';
+  static const String resumeVideoFile = 'video_file';
 }

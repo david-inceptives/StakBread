@@ -471,10 +471,14 @@ class _CreatorCard extends StatelessWidget {
           SizedBox(
             width: double.infinity,
             child: Material(
-              color: ColorRes.themeAccentSolid,
+              color: creator.resume != null
+                  ? ColorRes.themeAccentSolid
+                  : ColorRes.borderLight,
               borderRadius: BorderRadius.circular(10),
               child: InkWell(
-                onTap: () => Get.to(() => ResumeViewScreen(creator: creator)),
+                onTap: creator.resume != null
+                    ? () => Get.to(() => ResumeViewScreen(creator: creator))
+                    : null,
                 borderRadius: BorderRadius.circular(10),
                 child: Padding(
                   padding: const EdgeInsets.symmetric(vertical: 8),
@@ -483,7 +487,9 @@ class _CreatorCard extends StatelessWidget {
                       LKey.viewResume.tr,
                       style: TextStyleCustom.outFitSemiBold600(
                         fontSize: 12,
-                        color: ColorRes.whitePure,
+                        color: creator.resume != null
+                            ? ColorRes.whitePure
+                            : ColorRes.textLightGrey,
                       ),
                     ),
                   ),

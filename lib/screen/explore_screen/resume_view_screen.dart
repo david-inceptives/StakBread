@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:stakBread/common/extensions/string_extension.dart';
 import 'package:stakBread/screen/explore_screen/explore_tab_controller.dart';
 import 'package:stakBread/utilities/color_res.dart';
 import 'package:stakBread/utilities/text_style_custom.dart';
@@ -132,26 +133,91 @@ class _ResumeContent extends StatelessWidget {
             color: ColorRes.textDarkGrey,
           ),
         ),
-        const SizedBox(height: 20),
-        _SectionHeading(title: 'Skills'),
-        const SizedBox(height: 8),
-        ...data.skills.map((s) => _BulletItem(text: s)),
-        const SizedBox(height: 20),
-        _SectionHeading(title: 'Work Experience'),
-        const SizedBox(height: 8),
-        ...data.experience.expand((job) => [
-              Text(
-                job.title,
-                style: TextStyleCustom.outFitMedium500(
-                  fontSize: 14,
-                  color: ColorRes.textDarkGrey,
+        if (data.videoUrl != null) ...[
+          const SizedBox(height: 16),
+          _ResumeLinkRow(
+            icon: Icons.play_circle_outline_rounded,
+            label: 'Open resume video',
+            url: data.videoUrl!,
+          ),
+        ],
+        if (data.pdfUrl != null) ...[
+          const SizedBox(height: 10),
+          _ResumeLinkRow(
+            icon: Icons.picture_as_pdf_outlined,
+            label: 'Open resume PDF',
+            url: data.pdfUrl!,
+          ),
+        ],
+        if (data.skills.isNotEmpty) ...[
+          const SizedBox(height: 20),
+          _SectionHeading(title: 'Skills'),
+          const SizedBox(height: 8),
+          ...data.skills.map((s) => _BulletItem(text: s)),
+        ],
+        if (data.experience.isNotEmpty) ...[
+          const SizedBox(height: 20),
+          _SectionHeading(title: 'Work Experience'),
+          const SizedBox(height: 8),
+          ...data.experience.expand((job) => [
+                Text(
+                  job.title,
+                  style: TextStyleCustom.outFitMedium500(
+                    fontSize: 14,
+                    color: ColorRes.textDarkGrey,
+                  ),
+                ),
+                const SizedBox(height: 6),
+                ...job.bullets.map((b) => _BulletItem(text: b)),
+                const SizedBox(height: 14),
+              ]),
+        ],
+      ],
+    );
+  }
+}
+
+class _ResumeLinkRow extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  final String url;
+
+  const _ResumeLinkRow({
+    required this.icon,
+    required this.label,
+    required this.url,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: ColorRes.themeAccentSolid.withValues(alpha: 0.08),
+      borderRadius: BorderRadius.circular(12),
+      child: InkWell(
+        onTap: () {
+          url.lunchUrl;
+        },
+        borderRadius: BorderRadius.circular(12),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+          child: Row(
+            children: [
+              Icon(icon, color: ColorRes.themeAccentSolid, size: 22),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Text(
+                  label,
+                  style: TextStyleCustom.outFitSemiBold600(
+                    fontSize: 14,
+                    color: ColorRes.themeAccentSolid,
+                  ),
                 ),
               ),
-              const SizedBox(height: 6),
-              ...job.bullets.map((b) => _BulletItem(text: b)),
-              const SizedBox(height: 14),
-            ]),
-      ],
+              Icon(Icons.open_in_new_rounded, size: 18, color: ColorRes.themeAccentSolid),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }
@@ -218,6 +284,8 @@ class _ResumeData {
   final String summary;
   final List<String> skills;
   final List<_JobEntry> experience;
+  final String? videoUrl;
+  final String? pdfUrl;
 
   _ResumeData({
     required this.name,
@@ -225,9 +293,33 @@ class _ResumeData {
     required this.summary,
     required this.skills,
     required this.experience,
+    this.videoUrl,
+    this.pdfUrl,
   });
 
+  static String? _mediaUrl(String? path) {
+    if (path == null || path.isEmpty) return null;
+    if (path.startsWith('http')) return path;
+    return path.addBaseURL();
+  }
+
   static _ResumeData forCreator(ExploreCreatorItem creator) {
+    final r = creator.resume;
+    if (r != null) {
+      final cap = r.caption?.trim();
+      final summaryText = (cap != null && cap.isNotEmpty)
+          ? cap
+          : 'Resume video and document are available below.';
+      return _ResumeData(
+        name: creator.name,
+        title: (cap != null && cap.isNotEmpty) ? cap : 'Resume',
+        summary: summaryText,
+        skills: const [],
+        experience: const [],
+        videoUrl: _mediaUrl(r.videoFile),
+        pdfUrl: _mediaUrl(r.pdfFile),
+      );
+    }
     if (creator.id == 'c1' || creator.name == 'Cara Lee') {
       return _ResumeData(
         name: 'Cara Lee',

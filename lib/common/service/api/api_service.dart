@@ -6,6 +6,7 @@ import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
+import 'package:path/path.dart' as p;
 import 'package:stakBread/common/functions/debounce_action.dart';
 import 'package:stakBread/common/manager/logger.dart';
 import 'package:stakBread/common/manager/session_manager.dart';
@@ -58,13 +59,18 @@ class ApiService {
 
     if (!cancelAuthToken) {
       header[Params.authToken] = SessionManager.instance.getAuthToken();
+      header[Params.accept] = "application/json";
     }
     Loggers.info("URL: $url");
     Loggers.info("header: $header");
     Loggers.info("Parameters: ${params.isEmpty ? "Empty" : params}");
     try {
-      final response =
-          await client.post(Uri.parse(url), headers: header, body: params);
+      final response = await _postFollowingSameHostRedirects(
+        client: client,
+        urlString: url,
+        headers: header,
+        body: params,
+      );
       Loggers.success(response.statusCode);
       if (cancelToken?.isCancelled ?? false) {
         if (kDebugMode) {
@@ -148,6 +154,51 @@ class ApiService {
     return responseBody.length > maxLength
         ? "${responseBody.substring(0, maxLength)}..."
         : responseBody;
+  }
+
+  static const int _maxPostRedirects = 5;
+
+  /// [http.Client.post] does not follow redirects the way browsers do; Laravel/Apache often
+  /// responds with 301/302 for canonical URLs (e.g. trailing slash). Re-POST same body to
+  /// [Location] when it stays on the same host and under `/api/` (skip auth redirects to `/login`).
+  Future<http.Response> _postFollowingSameHostRedirects({
+    required http.Client client,
+    required String urlString,
+    required Map<String, String> headers,
+    required Map<String, String> body,
+  }) async {
+    var uri = Uri.parse(urlString);
+    final pinnedHost = uri.host;
+    final pinnedScheme = uri.scheme;
+    var response = await client.post(uri, headers: headers, body: body);
+
+    for (var hop = 0; hop < _maxPostRedirects; hop++) {
+      final code = response.statusCode;
+      if (code != 301 &&
+          code != 302 &&
+          code != 303 &&
+          code != 307 &&
+          code != 308) {
+        break;
+      }
+      final raw = response.headers['location'] ?? response.headers['Location'];
+      if (raw == null || raw.isEmpty) break;
+
+      final next = uri.resolve(raw);
+      if (next.scheme != pinnedScheme || next.host != pinnedHost) {
+        Loggers.warning('POST redirect ignored (host/scheme): $raw');
+        break;
+      }
+      if (!next.path.contains('/api/')) {
+        Loggers.warning('POST redirect ignored (not API path): $next');
+        break;
+      }
+
+      uri = next;
+      Loggers.info('Following POST redirect ($code) → $uri');
+      response = await client.post(uri, headers: headers, body: body);
+    }
+    return response;
   }
 
   Future<T> callGet<T>({required String url}) async {
@@ -257,67 +308,118 @@ class ApiService {
       _activeClients[cancelToken] = client;
     }
 
-    final request = MultipartRequest(
-      'POST',
-      Uri.parse(url),
-      onProgress: (bytes, totalBytes) {
-        if (onProgress != null) {
-          onProgress(bytes / totalBytes);
-        }
-      },
-    );
-
     Map<String, String> params = {};
     param?.removeWhere((key, value) => value == null || value == 'null');
     param?.forEach((key, value) {
       params[key] = "$value";
     });
 
-    request.fields.addAll(params);
-    request.headers.addAll(header);
+    header[Params.authToken] = SessionManager.instance.getAuthToken();
+    final headerCopy = Map<String, String>.from(header);
 
-    filesMap.forEach((keyName, files) {
-      for (var xFile in files) {
-        if (xFile != null && xFile.path.isNotEmpty) {
-          final file = File(xFile.path);
-          final multipartFile = http.MultipartFile(
-              keyName, file.readAsBytes().asStream(), file.lengthSync(),
-              filename: xFile.name);
-          request.files.add(multipartFile);
-        }
-      }
-    });
-    Loggers.info("URL : $url");
-    Loggers.info("HEADERS : ${request.headers}");
-    Loggers.info("FIELDS : ${request.fields}");
-    Loggers.info("FILES : ${request.files.map((e) => e)}");
+    var uri = Uri.parse(url);
+    final pinnedHost = uri.host;
+    final pinnedScheme = uri.scheme;
 
     try {
-      final responseStream = await client.send(request);
+      for (var hop = 0; hop < _maxPostRedirects; hop++) {
+        final request = MultipartRequest(
+          'POST',
+          uri,
+          onProgress: (bytes, totalBytes) {
+            if (onProgress != null) {
+              onProgress(bytes / totalBytes);
+            }
+          },
+        );
 
-      if (cancelToken?.isCancelled ?? false) {
-        if (kDebugMode) {
-          Loggers.error("Request cancelled: $url");
+        request.fields.addAll(Map<String, String>.from(params));
+        request.headers.addAll(headerCopy);
+
+        filesMap.forEach((keyName, files) {
+          for (var xFile in files) {
+            if (xFile != null && xFile.path.isNotEmpty) {
+              final file = File(xFile.path);
+              final filename = (xFile.name.isNotEmpty)
+                  ? xFile.name
+                  : p.basename(xFile.path);
+              final multipartFile = http.MultipartFile(
+                keyName,
+                file.readAsBytes().asStream(),
+                file.lengthSync(),
+                filename: filename,
+              );
+              request.files.add(multipartFile);
+            }
+          }
+        });
+
+        if (hop == 0) {
+          Loggers.info("URL : $url");
+          Loggers.info("HEADERS : ${request.headers}");
+          Loggers.info("FIELDS : ${request.fields}");
+          Loggers.info("FILES : ${request.files.map((e) => e)}");
+        } else {
+          Loggers.info("Multipart POST (redirect) : $uri");
         }
-        throw Exception('Request was cancelled');
-      }
 
-      final responseStr = await responseStream.stream.bytesToString();
-      final decodedResponse = jsonDecode(responseStr) as Map<String, dynamic>;
+        final streamed = await client.send(request);
 
-      if (kDebugMode) {
-        // Loggers.info(responseStr);
-      }
-      if (decodedResponse['status'] == false) {
-        Loggers.error(decodedResponse['message']);
-      }
-      // Use the provided `fromJson` function to parse the response
-      if (fromJson != null) {
-        return fromJson(decodedResponse);
-      }
+        if (cancelToken?.isCancelled ?? false) {
+          if (kDebugMode) {
+            Loggers.error("Request cancelled: $url");
+          }
+          throw Exception('Request was cancelled');
+        }
 
-      // If no `fromJson` is provided, return the raw response
-      return decodedResponse as T;
+        final responseStr = await streamed.stream.bytesToString();
+        final code = streamed.statusCode;
+
+        if (code >= 200 && code < 300) {
+          final decodedResponse =
+              jsonDecode(responseStr) as Map<String, dynamic>;
+          if (decodedResponse['status'] == false) {
+            Loggers.error(decodedResponse['message']);
+          }
+          if (fromJson != null) {
+            return fromJson(decodedResponse);
+          }
+          return decodedResponse as T;
+        }
+
+        if (code == 401) {
+          Loggers.error('Unauthorized Error 401: multipart $uri');
+          DebounceAction.shared.call(() {
+            Get.offAll(
+                () => const SessionExpiredScreen(type: SessionType.unauthorized));
+          });
+          throw Exception("Unauthorized Error: $code");
+        }
+
+        if ([301, 302, 303, 307, 308].contains(code) &&
+            hop < _maxPostRedirects - 1) {
+          final raw =
+              streamed.headers['location'] ?? streamed.headers['Location'];
+          if (raw != null && raw.isNotEmpty) {
+            final next = uri.resolve(raw);
+            if (next.scheme == pinnedScheme &&
+                next.host == pinnedHost &&
+                next.path.contains('/api/')) {
+              Loggers.info('Following multipart redirect ($code) → $next');
+              uri = next;
+              continue;
+            }
+          }
+        }
+
+        Loggers.error('Multipart HTTP $code: ${_shorten(responseStr)}');
+        throw Exception(
+            "HTTP Error: $code - ${streamed.reasonPhrase ?? 'multipart'}");
+      }
+      throw Exception('Too many multipart redirects');
+    } on FormatException catch (e) {
+      Loggers.error("Invalid JSON (multipart): ${e.message}");
+      throw Exception("Invalid JSON format: ${e.message}");
     } finally {
       _cleanupClient(cancelToken);
     }

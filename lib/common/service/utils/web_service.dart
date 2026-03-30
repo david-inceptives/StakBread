@@ -12,6 +12,11 @@ class WebService {
   static var moderation = _Moderation();
   static var common = _Common();
   static var store = _Store();
+  static var resume = _Resume();
+}
+
+class _Resume {
+  String addResume = "${apiURL}resume/addResume";
 }
 
 class _Store {

@@ -15,6 +15,8 @@ class ExploreCreatorItem {
   final String? avatarPath;
   final String? avatarUrl;
   final bool verified;
+  final bool isFollowing;
+  final TrendingCreatorResume? resume;
 
   ExploreCreatorItem({
     required this.id,
@@ -23,6 +25,8 @@ class ExploreCreatorItem {
     this.avatarPath,
     this.avatarUrl,
     this.verified = false,
+    this.isFollowing = false,
+    this.resume,
   });
 }
 
@@ -164,6 +168,8 @@ class ExploreTabController extends BaseController {
       profession: sub,
       avatarUrl: url,
       verified: m.isVerify,
+      isFollowing: m.isFollowing,
+      resume: m.resume,
     );
   }
 }

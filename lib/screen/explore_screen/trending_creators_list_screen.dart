@@ -94,12 +94,16 @@ class TrendingCreatorsListScreen extends StatelessWidget {
                     ),
                     const SizedBox(width: 8),
                     TextButton(
-                      onPressed: () => Get.to(() => ResumeViewScreen(creator: creator)),
+                      onPressed: creator.resume != null
+                          ? () => Get.to(() => ResumeViewScreen(creator: creator))
+                          : null,
                       child: Text(
                         LKey.viewResume.tr,
                         style: TextStyleCustom.outFitSemiBold600(
                           fontSize: 12,
-                          color: ColorRes.themeAccentSolid,
+                          color: creator.resume != null
+                              ? ColorRes.themeAccentSolid
+                              : ColorRes.textLightGrey,
                         ),
                       ),
                     ),
