@@ -1,5 +1,6 @@
 import 'package:image_picker/image_picker.dart';
 import 'package:stakBread/common/manager/logger.dart';
+import 'package:stakBread/common/manager/session_manager.dart';
 import 'package:stakBread/common/service/api/api_service.dart';
 import 'package:stakBread/common/service/utils/params.dart';
 import 'package:stakBread/common/service/utils/web_service.dart';
@@ -140,6 +141,64 @@ class StoreService {
     return list;
   }
 
+  Future<List<StoreProduct>> fetchProductsByUserId(String userId) async {
+    final id = userId.trim();
+    if (id.isEmpty) return [];
+    final decoded = await ApiService.instance.callGetAuthenticated<Map<String, dynamic>>(
+      url: WebService.store.productByUserId(id),
+      fromJson: (json) => json,
+    );
+    if (decoded['status'] != true) {
+      throw Exception(decoded['message']?.toString() ?? 'Failed to load my products');
+    }
+    final raw = decoded['data'];
+    if (raw is! List) return [];
+    final list = <StoreProduct>[];
+    for (final item in raw) {
+      if (item is Map<String, dynamic>) {
+        list.add(StoreProduct.fromProductForYouJson(item));
+      }
+    }
+    return list;
+  }
+
+  /// Best-effort "My products" list. Until backend provides a dedicated endpoint,
+  /// we merge multiple store feeds and keep only products matching logged-in `user_id`.
+  Future<List<StoreProduct>> fetchMyProducts() async {
+    final me = SessionManager.instance.getUserID();
+    if (me <= 0) return [];
+
+    Future<List<StoreProduct>> safe(Future<List<StoreProduct>> f) async {
+      try {
+        return await f;
+      } catch (e) {
+        Loggers.error('[MY_PRODUCTS] $e');
+        return [];
+      }
+    }
+
+    final lists = await Future.wait([
+      safe(fetchProductForYou()),
+      safe(fetchFeatureProducts()),
+      safe(fetchTopSellingProducts()),
+    ]);
+
+    final byId = <String, StoreProduct>{};
+    for (final l in lists) {
+      for (final p in l) {
+        if (p.id.isEmpty) continue;
+        byId[p.id] = p;
+      }
+    }
+
+    final out = <StoreProduct>[];
+    for (final p in byId.values) {
+      if (p.sellerUserId == me) out.add(p);
+    }
+    out.sort((a, b) => b.id.compareTo(a.id));
+    return out;
+  }
+
   Future<StoreProduct?> fetchProductDetail(String productId) async {
     final decoded = await ApiService.instance.callGetAuthenticated<Map<String, dynamic>>(
       url: WebService.store.productDetail(productId),
@@ -199,6 +258,52 @@ class StoreService {
       filesMap: {
         Params.addProductImages: [...images],
       },
+      fromJson: StatusModel.fromJson,
+    );
+  }
+
+  /// POST `updateProduct` — multipart: product_id + name, category_id, price, stock, description, is_featured, `images[]`, optional repeated `attribute_value_ids[]`.
+  Future<StatusModel> updateProduct({
+    required String productId,
+    required String name,
+    required String categoryId,
+    required String price,
+    required String stock,
+    required String description,
+    bool isFeatured = false,
+    List<XFile> images = const <XFile>[],
+    List<String> attributeValueIds = const [],
+  }) async {
+    final stringParts = <MapEntry<String, String>>[];
+    for (final id in attributeValueIds) {
+      final t = id.trim();
+      if (t.isNotEmpty) {
+        stringParts.add(MapEntry(Params.addProductAttributeValueIds, t));
+      }
+    }
+
+    return ApiService.instance.multiPartCallApi<StatusModel>(
+      url: WebService.store.updateProduct,
+      param: {
+        'product_id': productId,
+        Params.addProductName: name,
+        Params.categoryId: categoryId,
+        Params.addProductPrice: price,
+        Params.addProductStock: stock,
+        Params.description: description,
+        Params.addProductIsFeatured: isFeatured ? 1 : 0,
+      },
+      multipartStringParts: stringParts.isEmpty ? null : stringParts,
+      filesMap: images.isEmpty ? {} : {Params.addProductImages: [...images]},
+      fromJson: StatusModel.fromJson,
+    );
+  }
+
+  /// POST `deleteProduct` — form-data: product_id
+  Future<StatusModel> deleteProduct({required String productId}) async {
+    return ApiService.instance.call<StatusModel>(
+      url: WebService.store.deleteProduct,
+      param: {'product_id': productId},
       fromJson: StatusModel.fromJson,
     );
   }

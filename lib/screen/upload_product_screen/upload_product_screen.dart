@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -11,11 +12,14 @@ import 'package:stakBread/common/widget/custom_app_bar.dart';
 import 'package:stakBread/languages/languages_keys.dart';
 import 'package:stakBread/model/store/product_attribute_model.dart';
 import 'package:stakBread/model/store/store_product_category.dart';
+import 'package:stakBread/model/store/store_product_model.dart';
 import 'package:stakBread/utilities/color_res.dart';
 import 'package:stakBread/utilities/text_style_custom.dart';
 
 class UploadProductScreen extends StatefulWidget {
-  const UploadProductScreen({super.key});
+  final StoreProduct? editProduct;
+
+  const UploadProductScreen({super.key, this.editProduct});
 
   @override
   State<UploadProductScreen> createState() => _UploadProductScreenState();
@@ -30,6 +34,7 @@ class _UploadProductScreenState extends State<UploadProductScreen> {
   final _picker = ImagePicker();
 
   final List<XFile> _images = [];
+  final List<String> _existingImageUrls = [];
   final Set<int> _selectedAttributeValueIds = {};
 
   List<StoreProductCategory> _categories = [];
@@ -44,9 +49,26 @@ class _UploadProductScreenState extends State<UploadProductScreen> {
   bool _isFeatured = false;
   bool _submitting = false;
 
+  bool get _isEdit => widget.editProduct != null && widget.editProduct!.id.isNotEmpty;
+
   @override
   void initState() {
     super.initState();
+    final p = widget.editProduct;
+    if (p != null) {
+      _nameController.text = p.title;
+      _descController.text = p.detailDescription ?? p.description;
+      _priceController.text = (p.price ?? '').replaceAll('\$', '').trim();
+      _stockController.text = p.stock?.toString() ?? '';
+      _selectedCategoryId = p.categoryId;
+      _isFeatured = p.isFeatured;
+      _existingImageUrls
+        ..clear()
+        ..addAll(p.effectiveThumbnailSources.where((e) => e.trim().isNotEmpty));
+      _selectedAttributeValueIds
+        ..clear()
+        ..addAll(p.attributeValues.map((e) => e.id).where((e) => e > 0));
+    }
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _loadCategories();
       _loadAttributes();
@@ -128,6 +150,10 @@ class _UploadProductScreenState extends State<UploadProductScreen> {
     setState(() => _images.removeAt(index));
   }
 
+  void _removeExistingImage(int index) {
+    setState(() => _existingImageUrls.removeAt(index));
+  }
+
   void _toggleAttributeValue(int valueId) {
     setState(() {
       if (_selectedAttributeValueIds.contains(valueId)) {
@@ -145,7 +171,7 @@ class _UploadProductScreenState extends State<UploadProductScreen> {
       BaseController.share.showSnackBar(LKey.selectCategory.tr);
       return;
     }
-    if (_images.isEmpty) {
+    if (!_isEdit && _images.isEmpty) {
       BaseController.share.showSnackBar(LKey.uploadProductValidation.tr);
       return;
     }
@@ -167,16 +193,28 @@ class _UploadProductScreenState extends State<UploadProductScreen> {
     setState(() => _submitting = true);
     BaseController.share.showLoader();
     try {
-      final model = await StoreService.instance.addProduct(
-        name: _nameController.text.trim(),
-        categoryId: _selectedCategoryId!,
-        price: price.toStringAsFixed(2),
-        stock: '$stock',
-        description: _descController.text.trim(),
-        isFeatured: _isFeatured,
-        images: List<XFile>.from(_images),
-        attributeValueIds: attributeValueIds,
-      );
+      final model = _isEdit
+          ? await StoreService.instance.updateProduct(
+              productId: widget.editProduct!.id,
+              name: _nameController.text.trim(),
+              categoryId: _selectedCategoryId!,
+              price: price.toStringAsFixed(2),
+              stock: '$stock',
+              description: _descController.text.trim(),
+              isFeatured: _isFeatured,
+              images: List<XFile>.from(_images),
+              attributeValueIds: attributeValueIds,
+            )
+          : await StoreService.instance.addProduct(
+              name: _nameController.text.trim(),
+              categoryId: _selectedCategoryId!,
+              price: price.toStringAsFixed(2),
+              stock: '$stock',
+              description: _descController.text.trim(),
+              isFeatured: _isFeatured,
+              images: List<XFile>.from(_images),
+              attributeValueIds: attributeValueIds,
+            );
       BaseController.share.stopLoader();
       if (!mounted) return;
       if (model.status == true) {
@@ -620,6 +658,7 @@ class _UploadProductScreenState extends State<UploadProductScreen> {
 
   Widget _buildImageSection(double maxWidth) {
     final h = (maxWidth * 0.42).clamp(160.0, 280.0);
+    final itemsCount = _existingImageUrls.length + _images.length;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -628,27 +667,42 @@ class _UploadProductScreenState extends State<UploadProductScreen> {
           child: Container(
             height: h,
             color: const Color(0xFFF2F2F2),
-            child: _images.isEmpty
+            child: itemsCount == 0
                 ? Center(
                     child: Icon(Icons.image_outlined, size: 8.h, color: ColorRes.disabledGrey),
                   )
                 : ListView.separated(
                     scrollDirection: Axis.horizontal,
                     padding: EdgeInsets.all(1.2.h),
-                    itemCount: _images.length,
+                    itemCount: itemsCount,
                     separatorBuilder: (_, __) => SizedBox(width: 1.2.h),
                     itemBuilder: (context, i) {
+                      final isExisting = i < _existingImageUrls.length;
                       return Stack(
                         clipBehavior: Clip.none,
                         children: [
                           ClipRRect(
                             borderRadius: BorderRadius.circular(8),
-                            child: Image.file(
-                              File(_images[i].path),
-                              width: h - 2.4.h,
-                              height: h - 2.4.h,
-                              fit: BoxFit.cover,
-                            ),
+                            child: isExisting
+                                ? CachedNetworkImage(
+                                    imageUrl: _existingImageUrls[i],
+                                    width: h - 2.4.h,
+                                    height: h - 2.4.h,
+                                    fit: BoxFit.cover,
+                                    errorWidget: (_, __, ___) => Container(
+                                      width: h - 2.4.h,
+                                      height: h - 2.4.h,
+                                      color: ColorRes.borderLight,
+                                      alignment: Alignment.center,
+                                      child: Icon(Icons.broken_image_outlined, color: ColorRes.textLightGrey),
+                                    ),
+                                  )
+                                : Image.file(
+                                    File(_images[i - _existingImageUrls.length].path),
+                                    width: h - 2.4.h,
+                                    height: h - 2.4.h,
+                                    fit: BoxFit.cover,
+                                  ),
                           ),
                           Positioned(
                             top: 4,
@@ -658,7 +712,9 @@ class _UploadProductScreenState extends State<UploadProductScreen> {
                               shape: const CircleBorder(),
                               child: InkWell(
                                 customBorder: const CircleBorder(),
-                                onTap: () => _removeImage(i),
+                                onTap: () => isExisting
+                                    ? _removeExistingImage(i)
+                                    : _removeImage(i - _existingImageUrls.length),
                                 child: const Padding(
                                   padding: EdgeInsets.all(4),
                                   child: Icon(Icons.close, color: Colors.white, size: 18),

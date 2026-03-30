@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:stakBread/common/controller/base_controller.dart';
 import 'package:stakBread/common/manager/session_manager.dart';
@@ -992,11 +993,12 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
     if (displaySrc.isEmpty) return _placeholder();
     if (product.isNetworkImage) {
       return CachedNetworkImage(
+        height: 40.h,
         imageUrl: displaySrc.addBaseURL(),
-        fit: BoxFit.contain,
+        fit: BoxFit.cover,
         width: double.infinity,
         placeholder: (_, __) => Container(
-          height: 280,
+          height: 40.h,
           alignment: Alignment.center,
           child: const CircularProgressIndicator(color: ColorRes.green),
         ),

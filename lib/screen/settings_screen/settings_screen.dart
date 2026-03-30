@@ -5,15 +5,13 @@ import 'package:stakBread/model/user_model/user_model.dart';
 import 'package:stakBread/screen/edit_profile_screen/edit_profile_screen.dart';
 import 'package:stakBread/screen/settings_screen/settings_screen_controller.dart';
 import 'package:stakBread/screen/settings_screen/widget/notifications_page.dart';
-import 'package:stakBread/screen/subscription_screen/subscription_screen.dart';
 import 'package:stakBread/screen/term_and_privacy_screen/term_and_privacy_screen.dart';
 import 'package:stakBread/screen/withdrawals_screen/withdrawals_screen.dart';
 import 'package:stakBread/utilities/text_style_custom.dart';
 import 'package:stakBread/utilities/color_res.dart';
 
-import '../../common/widget/custom_drop_down.dart';
-import '../../common/widget/custom_toggle.dart';
 import '../blocked_user_screen/blocked_user_screen.dart';
+import '../my_products_screen/my_products_screen.dart';
 import '../saved_post_screen/saved_post_screen.dart';
 import '../sold_products/order_management_screen.dart';
 import '../product_purchased/product_purchased_screen.dart';
@@ -25,7 +23,7 @@ class SettingsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final controller = Get.put(SettingsScreenController());
+    Get.put(SettingsScreenController());
     return Scaffold(
       backgroundColor: ColorRes.whitePure,
       body: SafeArea(
@@ -100,6 +98,10 @@ class SettingsScreen extends StatelessWidget {
                     _SettingTile(
                       title: LKey.productsSold.tr,
                       onTap: () => Get.to(() => const OrderManagementScreen()),
+                    ),
+                    _SettingTile(
+                      title: LKey.myProducts.tr,
+                      onTap: () => Get.to(() => const MyProductsScreen()),
                     ),
                     _SettingTile(
                       title: LKey.productsPurchased.tr,

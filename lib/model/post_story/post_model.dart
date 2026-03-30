@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:stakBread/common/service/api/post_service.dart';
 import 'package:stakBread/common/service/url_extractor/parsers/base_parser.dart';
 import 'package:stakBread/model/post_story/music/music_model.dart';
+import 'package:stakBread/model/store/store_product_model.dart';
 import 'package:stakBread/model/user_model/user_model.dart';
 
 class PostModel {
@@ -78,6 +79,7 @@ class Post {
     this.images,
     this.music,
     this.user,
+    this.product,
   });
 
   Post.fromJson(dynamic json) {
@@ -125,6 +127,10 @@ class Post {
     }
     music = json['music'] != null ? Music.fromJson(json['music']) : null;
     user = json['user'] != null ? User.fromJson(json['user']) : null;
+    final p = json['product'];
+    if (p is Map<String, dynamic>) {
+      product = StoreProduct.fromProductForYouJson(p);
+    }
   }
 
   int? id;
@@ -159,6 +165,8 @@ class Post {
   List<Images>? images;
   Music? music;
   User? user;
+  /// Linked store product on reels (API `product` object).
+  StoreProduct? product;
 
   Map<String, dynamic> toJson() {
     final map = <String, dynamic>{};

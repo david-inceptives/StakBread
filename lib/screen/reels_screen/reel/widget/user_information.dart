@@ -71,9 +71,17 @@ class UserInfoHeader extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        /// 🛒 Product widget overlay (left side)
-        ReelProductWidget(controller: controller),
-        SizedBox(height: 20,),
+        Obx(() {
+          final prod = controller.reelData.value.product;
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ReelProductWidget(product: prod),
+              if (prod != null) const SizedBox(height: 20),
+            ],
+          );
+        }),
         Row(
           children: [
             Flexible(

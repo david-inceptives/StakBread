@@ -10,6 +10,7 @@ import 'package:stakBread/common/manager/logger.dart';
 import 'package:stakBread/common/manager/session_manager.dart';
 import 'package:stakBread/common/service/api/moderator_service.dart';
 import 'package:stakBread/common/service/api/post_service.dart';
+import 'package:stakBread/common/service/api/store_service.dart';
 import 'package:stakBread/common/service/api/user_service.dart';
 import 'package:stakBread/common/widget/confirmation_dialog.dart';
 import 'package:stakBread/languages/languages_keys.dart';
@@ -17,6 +18,7 @@ import 'package:stakBread/model/chat/chat_thread.dart';
 import 'package:stakBread/model/general/settings_model.dart';
 import 'package:stakBread/model/general/status_model.dart';
 import 'package:stakBread/model/post_story/post_model.dart';
+import 'package:stakBread/model/store/store_product_model.dart';
 import 'package:stakBread/model/post_story/story/story_model.dart';
 import 'package:stakBread/model/post_story/user_post_model.dart';
 import 'package:stakBread/model/user_model/user_model.dart';
@@ -39,6 +41,9 @@ class ProfileScreenController extends BlockUserController
   Rx<User?> userData;
   RxList<Post> reels = <Post>[].obs;
   RxList<Post> posts = <Post>[].obs;
+  /// Other user's shop — GET [productByUserId/:id].
+  RxList<StoreProduct> shopProducts = <StoreProduct>[].obs;
+  RxBool isShopLoading = false.obs;
   RxBool isReelLoading = false.obs;
   RxBool isPostLoading = false.obs;
   final PageController pageController = PageController();
@@ -84,6 +89,27 @@ class ProfileScreenController extends BlockUserController
       fetchReel(),
       fetchPost(),
     });
+    final uid = userData.value?.id;
+    if (uid != null && uid != SessionManager.instance.getUserID()) {
+      fetchShopProducts();
+    }
+  }
+
+  /// Loads products for the profile user (Shop tab on other profiles).
+  Future<void> fetchShopProducts() async {
+    final uid = userData.value?.id;
+    if (uid == null) return;
+    isShopLoading.value = true;
+    try {
+      final list =
+          await StoreService.instance.fetchProductsByUserId('$uid');
+      shopProducts.assignAll(list);
+    } catch (e) {
+      Loggers.error('Fetch shop products: $e');
+      shopProducts.clear();
+    } finally {
+      isShopLoading.value = false;
+    }
   }
 
   void onTabChanged(int value) {
@@ -158,11 +184,15 @@ class ProfileScreenController extends BlockUserController
   }
 
   Future<void> onRefresh() async {
-    Future.wait([
+    await Future.wait([
       fetchUserDetail(),
       fetchPost(isEmpty: true),
-      fetchReel(isEmpty: true)
+      fetchReel(isEmpty: true),
     ]);
+    final uid = userData.value?.id;
+    if (uid != null && uid != SessionManager.instance.getUserID()) {
+      await fetchShopProducts();
+    }
   }
 
   void onAddPost({Post? post, CreateFeedType? type}) {

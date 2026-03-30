@@ -1,53 +1,47 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:stakBread/screen/reels_screen/reel/reel_page_controller.dart';
+import 'package:stakBread/model/store/store_product_model.dart';
+import 'package:stakBread/screen/store_screen/product_detail_screen.dart';
 import 'package:stakBread/utilities/asset_res.dart';
 import 'package:stakBread/utilities/color_res.dart';
 import 'package:stakBread/utilities/text_style_custom.dart';
 
-/// Product overlay on reel: semi-transparent card with product icon, title, price and cart icon.
-/// Uses app colors. Shown on left side of reel; tap opens product or adds to cart.
+/// Product overlay on reel when API returns `product` on the post.
 class ReelProductWidget extends StatelessWidget {
-  final ReelController controller;
-
-  /// Optional product title from API (e.g. from Post.reelProductTitle). If null, placeholder is used.
-  final String? productTitle;
-
-  /// Optional price from API (e.g. from Post.reelProductPrice). If null, placeholder is used.
-  final String? productPrice;
-
-  /// Optional image path or URL. If null, gift icon is used.
-  final String? productImagePath;
-
-  /// Optional product id for navigation to product detail.
-  final String? productId;
+  final StoreProduct? product;
 
   const ReelProductWidget({
     super.key,
-    required this.controller,
-    this.productTitle,
-    this.productPrice,
-    this.productImagePath,
-    this.productId,
+    this.product,
   });
+
+  void _openProduct() {
+    final p = product;
+    if (p == null) return;
+    Get.to(() => ProductDetailScreen(product: p));
+  }
 
   @override
   Widget build(BuildContext context) {
-    final title = productTitle?.trim().isNotEmpty == true
-        ? productTitle!
-        : 'Mystery Gifts For You';
-    final price = productPrice?.trim().isNotEmpty == true
-        ? productPrice!
-        : '\$ 19.99';
+    final p = product;
+    if (p == null) return const SizedBox.shrink();
+
+    final title = p.title.trim().isNotEmpty ? p.title : 'Product';
+    final price = p.price?.trim().isNotEmpty == true ? p.price! : '\$0';
+    final thumb = p.effectiveThumbnailSources.isNotEmpty
+        ? p.effectiveThumbnailSources.first
+        : (p.imageUrl ?? '');
+    final hasThumb = thumb.trim().isNotEmpty;
 
     return Material(
       color: Colors.transparent,
       child: InkWell(
-        onTap: _onProductTap,
+        onTap: _openProduct,
         borderRadius: BorderRadius.circular(12),
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
-          constraints: const BoxConstraints(maxWidth: 200),
+          constraints: const BoxConstraints(maxWidth: 220),
           decoration: BoxDecoration(
             color: ColorRes.blackPure.withValues(alpha: 0.2),
             borderRadius: BorderRadius.circular(12),
@@ -68,14 +62,15 @@ class ReelProductWidget extends StatelessWidget {
             children: [
               ClipRRect(
                 borderRadius: BorderRadius.circular(8),
-                child: productImagePath != null && productImagePath!.isNotEmpty
-                    ? Image.asset(
-                        productImagePath!,
+                child: hasThumb
+                    ? CachedNetworkImage(
+                        imageUrl: thumb,
                         width: 44,
                         height: 44,
                         fit: BoxFit.cover,
+                        errorWidget: (_, __, ___) => _fallbackThumb(),
                       )
-                    : _buildGiftBoxImage(),
+                    : _fallbackThumb(),
               ),
               const SizedBox(width: 8),
               Expanded(
@@ -110,7 +105,7 @@ class ReelProductWidget extends StatelessWidget {
                 color: ColorRes.borderLight,
               ),
               InkWell(
-                onTap: _onCartTap,
+                onTap: _openProduct,
                 borderRadius: BorderRadius.circular(8),
                 child: Padding(
                   padding: const EdgeInsets.all(6),
@@ -129,7 +124,7 @@ class ReelProductWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildGiftBoxImage() {
+  Widget _fallbackThumb() {
     return Image.asset(
       AssetRes.reelProductGift,
       width: 44,
@@ -150,11 +145,5 @@ class ReelProductWidget extends StatelessWidget {
         ),
       ),
     );
-  }
-
-  void _onProductTap() {
-  }
-
-  void _onCartTap() {
   }
 }

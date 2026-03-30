@@ -7,6 +7,7 @@ import 'package:stakBread/common/widget/reel_list.dart';
 import 'package:stakBread/languages/languages_keys.dart';
 import 'package:stakBread/model/user_model/user_model.dart';
 import 'package:stakBread/screen/profile_screen/profile_screen_controller.dart';
+import 'package:stakBread/screen/profile_screen/widget/profile_shop_tab.dart';
 import 'package:stakBread/utilities/text_style_custom.dart';
 import 'package:stakBread/utilities/color_res.dart';
 
@@ -88,7 +89,8 @@ class ProfilePageView extends StatelessWidget {
                                               controller.onDeleteReel(post,
                                                   isModerator: true))
                                   ],
-                            isPinShow: true):Container(),
+                            isPinShow: true)
+                            : ProfileShopTab(controller: controller),
                       ],
                     );
     }));

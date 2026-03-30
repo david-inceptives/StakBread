@@ -24,6 +24,9 @@ class _Store {
 
   String productDetail(String productId) => "${apiURL}productDetail/$productId";
 
+  /// GET `productByUserId/:id`
+  String productByUserId(String userId) => "${apiURL}productByUserId/$userId";
+
   String get topSellingProducts => "${apiURL}products/topSelling";
 
   String productReviews(String productId) => "${apiURL}productReviews/$productId";
@@ -48,6 +51,12 @@ class _Store {
 
   /// POST `form-data`: name, category_id, price, stock, description, is_featured, `images[]`, `attribute_value_ids[]`.
   String get addProduct => "${apiURL}addProduct";
+
+  /// POST `multipart/form-data`: product_id + same fields as [addProduct].
+  String get updateProduct => "${apiURL}updateProduct";
+
+  /// POST `form-data`: product_id
+  String get deleteProduct => "${apiURL}deleteProduct";
 }
 
 class _Common {

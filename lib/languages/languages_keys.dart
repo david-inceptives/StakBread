@@ -133,6 +133,9 @@ class LKey {
   static const String outOfStock = "Out of stock";
   static const String inStockCount = "In stock: @count";
   static const String stockLimitReached = "Only @count in stock";
+  static const String myProducts = "My Products";
+  static const String myShop = "My Shop";
+  static const String edit = "Edit";
   static const String viewCart = "View Cart";
   static const String cart = "Cart";
   static const String delivery = "Delivery";
@@ -278,7 +281,6 @@ class LKey {
   static const String title = "Title";
   static const String addLink = "Add Link";
   static const String editLink = "Edit Link";
-  static const String edit = "Edit";
   static const String delete = "Delete";
   static const String save = "Save";
   static const String saveChanges = "Save Changes";
