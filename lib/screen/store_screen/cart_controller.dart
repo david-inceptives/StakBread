@@ -1,5 +1,6 @@
 import 'dart:math' as math;
 
+import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:stakBread/model/store/store_product_model.dart';
 
@@ -9,15 +10,15 @@ class CartItem {
   final String? variantText; // e.g. "Size: M", "Color: Black"
   /// Server cart row id from add-to-cart API (for [StoreService.updateCart]).
   int? serverCartId;
-  /// Matches API `variant_id` on the cart line (null = no variant row).
-  final int? variantId;
+  /// Selected attribute value ids for this line (API `attribute_values`).
+  final List<int> selectedAttributeValueIds;
 
   CartItem({
     required this.product,
     this.quantity = 1,
     this.variantText,
     this.serverCartId,
-    this.variantId,
+    this.selectedAttributeValueIds = const [],
   });
 
   double get linePrice {
@@ -34,6 +35,15 @@ class CartItem {
 
 class CartController extends GetxController {
   final RxList<CartItem> items = <CartItem>[].obs;
+
+  static List<int> _normalizeAttributeIds(List<int>? ids) {
+    final out = (ids ?? []).where((e) => e > 0).toList()..sort();
+    return out;
+  }
+
+  static bool _sameAttributeSelection(List<int> a, List<int> b) {
+    return listEquals(_normalizeAttributeIds(a), _normalizeAttributeIds(b));
+  }
 
   /// From [StoreService.applyCoupon] — subtracted in [total].
   final RxDouble couponDiscountAmount = 0.0.obs;
@@ -58,10 +68,16 @@ class CartController extends GetxController {
     couponDiscountAmount.value = 0.0;
   }
 
-  int _indexOf(String productId, int? variantId) {
+  int _indexOf(String productId, List<int> attributeValueIds) {
     return items.indexWhere(
-      (e) => e.product.id == productId && e.variantId == variantId,
+      (e) =>
+          e.product.id == productId &&
+          _sameAttributeSelection(e.selectedAttributeValueIds, attributeValueIds),
     );
+  }
+
+  int findItemIndex(String productId, List<int> attributeValueIds) {
+    return _indexOf(productId, _normalizeAttributeIds(attributeValueIds));
   }
 
   /// Replaces in-memory cart with server state from [fetchCart].
@@ -76,10 +92,10 @@ class CartController extends GetxController {
     int quantity = 1,
     String? variantText,
     int? serverCartId,
-    int? variantId,
+    List<int>? selectedAttributeValueIds,
   }) {
-    final vid = variantId ?? product.variantId;
-    final existing = _indexOf(product.id, vid);
+    final ids = _normalizeAttributeIds(selectedAttributeValueIds);
+    final existing = _indexOf(product.id, ids);
     if (existing >= 0) {
       items[existing].quantity += quantity;
       if (serverCartId != null) {
@@ -92,42 +108,48 @@ class CartController extends GetxController {
         quantity: quantity,
         variantText: variantText,
         serverCartId: serverCartId,
-        variantId: vid,
+        selectedAttributeValueIds: ids,
       ));
     }
   }
 
-  void removeItem(String productId, {int? variantId}) {
+  void removeItem(String productId, {List<int>? selectedAttributeValueIds}) {
+    final ids = _normalizeAttributeIds(selectedAttributeValueIds);
     items.removeWhere(
-      (e) => e.product.id == productId && e.variantId == variantId,
+      (e) =>
+          e.product.id == productId &&
+          _sameAttributeSelection(e.selectedAttributeValueIds, ids),
     );
   }
 
-  void updateQuantity(String productId, int quantity, {int? variantId}) {
+  void updateQuantity(String productId, int quantity, {List<int>? selectedAttributeValueIds}) {
+    final ids = _normalizeAttributeIds(selectedAttributeValueIds);
     if (quantity <= 0) {
-      removeItem(productId, variantId: variantId);
+      removeItem(productId, selectedAttributeValueIds: ids);
       return;
     }
-    final i = _indexOf(productId, variantId);
+    final i = _indexOf(productId, ids);
     if (i >= 0) {
       items[i].quantity = quantity;
       items.refresh();
     }
   }
 
-  void incrementQuantity(String productId, {int? variantId}) {
-    final i = _indexOf(productId, variantId);
+  void incrementQuantity(String productId, {List<int>? selectedAttributeValueIds}) {
+    final ids = _normalizeAttributeIds(selectedAttributeValueIds);
+    final i = _indexOf(productId, ids);
     if (i >= 0) {
       items[i].quantity++;
       items.refresh();
     }
   }
 
-  void decrementQuantity(String productId, {int? variantId}) {
-    final i = _indexOf(productId, variantId);
+  void decrementQuantity(String productId, {List<int>? selectedAttributeValueIds}) {
+    final ids = _normalizeAttributeIds(selectedAttributeValueIds);
+    final i = _indexOf(productId, ids);
     if (i >= 0) {
       if (items[i].quantity <= 1) {
-        removeItem(productId, variantId: variantId);
+        removeItem(productId, selectedAttributeValueIds: ids);
       } else {
         items[i].quantity--;
         items.refresh();

@@ -104,4 +104,7 @@ class Params {
   static const String addProductIsFeatured = 'is_featured';
   static const String addProductImages = 'images[]';
   static const String addProductAttributeValueIds = 'attribute_value_ids[]';
+
+  /// POST [addToCart] — repeated ids (selected attribute values).
+  static const String cartAttributeValues = 'attribute_values[]';
 }

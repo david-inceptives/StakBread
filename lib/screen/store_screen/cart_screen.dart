@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:get/get.dart';
 import 'package:stakBread/common/controller/base_controller.dart';
 import 'package:stakBread/common/extensions/string_extension.dart';
@@ -42,6 +43,7 @@ class CartScreen extends StatefulWidget {
 
 class _CartScreenState extends State<CartScreen> {
   final TextEditingController _couponController = TextEditingController();
+  final TextEditingController _addressController = TextEditingController();
   bool _applyingCoupon = false;
   List<StoreProduct> _featureProducts = [];
   bool _loadingFeatureProducts = false;
@@ -60,7 +62,69 @@ class _CartScreenState extends State<CartScreen> {
   @override
   void dispose() {
     _couponController.dispose();
+    _addressController.dispose();
     super.dispose();
+  }
+
+  Future<void> _startCheckout() async {
+    final cart = Get.find<CartController>();
+    if (cart.items.isEmpty) return;
+    final address = _addressController.text.trim();
+    if (address.isEmpty) {
+      BaseController.share.showSnackBar(LKey.pleaseEnterDeliveryAddress.tr);
+      return;
+    }
+
+    BaseController.share.showLoader();
+    OrderCheckoutResult checkout;
+    try {
+      checkout = await StoreService.instance.checkoutOrder(address: address);
+    } catch (e) {
+      BaseController.share.stopLoader();
+      BaseController.share
+          .showSnackBar(e.toString().replaceFirst('Exception: ', ''));
+      return;
+    }
+    BaseController.share.stopLoader();
+
+    try {
+      await Stripe.instance.initPaymentSheet(
+        paymentSheetParameters: SetupPaymentSheetParameters(
+          paymentIntentClientSecret: checkout.clientSecret,
+          merchantDisplayName: 'StakBread',
+        ),
+      );
+      await Stripe.instance.presentPaymentSheet();
+    } on StripeException catch (e) {
+      if (e.error.code == FailureCode.Canceled) {
+        return;
+      }
+      BaseController.share.showSnackBar(
+        e.error.localizedMessage ?? e.error.message ?? 'Payment failed',
+      );
+      return;
+    } catch (e) {
+      BaseController.share
+          .showSnackBar(e.toString().replaceFirst('Exception: ', ''));
+      return;
+    }
+
+    BaseController.share.showLoader();
+    try {
+      final piId = OrderCheckoutResult.paymentIntentIdFromClientSecret(
+        checkout.clientSecret,
+      );
+      await StoreService.instance.confirmOrderPayment(paymentIntentId: piId);
+      cart.replaceAllFromServer([]);
+      BaseController.share.stopLoader();
+      if (mounted) {
+        Get.to(() => const OrderConfirmedScreen());
+      }
+    } catch (e) {
+      BaseController.share.stopLoader();
+      BaseController.share
+          .showSnackBar(e.toString().replaceFirst('Exception: ', ''));
+    }
   }
 
   Future<void> _refreshCartFromServer() async {
@@ -84,18 +148,15 @@ class _CartScreenState extends State<CartScreen> {
     }
   }
 
-  Future<void> _onIncrementQuantity(CartController cart, String productId, int? variantId) async {
-    final i = cart.items.indexWhere(
-      (e) => e.product.id == productId && e.variantId == variantId,
-    );
+  Future<void> _onIncrementQuantity(
+      CartController cart, String productId, List<int> selectedAttributeValueIds) async {
+    final i = cart.findItemIndex(productId, selectedAttributeValueIds);
     if (i < 0) return;
     final serverId = cart.items[i].serverCartId;
     final isNet = cart.items[i].product.isNetworkImage;
-    cart.incrementQuantity(productId, variantId: variantId);
+    cart.incrementQuantity(productId, selectedAttributeValueIds: selectedAttributeValueIds);
     if (!isNet || serverId == null) return;
-    final j = cart.items.indexWhere(
-      (e) => e.product.id == productId && e.variantId == variantId,
-    );
+    final j = cart.findItemIndex(productId, selectedAttributeValueIds);
     if (j < 0) return;
     try {
       await StoreService.instance.updateCart(
@@ -109,15 +170,14 @@ class _CartScreenState extends State<CartScreen> {
     }
   }
 
-  Future<void> _onDecrementQuantity(CartController cart, String productId, int? variantId) async {
-    final i = cart.items.indexWhere(
-      (e) => e.product.id == productId && e.variantId == variantId,
-    );
+  Future<void> _onDecrementQuantity(
+      CartController cart, String productId, List<int> selectedAttributeValueIds) async {
+    final i = cart.findItemIndex(productId, selectedAttributeValueIds);
     if (i < 0) return;
     final serverId = cart.items[i].serverCartId;
     final isNet = cart.items[i].product.isNetworkImage;
     final nextQty = cart.items[i].quantity - 1;
-    cart.decrementQuantity(productId, variantId: variantId);
+    cart.decrementQuantity(productId, selectedAttributeValueIds: selectedAttributeValueIds);
     if (!isNet || serverId == null) return;
     try {
       if (nextQty <= 0) {
@@ -194,7 +254,6 @@ class _CartScreenState extends State<CartScreen> {
                       _buildDivider(),
                       _buildAddress(),
                       _buildDivider(),
-                      _buildPayment(),
                       _buildDivider(),
                       const SizedBox(height: 12),
                       _buildCoupon(cart),
@@ -355,7 +414,7 @@ class _CartScreenState extends State<CartScreen> {
                             price,
                             style: TextStyleCustom.outFitSemiBold600(fontSize: 15, color: ColorRes.textDarkGrey),
                           ),
-                          _quantityControl(cart, product.id, item.quantity, item.variantId),
+                          _quantityControl(cart, product.id, item.quantity, item.selectedAttributeValueIds),
                         ],
                       ),
                     ],
@@ -369,7 +428,8 @@ class _CartScreenState extends State<CartScreen> {
     );
   }
 
-  Widget _quantityControl(CartController cart, String productId, int quantity, int? variantId) {
+  Widget _quantityControl(
+      CartController cart, String productId, int quantity, List<int> selectedAttributeValueIds) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
       decoration: BoxDecoration(
@@ -381,7 +441,7 @@ class _CartScreenState extends State<CartScreen> {
         mainAxisSize: MainAxisSize.min,
         children: [
           InkWell(
-            onTap: () => _onDecrementQuantity(cart, productId, variantId),
+            onTap: () => _onDecrementQuantity(cart, productId, selectedAttributeValueIds),
             customBorder: const CircleBorder(),
             child: Container(
               width: 26,
@@ -399,7 +459,7 @@ class _CartScreenState extends State<CartScreen> {
             ),
           ),
           InkWell(
-            onTap: () => _onIncrementQuantity(cart, productId, variantId),
+            onTap: () => _onIncrementQuantity(cart, productId, selectedAttributeValueIds),
             customBorder: const CircleBorder(),
             child: Container(
               width: 26,
@@ -483,9 +543,29 @@ class _CartScreenState extends State<CartScreen> {
             LKey.address.tr,
             style: TextStyleCustom.outFitSemiBold600(fontSize: 16, color: ColorRes.textDarkGrey),
           ),
-          const SizedBox(height: 6),
-          Text(
-            '95 Kelampok Kasri 4037 Milan, Italy',
+          const SizedBox(height: 8),
+          TextField(
+            controller: _addressController,
+            maxLines: 3,
+            minLines: 2,
+            decoration: InputDecoration(
+              hintText: LKey.address.tr,
+              filled: true,
+              fillColor: ColorRes.whitePure,
+              contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: const BorderSide(color: ColorRes.borderLight),
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: const BorderSide(color: ColorRes.borderLight),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: const BorderSide(color: ColorRes.green, width: 1.5),
+              ),
+            ),
             style: TextStyleCustom.outFitRegular400(fontSize: 14, color: ColorRes.textDarkGrey),
           ),
         ],
@@ -493,55 +573,6 @@ class _CartScreenState extends State<CartScreen> {
     );
   }
 
-  Widget _buildPayment() {
-    return Container(
-      color: Colors.transparent,
-      padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Text(
-                LKey.payment.tr,
-                style: TextStyleCustom.outFitSemiBold600(fontSize: 16, color: ColorRes.textDarkGrey),
-              ),
-              const Spacer(),
-              TextButton(
-                onPressed: () {},
-                style: TextButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-                  minimumSize: Size.zero,
-                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                ),
-                child: Text(
-                  LKey.edit.tr,
-                  style: TextStyleCustom.outFitRegular400(fontSize: 14, color: ColorRes.textLightGrey),
-                ),
-              ),
-            ],
-          ),
-          Text(
-            LKey.mastercard.tr,
-            style: TextStyleCustom.outFitRegular400(fontSize: 14, color: ColorRes.textDarkGrey),
-          ),
-          Text(
-            '9432 **** **** ****',
-            style: TextStyleCustom.outFitRegular400(fontSize: 14, color: ColorRes.textDarkGrey),
-          ),
-          const SizedBox(height: 4),
-          Text(
-            LKey.cardholderName.tr,
-            style: TextStyleCustom.outFitSemiBold600(fontSize: 13, color: ColorRes.textDarkGrey),
-          ),
-          Text(
-            'Mariah Johana',
-            style: TextStyleCustom.outFitRegular400(fontSize: 14, color: ColorRes.textDarkGrey),
-          ),
-        ],
-      ),
-    );
-  }
 
   Widget _buildDivider() {
     return Divider(height: 1, color: ColorRes.borderLight, thickness: 1);
@@ -691,14 +722,7 @@ class _CartScreenState extends State<CartScreen> {
                     totalStr,
                     style: TextStyleCustom.outFitSemiBold600(fontSize: 20, color: ColorRes.textDarkGrey),
                   ),
-                  const SizedBox(height: 4),
-                  InkWell(
-                    onTap: () {},
-                    child: Text(
-                      LKey.paymentDetails.tr,
-                      style: TextStyleCustom.outFitRegular400(fontSize: 13, color: ColorRes.green),
-                    ),
-                  ),
+
                 ],
               ),
             ],
@@ -709,17 +733,13 @@ class _CartScreenState extends State<CartScreen> {
   }
 
   Widget _buildCheckOutButton() {
-    final cart = Get.find<CartController>();
     return SizedBox(
       width: double.infinity,
       child: Material(
         color: ColorRes.green,
         borderRadius: BorderRadius.circular(14),
         child: InkWell(
-          onTap: () {
-            cart.items.clear();
-            Get.to(() => const OrderConfirmedScreen());
-          },
+          onTap: _startCheckout,
           borderRadius: BorderRadius.circular(14),
           child: Padding(
             padding: const EdgeInsets.symmetric(vertical: 18),

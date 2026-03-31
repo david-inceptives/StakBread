@@ -80,6 +80,7 @@ class Post {
     this.music,
     this.user,
     this.product,
+    this.ownerProducts = const [],
   });
 
   Post.fromJson(dynamic json) {
@@ -131,6 +132,17 @@ class Post {
     if (p is Map<String, dynamic>) {
       product = StoreProduct.fromProductForYouJson(p);
     }
+    ownerProducts = [];
+    final op = json['owner_products'];
+    if (op is List) {
+      for (final v in op) {
+        if (v is Map<String, dynamic>) {
+          try {
+            ownerProducts.add(StoreProduct.fromProductForYouJson(v));
+          } catch (_) {}
+        }
+      }
+    }
   }
 
   int? id;
@@ -167,6 +179,29 @@ class Post {
   User? user;
   /// Linked store product on reels (API `product` object).
   StoreProduct? product;
+
+  /// Seller's products attached to this reel (API `owner_products`).
+  List<StoreProduct> ownerProducts = [];
+
+  /// Reel overlay: merged `product` + `owner_products` (deduped by product id).
+  List<StoreProduct> get reelDisplayProducts {
+    final out = <StoreProduct>[];
+    final seen = <String>{};
+    void take(StoreProduct? p) {
+      if (p == null) return;
+      final id = p.id.trim();
+      if (id.isEmpty) return;
+      if (seen.contains(id)) return;
+      seen.add(id);
+      out.add(p);
+    }
+
+    take(product);
+    for (final p in ownerProducts) {
+      take(p);
+    }
+    return out;
+  }
 
   Map<String, dynamic> toJson() {
     final map = <String, dynamic>{};

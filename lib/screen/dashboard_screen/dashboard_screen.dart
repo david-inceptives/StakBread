@@ -15,6 +15,9 @@ import 'package:stakBread/screen/explore_screen/explore_tab_screen.dart';
 import 'package:stakBread/screen/profile_screen/profile_screen.dart';
 import 'package:stakBread/screen/store_screen/store_screen.dart';
 import 'package:stakBread/screen/upload_product_screen/upload_product_screen.dart';
+import 'package:stakBread/common/controller/base_controller.dart';
+import 'package:stakBread/common/extensions/string_extension.dart';
+import 'package:stakBread/common/service/api/store_service.dart';
 import 'package:stakBread/utilities/style_res.dart';
 import 'package:stakBread/utilities/text_style_custom.dart';
 import 'package:stakBread/utilities/color_res.dart';
@@ -139,7 +142,8 @@ class DashboardScreen extends StatelessWidget {
     });
   }
 
-  void _showUploadOptionsSheet(BuildContext context) {
+  void _showUploadOptionsSheet(
+      BuildContext context, DashboardScreenController controller) {
     Get.bottomSheet(
       Container(
         decoration: BoxDecoration(
@@ -161,7 +165,7 @@ class DashboardScreen extends StatelessWidget {
             InkWell(
               onTap: () {
                 Get.back();
-                Get.to(() => const UploadProductScreen());
+                _handleAddProductTap(controller);
               },
               child: Padding(
                 padding: EdgeInsets.symmetric(horizontal: 2.h, vertical: 1.6.h),
@@ -250,16 +254,13 @@ class DashboardScreen extends StatelessWidget {
   }) {
     return Obx(() {
       final isSelected = controller.selectedPageIndex.value == index;
-      final iconColor = isSelected
-          ? ColorRes.themeAccentSolid
-          : ColorRes.textLightGrey;
 
       return SafeArea(
         bottom: isPostUploading ? false : true,
         child: InkWell(
           onTap: () {
             if (isAddButton) {
-              _showUploadOptionsSheet(context);
+              _showUploadOptionsSheet(context, controller);
             } else {
               controller.onChanged(index);
             }
@@ -312,5 +313,34 @@ class DashboardScreen extends StatelessWidget {
         ),
       );
     });
+  }
+
+  Future<void> _handleAddProductTap(DashboardScreenController controller) async {
+    BaseController.share.showLoader();
+    try {
+      final completed =
+          await StoreService.instance.getStripeConnectIsSetupCompleted();
+      if (!completed) {
+        final url = await StoreService.instance
+            .createStripeConnectAccountAndGetOnboardingUrl();
+        BaseController.share.stopLoader();
+        if (url.isEmpty) {
+          BaseController.share.showSnackBar('Stripe setup link not found');
+          return;
+        }
+        final result = await url.lunchUrl;
+        if (result.status != true) {
+          BaseController.share.showSnackBar(
+              result.message ?? 'Failed to open Stripe setup link');
+        }
+        return;
+      }
+      BaseController.share.stopLoader();
+      Get.to(() => const UploadProductScreen());
+    } catch (e) {
+      BaseController.share.stopLoader();
+      BaseController.share
+          .showSnackBar(e.toString().replaceFirst('Exception: ', ''));
+    }
   }
 }

@@ -340,4 +340,44 @@ class StoreProduct {
     if (imagePath != null && imagePath!.isNotEmpty) return [imagePath!];
     return [];
   }
+
+  /// Human-readable summary for cart line (hex-only values omit the code; use attribute name).
+  String? summaryForSelectedAttributeValueIds(List<int> ids) {
+    if (ids.isEmpty) return null;
+    final parts = <String>[];
+    for (final id in ids) {
+      StoreProductAttributeValue? match;
+      for (final v in attributeValues) {
+        if (v.id == id) {
+          match = v;
+          break;
+        }
+      }
+      if (match == null) continue;
+      final name = match.attributeName?.trim();
+      final val = match.value.trim();
+      if (_isHexColorCode(val)) {
+        if (name != null && name.isNotEmpty) {
+          parts.add(name);
+        }
+      } else {
+        parts.add(
+          (name != null && name.isNotEmpty) ? '$name: $val' : val,
+        );
+      }
+    }
+    if (parts.isEmpty) return null;
+    return parts.join(', ');
+  }
+
+  static bool _isHexColorCode(String input) {
+    var s = input.trim();
+    if (!s.startsWith('#')) return false;
+    s = s.substring(1);
+    if (s.length == 3) {
+      s = s.split('').map((c) => '$c$c').join();
+    }
+    if (s.length != 6 && s.length != 8) return false;
+    return int.tryParse(s, radix: 16) != null;
+  }
 }

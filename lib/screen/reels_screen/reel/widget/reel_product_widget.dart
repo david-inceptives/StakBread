@@ -1,38 +1,58 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:stakBread/common/extensions/string_extension.dart';
 import 'package:stakBread/model/store/store_product_model.dart';
 import 'package:stakBread/screen/store_screen/product_detail_screen.dart';
 import 'package:stakBread/utilities/asset_res.dart';
 import 'package:stakBread/utilities/color_res.dart';
 import 'package:stakBread/utilities/text_style_custom.dart';
 
-/// Product overlay on reel when API returns `product` on the post.
+/// Product strip on reel: API `product` and/or `owner_products`.
 class ReelProductWidget extends StatelessWidget {
-  final StoreProduct? product;
+  final List<StoreProduct> products;
 
   const ReelProductWidget({
     super.key,
-    this.product,
+    required this.products,
   });
 
+  @override
+  Widget build(BuildContext context) {
+    if (products.isEmpty) return const SizedBox.shrink();
+
+    return SizedBox(
+      height: 60,
+      child: ListView.separated(
+        scrollDirection: Axis.horizontal,
+        shrinkWrap: true,
+        physics: const BouncingScrollPhysics(),
+        itemCount: products.length,
+        separatorBuilder: (_, __) => const SizedBox(width: 8),
+        itemBuilder: (_, i) => _ReelProductChip(product: products[i]),
+      ),
+    );
+  }
+}
+
+class _ReelProductChip extends StatelessWidget {
+  final StoreProduct product;
+
+  const _ReelProductChip({required this.product});
+
   void _openProduct() {
-    final p = product;
-    if (p == null) return;
-    Get.to(() => ProductDetailScreen(product: p));
+    Get.to(() => ProductDetailScreen(product: product));
   }
 
   @override
   Widget build(BuildContext context) {
-    final p = product;
-    if (p == null) return const SizedBox.shrink();
-
-    final title = p.title.trim().isNotEmpty ? p.title : 'Product';
-    final price = p.price?.trim().isNotEmpty == true ? p.price! : '\$0';
-    final thumb = p.effectiveThumbnailSources.isNotEmpty
-        ? p.effectiveThumbnailSources.first
-        : (p.imageUrl ?? '');
-    final hasThumb = thumb.trim().isNotEmpty;
+    final title = product.title.trim().isNotEmpty ? product.title : 'Product';
+    final price = product.price?.trim().isNotEmpty == true ? product.price! : '\$0';
+    final thumbRaw = product.effectiveThumbnailSources.isNotEmpty
+        ? product.effectiveThumbnailSources.first
+        : (product.imageUrl ?? '');
+    final thumb = thumbRaw.trim().isNotEmpty ? thumbRaw.addBaseURL() : '';
+    final hasThumb = thumb.isNotEmpty;
 
     return Material(
       color: Colors.transparent,
@@ -73,7 +93,7 @@ class ReelProductWidget extends StatelessWidget {
                     : _fallbackThumb(),
               ),
               const SizedBox(width: 8),
-              Expanded(
+              Flexible(
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.start,

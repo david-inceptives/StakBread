@@ -418,12 +418,13 @@ class CameraEditScreenController extends BaseController {
   /// Extracts thumbnail and navigates to the CreateFeed screen for reels
   Future<void> _goToCreateFeedScreen(String videoFilePath) async {
     try {
-      // Extract thumbnail image and byte data from video
-      final Uint8List? thumbnailBytes = await MediaPickerHelper.shared
-          .extractThumbnailByte(videoPath: videoFilePath);
-
-      final XFile thumbnailFile = await MediaPickerHelper.shared
-          .extractThumbnail(videoPath: videoFilePath);
+      // Run both VideoCompress-backed extractions in parallel (was serial → long freeze).
+      final results = await Future.wait([
+        MediaPickerHelper.shared.extractThumbnailByte(videoPath: videoFilePath),
+        MediaPickerHelper.shared.extractThumbnail(videoPath: videoFilePath),
+      ]);
+      final thumbnailBytes = results[0] as Uint8List?;
+      final thumbnailFile = results[1] as XFile;
 
       // Prepare content model for the next screen
       final PostStoryContent reelContent = PostStoryContent(

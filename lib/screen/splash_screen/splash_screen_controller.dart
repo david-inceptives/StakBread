@@ -8,6 +8,7 @@ import 'package:stakBread/common/controller/base_controller.dart';
 import 'package:stakBread/common/extensions/string_extension.dart';
 import 'package:stakBread/common/manager/logger.dart';
 import 'package:stakBread/common/manager/session_manager.dart';
+import 'package:stakBread/common/manager/stripe_connect_manager.dart';
 import 'package:stakBread/common/service/api/common_service.dart';
 import 'package:stakBread/common/service/api/user_service.dart';
 import 'package:stakBread/common/service/network_helper/network_helper.dart';
@@ -29,6 +30,8 @@ class SplashScreenController extends BaseController {
   @override
   void onReady() {
     super.onReady();
+
+    StripeConnectManager.shared.start();
 
     Future.wait([fetchSettings()]);
 

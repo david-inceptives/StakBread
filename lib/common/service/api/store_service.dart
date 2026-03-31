@@ -24,10 +24,65 @@ class CouponApplyResult {
   final double discountAmount;
 }
 
+/// Stripe PaymentIntent client secret from POST [WebService.order.checkout].
+class OrderCheckoutResult {
+  OrderCheckoutResult({required this.clientSecret});
+
+  final String clientSecret;
+
+  /// `pi_xxx` from `pi_xxx_secret_yyy`.
+  static String? paymentIntentIdFromClientSecret(String clientSecret) {
+    const marker = '_secret_';
+    final i = clientSecret.indexOf(marker);
+    if (i <= 0) return null;
+    return clientSecret.substring(0, i);
+  }
+}
+
 class StoreService {
   StoreService._();
 
   static final StoreService instance = StoreService._();
+
+  /// GET `stripe/getConnectAccountStatus` — returns `data.is_setup_completed`.
+  Future<bool> getStripeConnectIsSetupCompleted() async {
+    final decoded =
+        await ApiService.instance.callGetAuthenticated<Map<String, dynamic>>(
+      url: WebService.stripe.getConnectAccountStatus,
+      fromJson: (json) => json,
+    );
+    if (decoded['status'] != true) {
+      throw Exception(
+          decoded['message']?.toString() ?? 'Failed to fetch Stripe status');
+    }
+    final data = decoded['data'];
+    if (data is Map<String, dynamic>) {
+      final v = data['is_setup_completed'];
+      if (v is bool) return v;
+      if (v is num) return v != 0;
+      if (v is String) return v.toLowerCase() == 'true' || v == '1';
+    }
+    return false;
+  }
+
+  /// POST `stripe/createConnectAccount` — returns `data.onboarding_url`.
+  Future<String> createStripeConnectAccountAndGetOnboardingUrl() async {
+    final decoded = await ApiService.instance.call<Map<String, dynamic>>(
+      url: WebService.stripe.createConnectAccount,
+      param: {},
+      fromJson: (json) => json,
+    );
+    if (decoded['status'] != true) {
+      throw Exception(decoded['message']?.toString() ??
+          'Failed to create Stripe connect account');
+    }
+    final data = decoded['data'];
+    if (data is Map<String, dynamic>) {
+      final url = data['onboarding_url']?.toString().trim();
+      if (url != null && url.isNotEmpty) return url;
+    }
+    return '';
+  }
 
   Future<List<StoreProduct>> fetchProductForYou() async {
     final decoded = await ApiService.instance.callGetAuthenticated<Map<String, dynamic>>(
@@ -324,20 +379,28 @@ class StoreService {
     return null;
   }
 
-  /// POST `form-data`: `product_id`, `quantity`, `variant_id`.
+  /// POST multipart: `product_id`, `quantity`, repeated `attribute_values[]` (ids).
   /// Returns server cart line id when present (for [updateCart]).
   Future<int?> addToCart({
     required String productId,
     required int quantity,
-    required int variantId,
+    List<int> attributeValueIds = const [],
   }) async {
-    final decoded = await ApiService.instance.call<Map<String, dynamic>>(
+    final stringParts = <MapEntry<String, String>>[];
+    for (final id in attributeValueIds) {
+      if (id > 0) {
+        stringParts.add(MapEntry(Params.cartAttributeValues, '$id'));
+      }
+    }
+
+    final decoded = await ApiService.instance.multiPartCallApi<Map<String, dynamic>>(
       url: WebService.store.addToCart,
       param: {
         'product_id': productId,
         'quantity': quantity,
-        'variant_id': variantId,
       },
+      multipartStringParts: stringParts.isEmpty ? null : stringParts,
+      filesMap: const {},
       fromJson: (json) => json,
     );
     if (decoded['status'] != true) {
@@ -380,6 +443,27 @@ class StoreService {
     if (decoded['status'] != true) {
       throw Exception(decoded['message']?.toString() ?? 'Delete from cart failed');
     }
+  }
+
+  /// One seller per cart: if [product] belongs to a different `sellerUserId` than existing
+  /// lines, removes every line (server delete when `serverCartId` exists, then local clear).
+  Future<void> replaceCartIfDifferentSeller({
+    required CartController cart,
+    required StoreProduct product,
+  }) async {
+    if (cart.items.isEmpty) return;
+    final existingSeller = cart.items.first.product.sellerUserId;
+    if (existingSeller == product.sellerUserId) return;
+    final snapshot = List<CartItem>.from(cart.items);
+    for (final item in snapshot) {
+      final serverId = item.serverCartId;
+      if (item.product.isNetworkImage && serverId != null) {
+        try {
+          await deleteFromCart(cartId: serverId);
+        } catch (_) {}
+      }
+    }
+    cart.replaceAllFromServer([]);
   }
 
   /// POST (server route does not support GET) — full cart for syncing local [CartController].
@@ -432,6 +516,68 @@ class StoreService {
     );
   }
 
+  /// POST `order/checkout` — form `address` only; response must include PaymentIntent `client_secret`.
+  Future<OrderCheckoutResult> checkoutOrder({required String address}) async {
+    final trimmed = address.trim();
+    if (trimmed.isEmpty) {
+      throw Exception('Address is required');
+    }
+    final decoded = await ApiService.instance.call<Map<String, dynamic>>(
+      url: WebService.order.checkout,
+      param: {'address': trimmed},
+      fromJson: (json) => json,
+    );
+    if (decoded['status'] != true) {
+      throw Exception(decoded['message']?.toString() ?? 'Checkout failed');
+    }
+    final secret = _parsePaymentClientSecret(decoded);
+    if (secret == null || secret.isEmpty) {
+      throw Exception('Missing client_secret in checkout response');
+    }
+    return OrderCheckoutResult(clientSecret: secret);
+  }
+
+  /// POST `order/confirmPayment` — after Stripe PaymentSheet succeeds.
+  Future<void> confirmOrderPayment({String? paymentIntentId}) async {
+    final param = <String, dynamic>{};
+    final id = paymentIntentId?.trim();
+    if (id != null && id.isNotEmpty) {
+      param['payment_intent_id'] = id;
+    }
+    final decoded = await ApiService.instance.call<Map<String, dynamic>>(
+      url: WebService.order.confirmPayment,
+      param: param,
+      fromJson: (json) => json,
+    );
+    if (decoded['status'] != true) {
+      throw Exception(
+          decoded['message']?.toString() ?? 'Payment confirmation failed');
+    }
+  }
+
+  static String? _parsePaymentClientSecret(Map<String, dynamic> decoded) {
+    final data = decoded['data'];
+    if (data is Map<String, dynamic>) {
+      for (final key in [
+        'client_secret',
+        'clientSecret',
+        'payment_intent_client_secret',
+      ]) {
+        final v = data[key];
+        if (v != null && v.toString().trim().isNotEmpty) {
+          return v.toString().trim();
+        }
+      }
+    }
+    for (final key in ['client_secret', 'clientSecret']) {
+      final v = decoded[key];
+      if (v != null && v.toString().trim().isNotEmpty) {
+        return v.toString().trim();
+      }
+    }
+    return null;
+  }
+
   static double _parseCouponDiscount(dynamic data) {
     if (data == null) return 0;
     if (data is num) return data.toDouble();
@@ -458,22 +604,42 @@ class StoreService {
     return 0;
   }
 
+  static List<int> _attributeValueIdsFromCartLine(Map<String, dynamic> line) {
+    final out = <int>[];
+    dynamic raw = line['attribute_values'];
+    if (raw is! List) raw = line['attributeValues'];
+    if (raw is List) {
+      for (final e in raw) {
+        if (e is Map<String, dynamic>) {
+          final id = int.tryParse(e['id']?.toString() ?? '');
+          if (id != null && id > 0) out.add(id);
+        } else {
+          final id = int.tryParse(e.toString());
+          if (id != null && id > 0) out.add(id);
+        }
+      }
+    }
+    if (out.isEmpty && line['variant_id'] != null) {
+      final v = int.tryParse(line['variant_id'].toString());
+      if (v != null && v > 0) out.add(v);
+    }
+    out.sort();
+    return out;
+  }
+
   static CartItem? _cartItemFromLine(Map<String, dynamic> line) {
     final qty = int.tryParse(line['quantity']?.toString() ?? '0') ?? 0;
     if (qty < 1) return null;
     final cartRowId = int.tryParse(line['id']?.toString() ?? '');
-    int? variantId;
-    if (line['variant_id'] != null) {
-      variantId = int.tryParse(line['variant_id'].toString());
-    }
+    final selectedIds = _attributeValueIdsFromCartLine(line);
     final product = StoreProduct.fromCartLine(line);
     if (product.id.isEmpty) return null;
     return CartItem(
       product: product,
       quantity: qty,
-      variantText: variantId != null ? 'Standard' : null,
+      variantText: product.summaryForSelectedAttributeValueIds(selectedIds),
       serverCartId: cartRowId,
-      variantId: variantId,
+      selectedAttributeValueIds: selectedIds,
     );
   }
 }

@@ -25,7 +25,6 @@ import 'package:stakBread/common/service/utils/params.dart';
 import 'package:stakBread/languages/languages_keys.dart';
 import 'package:stakBread/model/general/file_path_model.dart';
 import 'package:stakBread/model/general/location_place_model.dart';
-import 'package:stakBread/model/general/place_detail.dart';
 import 'package:stakBread/model/general/settings_model.dart';
 import 'package:stakBread/model/post_story/music/music_model.dart';
 import 'package:stakBread/model/post_story/post_model.dart';
@@ -121,16 +120,24 @@ class CreateFeedScreenController extends BaseController {
     }
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      final postParams = await _buildPostParams(rawDescription);
-      Loggers.info('Post Data: $postParams');
+      try {
+        // Let popped routes (e.g. dashboard) paint before GPS / network work.
+        await Future<void>.delayed(Duration.zero);
+        final postParams = await _buildPostParams(rawDescription);
+        Loggers.info('Post Data: $postParams');
 
-      if (createType == CreateFeedType.reel) {
-        _uploadPostHandler(postParams, skipPop: true);
-      } else {
-        runContentModerationAndUpload(
-          description: rawDescription,
-          params: postParams,
-        );
+        if (createType == CreateFeedType.reel) {
+          await _uploadPostHandler(postParams, skipPop: true);
+        } else {
+          runContentModerationAndUpload(
+            description: rawDescription,
+            params: postParams,
+          );
+        }
+      } catch (e, st) {
+        Loggers.error('handleUpload (post-frame): $e');
+        Loggers.error(st.toString());
+        await failedResponseSnackBar(message: '$e');
       }
     });
   }
@@ -225,20 +232,31 @@ class CreateFeedScreenController extends BaseController {
   }
 
   Future<void> _addCurrentLocationData(Map<String, dynamic> params) async {
-    Position? position;
-    PlaceDetail? detail;
+    // Reel upload used to feel "stuck" here: GPS + IP lookup can take a long time
+    // and blocked the whole upload pipeline. Cap wait and continue without place.
     try {
-      position = await Geolocator.getCurrentPosition();
-      detail = await CommonService.instance.getIPPlaceDetail();
+      await _addCurrentLocationDataImpl(params).timeout(
+        const Duration(seconds: 8),
+        onTimeout: () {
+          Loggers.warning(
+            'Location lookup timed out; uploading without place fields',
+          );
+        },
+      );
     } catch (e) {
       Loggers.error('_addCurrentLocationData $e');
     }
-    if (detail != null && detail.status == 'success') {
+  }
+
+  Future<void> _addCurrentLocationDataImpl(Map<String, dynamic> params) async {
+    final position = await Geolocator.getCurrentPosition();
+    final detail = await CommonService.instance.getIPPlaceDetail();
+    if (detail.status == 'success') {
       params.addAll({
         Params.country: detail.country,
         Params.state: detail.region,
-        Params.placeLat: '${position?.latitude ?? detail.lat}',
-        Params.placeLon: '${position?.longitude ?? detail.lon}',
+        Params.placeLat: '${position.latitude}',
+        Params.placeLon: '${position.longitude}',
       });
     }
   }

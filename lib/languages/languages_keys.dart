@@ -142,6 +142,8 @@ class LKey {
   static const String regularDelivery = "Regular Delivery";
   static const String deliveryDays = "3-6 days";
   static const String address = "Address";
+  static const String pleaseEnterDeliveryAddress =
+      "Please enter your delivery address";
   static const String payment = "Payment";
   static const String mastercard = "Mastercard";
   static const String cardholderName = "Cardholder Name";

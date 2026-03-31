@@ -12,11 +12,28 @@ class WebService {
   static var moderation = _Moderation();
   static var common = _Common();
   static var store = _Store();
+  static var stripe = _Stripe();
+  static var order = _Order();
   static var resume = _Resume();
+}
+
+class _Order {
+  /// POST form-data: `address` — returns PaymentIntent `client_secret` in `data`.
+  String get checkout => "${apiURL}order/checkout";
+
+  /// POST after Stripe PaymentSheet success.
+  String get confirmPayment => "${apiURL}order/confirmPayment";
 }
 
 class _Resume {
   String addResume = "${apiURL}resume/addResume";
+}
+
+class _Stripe {
+  String get getConnectAccountStatus =>
+      "${apiURL}stripe/getConnectAccountStatus";
+
+  String get createConnectAccount => "${apiURL}stripe/createConnectAccount";
 }
 
 class _Store {

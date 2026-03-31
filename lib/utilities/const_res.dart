@@ -14,3 +14,4 @@ const bool kRevenueCatEnabled = false;
 // String revenueCatAppleApiKey = "________"; // revenueCat apple api
 String get revenueCatAndroidApiKey => "";
 String get revenueCatAppleApiKey => "";
+

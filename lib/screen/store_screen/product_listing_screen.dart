@@ -131,16 +131,21 @@ class _ProductListingScreenState extends State<ProductListingScreen> {
           product: product,
           imageTint: _cardImageTint(index),
           onTap: () => Get.to(() => ProductDetailScreen(product: product)),
-          onAddToCart: () {
-            if (Get.isRegistered<CartController>()) {
-              Get.find<CartController>().addItem(
-                product,
-                quantity: 1,
-                variantText: product.isNetworkImage
-                    ? 'Standard'
-                    : (product.id == '2' ? 'Size: M' : 'Color: Black'),
-              );
-            }
+          onAddToCart: () async {
+            final cart = Get.isRegistered<CartController>()
+                ? Get.find<CartController>()
+                : Get.put(CartController());
+            await StoreService.instance.replaceCartIfDifferentSeller(
+              cart: cart,
+              product: product,
+            );
+            cart.addItem(
+              product,
+              quantity: 1,
+              variantText: product.isNetworkImage
+                  ? 'Standard'
+                  : (product.id == '2' ? 'Size: M' : 'Color: Black'),
+            );
           },
         );
       },

@@ -423,14 +423,7 @@ class _CreatorCard extends StatelessWidget {
               Center(
                 child: ExploreCreatorCircleAvatar(creator: creator, radius: 36),
               ),
-              Positioned(
-                top: -4,
-                right: -4,
-                child: GestureDetector(
-                  onTap: () {},
-                  child: Icon(Icons.close, size: 18, color: ColorRes.textLightGrey),
-                ),
-              ),
+
             ],
           ),
           const SizedBox(height: 10),

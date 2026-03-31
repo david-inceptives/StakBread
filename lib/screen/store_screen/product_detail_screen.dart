@@ -41,6 +41,9 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
   bool _addingToCart = false;
   int cartQuantity = 1;
 
+  /// Per attribute group (`attribute_id`) → selected `attribute_values[].id`.
+  final Map<int, int> _selectedValueIdByAttributeId = {};
+
   static const Color _shimmerBase = Color(0xFFE8E8E8);
   static const Color _shimmerHighlight = Color(0xFFF5F6F8);
 
@@ -59,6 +62,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
     _product = widget.product;
     _reviews = List<ProductReview>.from(_product.reviews);
     _initialDataLoading = _product.isNetworkImage;
+    _ensureDefaultAttributeSelections();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       if (!mounted) return;
       final cart = Get.isRegistered<CartController>() ? Get.find<CartController>() : Get.put(CartController());
@@ -81,6 +85,34 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
     });
   }
 
+  void _ensureDefaultAttributeSelections() {
+    for (final entry in _product.attributeValuesByGroup.entries) {
+      final list = entry.value;
+      if (list.isEmpty) continue;
+      final attrId = list.first.attributeId;
+      final current = _selectedValueIdByAttributeId[attrId];
+      if (current == null || current <= 0) {
+        _selectedValueIdByAttributeId[attrId] = list.first.id;
+      }
+    }
+  }
+
+  List<int> get _selectedAttributeValueIds {
+    final out = _selectedValueIdByAttributeId.values.where((id) => id > 0).toList()
+      ..sort();
+    return out;
+  }
+
+  bool get _attributesSelectionComplete {
+    if (_product.attributeValues.isEmpty) return true;
+    final needed = _product.attributeValues.map((e) => e.attributeId).toSet();
+    for (final aid in needed) {
+      final v = _selectedValueIdByAttributeId[aid];
+      if (v == null || v <= 0) return false;
+    }
+    return true;
+  }
+
   void _syncFromCartIfNeeded() {
     if (_isOwnListing) {
       if (mounted) {
@@ -93,9 +125,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
     }
     if (!Get.isRegistered<CartController>()) return;
     final cart = Get.find<CartController>();
-    final idx = cart.items.indexWhere(
-      (e) => e.product.id == _product.id && e.variantId == _product.variantId,
-    );
+    final idx = cart.findItemIndex(_product.id, _selectedAttributeValueIds);
     if (idx >= 0 && mounted) {
       setState(() {
         hasAddedToCart = true;
@@ -148,14 +178,18 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
     return Color(v);
   }
 
-  Widget _attributeValueChip(StoreProductAttributeValue av) {
+  Widget _attributeValueChip(StoreProductAttributeValue av, {required bool selected}) {
     final hex = _parseHexColor(av.value);
+    final hideHexText = hex != null;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
       decoration: BoxDecoration(
         color: ColorRes.whitePure,
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: ColorRes.textLightGrey.withValues(alpha: 0.35)),
+        border: Border.all(
+          color: selected ? ColorRes.green : ColorRes.textLightGrey.withValues(alpha: 0.35),
+          width: selected ? 2 : 1,
+        ),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -172,13 +206,14 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
             ),
             const SizedBox(width: 8),
           ],
-          Text(
-            av.value,
-            style: TextStyleCustom.outFitRegular400(
-              fontSize: 13,
-              color: ColorRes.textDarkGrey,
+          if (!hideHexText)
+            Text(
+              av.value,
+              style: TextStyleCustom.outFitRegular400(
+                fontSize: 13,
+                color: ColorRes.textDarkGrey,
+              ),
             ),
-          ),
         ],
       ),
     );
@@ -193,6 +228,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
         setState(() {
           _product = detail;
           selectedThumbIndex = 0;
+          _ensureDefaultAttributeSelections();
           if (detail.reviews.isNotEmpty) {
             _reviews = List<ProductReview>.from(detail.reviews);
           }
@@ -212,12 +248,11 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
   Future<void> _syncCartQuantity() async {
     if (!Get.isRegistered<CartController>()) return;
     final cart = Get.find<CartController>();
-    final i = cart.items.indexWhere(
-      (e) => e.product.id == _product.id && e.variantId == _product.variantId,
-    );
+    final i = cart.findItemIndex(_product.id, _selectedAttributeValueIds);
     if (i < 0) return;
     final serverId = cart.items[i].serverCartId;
-    cart.updateQuantity(_product.id, cartQuantity, variantId: _product.variantId);
+    cart.updateQuantity(_product.id, cartQuantity,
+        selectedAttributeValueIds: _selectedAttributeValueIds);
     if (!_product.isNetworkImage || serverId == null) return;
     try {
       await StoreService.instance.updateCart(cartId: serverId, quantity: cartQuantity);
@@ -234,9 +269,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
   Future<void> _removeProductFromCart() async {
     if (!Get.isRegistered<CartController>()) return;
     final cart = Get.find<CartController>();
-    final i = cart.items.indexWhere(
-      (e) => e.product.id == _product.id && e.variantId == _product.variantId,
-    );
+    final i = cart.findItemIndex(_product.id, _selectedAttributeValueIds);
     if (i < 0) {
       if (mounted) {
         setState(() {
@@ -259,7 +292,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
         return;
       }
     }
-    cart.removeItem(_product.id, variantId: _product.variantId);
+    cart.removeItem(_product.id, selectedAttributeValueIds: _selectedAttributeValueIds);
     if (mounted) {
       setState(() {
         hasAddedToCart = false;
@@ -448,7 +481,20 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                                 Wrap(
                                   spacing: 8,
                                   runSpacing: 8,
-                                  children: e.value.map(_attributeValueChip).toList(),
+                                  children: e.value.map((av) {
+                                    final selected =
+                                        _selectedValueIdByAttributeId[av.attributeId] == av.id;
+                                    return InkWell(
+                                      onTap: () {
+                                        setState(() {
+                                          _selectedValueIdByAttributeId[av.attributeId] = av.id;
+                                        });
+                                        _syncFromCartIfNeeded();
+                                      },
+                                      borderRadius: BorderRadius.circular(8),
+                                      child: _attributeValueChip(av, selected: selected),
+                                    );
+                                  }).toList(),
                                 ),
                                 const SizedBox(height: 14),
                               ];
@@ -635,29 +681,33 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                                           BaseController.share.showSnackBar(LKey.outOfStock.tr);
                                           return;
                                         }
+                                        if (!_attributesSelectionComplete) {
+                                          BaseController.share.showSnackBar(LKey.fieldRequired.tr);
+                                          return;
+                                        }
                                         final cart = Get.put(CartController());
                                         if (product.isNetworkImage) {
-                                          final vid = product.variantId;
-                                          if (vid == null) {
-                                            BaseController.share.showSnackBar(
-                                              LKey.somethingWentWrong.tr,
-                                            );
-                                            return;
-                                          }
+                                          final attrIds = _selectedAttributeValueIds;
                                           setState(() => _addingToCart = true);
                                           try {
+                                            await StoreService.instance.replaceCartIfDifferentSeller(
+                                              cart: cart,
+                                              product: product,
+                                            );
+                                            if (!mounted) return;
                                             final cartId = await StoreService.instance.addToCart(
                                               productId: product.id,
                                               quantity: 1,
-                                              variantId: vid,
+                                              attributeValueIds: attrIds,
                                             );
                                             if (!mounted) return;
                                             cart.addItem(
                                               product,
                                               quantity: 1,
-                                              variantText: 'Standard',
+                                              variantText:
+                                                  product.summaryForSelectedAttributeValueIds(attrIds),
                                               serverCartId: cartId,
-                                              variantId: vid,
+                                              selectedAttributeValueIds: attrIds,
                                             );
                                             setState(() {
                                               hasAddedToCart = true;
@@ -673,6 +723,11 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                                             }
                                           }
                                         } else {
+                                          await StoreService.instance.replaceCartIfDifferentSeller(
+                                            cart: cart,
+                                            product: product,
+                                          );
+                                          if (!mounted) return;
                                           cart.addItem(
                                             product,
                                             quantity: 1,
@@ -770,82 +825,6 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                           ),
                         ),
                     ] else
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 20),
-                        child: Container(
-                          padding: const EdgeInsets.all(18),
-                          decoration: BoxDecoration(
-                            color: ColorRes.whitePure,
-                            border: Border.all(color: ColorRes.borderLight),
-                            borderRadius: BorderRadius.circular(16),
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Row(
-                                children: [
-                                  CircleAvatar(
-                                    radius: 24,
-                                    backgroundColor: ColorRes.borderLight,
-                                    child: Icon(Icons.person, size: 28, color: ColorRes.textLightGrey),
-                                  ),
-                                  const SizedBox(width: 14),
-                                  Expanded(
-                                    child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          'Lisa Lin',
-                                          style: TextStyleCustom.outFitSemiBold600(fontSize: 17, color: ColorRes.textDarkGrey),
-                                        ),
-                                        const SizedBox(height: 6),
-                                        Container(
-                                          padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
-                                          decoration: BoxDecoration(
-                                            color: ColorRes.green.withValues(alpha: 0.2),
-                                            borderRadius: BorderRadius.circular(5),
-                                          ),
-                                          child: Row(
-                                            mainAxisSize: MainAxisSize.min,
-                                            children: [
-                                              Icon(Icons.check_circle_rounded, size: 13, color: ColorRes.green),
-                                              const SizedBox(width: 5),
-                                              Text(
-                                                LKey.verifiedCustomer.tr,
-                                                style: TextStyleCustom.outFitSemiBold600(fontSize: 12, color: ColorRes.green),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  Column(
-                                    crossAxisAlignment: CrossAxisAlignment.end,
-                                    children: [
-                                      Row(
-                                        children: List.generate(4, (_) => Icon(Icons.star_rounded, size: 18, color: const Color(0xFFFFC107))),
-                                      ),
-                                      const SizedBox(height: 4),
-                                      Text(
-                                        '18-Feb-2022',
-                                        style: TextStyleCustom.outFitRegular400(fontSize: 12, color: ColorRes.textLightGrey),
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(height: 12),
-                              Text(
-                                "Alex Was Incredibly Professional And Fixed Our Leaking Issue In No Time. Highly Recommend!",
-                                style: TextStyleCustom.outFitRegular400(fontSize: 14, color: ColorRes.textDarkGrey),
-                                maxLines: 3,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
                     const SizedBox(height: 36),
                   ],
                 ),

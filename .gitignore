@@ -33,6 +33,11 @@ migrate_working_dir/
 .pub/
 /build/
 
+# Stripe / local secrets (never commit)
+secrets.env
+.env
+.env.local
+
 # Symbolication related
 app.*.symbols
 

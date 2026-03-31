@@ -51,7 +51,7 @@
             <string>Deep Linking</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>stakBread</string>
+				<string>stakbread</string>
 			</array>
 		</dict>
 	</array>

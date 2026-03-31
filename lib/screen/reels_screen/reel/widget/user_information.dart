@@ -72,13 +72,13 @@ class UserInfoHeader extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Obx(() {
-          final prod = controller.reelData.value.product;
+          final prods = controller.reelData.value.reelDisplayProducts;
           return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
             children: [
-              ReelProductWidget(product: prod),
-              if (prod != null) const SizedBox(height: 20),
+              ReelProductWidget(products: prods),
+              if (prods.isNotEmpty) const SizedBox(height: 20),
             ],
           );
         }),

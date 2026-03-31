@@ -58,8 +58,9 @@
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
 
-                <!-- Custom scheme -->
-                <data android:scheme="stakBread" />
+                <!-- Stripe connect return URLs -->
+                <data android:scheme="stakbread" android:host="stripe" android:pathPrefix="/success" />
+                <data android:scheme="stakbread" android:host="stripe" android:pathPrefix="/refresh" />
             </intent-filter>
 
             <intent-filter android:autoVerify="true">
@@ -69,7 +70,7 @@
                 <category android:name="android.intent.category.BROWSABLE" />
 
                 <data android:scheme="https" />
-                <data android:host="_____ BASE URL ______" />
+                <data android:host="stripe-success" />
             </intent-filter>
 
             <meta-data

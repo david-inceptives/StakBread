@@ -1,13 +1,12 @@
 import 'dart:async';
 import 'dart:io';
-import 'package:device_preview/device_preview.dart';
 import 'package:audio_session/audio_session.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:stakBread/common/manager/firebase_notification_manager.dart';
@@ -17,6 +16,7 @@ import 'package:stakBread/common/manager/session_manager.dart';
 import 'package:stakBread/common/widget/restart_widget.dart';
 import 'package:stakBread/languages/dynamic_translations.dart';
 import 'package:stakBread/screen/splash_screen/splash_screen.dart';
+import 'package:stakBread/utilities/stripe_keys.dart';
 import 'package:stakBread/utilities/theme_res.dart';
 
 import 'common/service/network_helper/network_helper.dart';
@@ -54,6 +54,22 @@ Future<void> main() async {
 
     NetworkHelper().initialize();
 
+    try {
+      final stripePk = await resolveStripePublishableKey();
+      if (stripePk.isEmpty) {
+        Loggers.error('Stripe: STRIPE_KEY is empty (check assets/config/stripe.env or --dart-define)');
+      } else {
+        Stripe.publishableKey = stripePk;
+        Stripe.urlScheme = 'stakbread';
+        if (Platform.isAndroid) {
+          Stripe.setReturnUrlSchemeOnAndroid = true;
+        }
+        await Stripe.instance.applySettings();
+      }
+    } catch (e, st) {
+      Loggers.error('Stripe init failed: $e\n$st');
+    }
+
     // Load Translations
     Get.put(DynamicTranslations());
 
@@ -81,8 +97,7 @@ class MyApp extends StatelessWidget {
         return GetMaterialApp(
           builder: (context, child) => ScrollConfiguration(behavior: MyBehavior(), child: child!),
           translations: Get.find<DynamicTranslations>(),
-          //locale: Locale(SessionManager.instance.getLang()),
-          locale: DevicePreview.locale(context),
+          locale: Locale(SessionManager.instance.getLang()),
           //builder: DevicePreview.appBuilder,
           fallbackLocale: Locale(SessionManager.instance.getFallbackLang()),
           themeMode: ThemeMode.light,
