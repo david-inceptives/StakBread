@@ -30,10 +30,21 @@ class ReelPreviewCard extends StatelessWidget {
           ClipSmoothRect(
               radius: SmoothBorderRadius(cornerRadius: 10, cornerSmoothing: 1),
               child: Obx(
-                () => controller.content.value?.thumbnailBytes != null
-                    ? Image.memory(controller.content.value!.thumbnailBytes!,
-                        width: 150, height: 235, fit: BoxFit.cover)
-                    : Container(),
+                () {
+                  final bytes = controller.content.value?.thumbnailBytes;
+                  if (bytes == null) return const SizedBox.shrink();
+                  return RepaintBoundary(
+                    child: Image.memory(
+                      bytes,
+                      width: 150,
+                      height: 235,
+                      fit: BoxFit.cover,
+                      gaplessPlayback: true,
+                      cacheWidth: 450,
+                      cacheHeight: 705,
+                    ),
+                  );
+                },
               )),
           Container(
             padding: const EdgeInsets.symmetric(vertical: 10),

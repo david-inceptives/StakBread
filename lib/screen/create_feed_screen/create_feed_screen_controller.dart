@@ -408,6 +408,7 @@ class CreateFeedScreenController extends BaseController {
 
   Future<PostModel?> _handleReelUpload(
       PostStoryContent? content, Map<String, dynamic> params) async {
+    await Future<void>.delayed(Duration.zero);
     if (content == null) {
       return failedResponseSnackBar(message: 'Invalid content');
     }
@@ -467,7 +468,8 @@ class CreateFeedScreenController extends BaseController {
     // progress.value = 10;
     updateUploadingProgress(progress: 10);
 
-    // Step 5: Upload video & thumbnail
+    // Step 5: Upload video & thumbnail (streams file; avoids loading whole reel into RAM)
+    await Future<void>.delayed(Duration.zero);
     Loggers.info('Uploading video...');
     FilePathModel uploadedVideo =
         await CommonService.instance.uploadFileGivePath(XFile(videoPath));
@@ -838,11 +840,16 @@ class CreateFeedScreenController extends BaseController {
     MediaFile? file =
         await MediaPickerHelper.shared.pickVideo(source: ImageSource.gallery);
     if (file != null) {
+      await videoPlayerController.value?.dispose();
       video.value =
           ImageWithFilter(media: file.file, thumbnail: file.thumbNail);
-      videoPlayerController.value =
-          VideoPlayerController.file(File(file.file.path))
-            ..initialize().then((value) => videoPlayerController.refresh());
+      videoPlayerController.value = VideoPlayerController.file(
+        File(file.file.path),
+        videoPlayerOptions: VideoPlayerOptions(mixWithOthers: true),
+      );
+      videoPlayerController.value!
+          .initialize()
+          .then((_) => videoPlayerController.refresh());
     }
     feedPostType.value = FeedPostType.video;
   }
@@ -862,6 +869,7 @@ class CreateFeedScreenController extends BaseController {
   void selectedVideoDelete() {
     video.value = null;
     videoPlayerController.value?.dispose();
+    videoPlayerController.value = null;
     feedPostType.value = FeedPostType.text;
   }
 }

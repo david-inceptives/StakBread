@@ -375,24 +375,10 @@ class _OrderCard extends StatelessWidget {
           ],
           if (order.status == OrderStatus.toShip) ...[
             const SizedBox(height: 12),
-            Row(
-              children: [
-                Expanded(
-                  child: _FullWidthButton(
-                    label: LKey.cancel.tr,
-                    onPressed: () => controller.onCancelOrder(order),
-                    filled: false,
-                  ),
-                ),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: _FullWidthButton(
-                    label: LKey.chat.tr,
-                    onPressed: () => controller.onChat(order),
-                    filled: true,
-                  ),
-                ),
-              ],
+            _FullWidthButton(
+              label: LKey.chat.tr,
+              onPressed: () => controller.onChat(order),
+              filled: true,
             ),
           ],
           if (order.status == OrderStatus.completed) ...[

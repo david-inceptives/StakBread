@@ -12,6 +12,7 @@ import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:stakBread/common/manager/firebase_notification_manager.dart';
 import 'package:stakBread/common/manager/logger.dart';
 import 'package:stakBread/common/manager/session_manager.dart';
+import 'package:stakBread/common/navigation/app_route_observer.dart';
 // import 'package:stakBread/common/service/subscription/subscription_manager.dart'; // RevenueCat hidden
 import 'package:stakBread/common/widget/restart_widget.dart';
 import 'package:stakBread/languages/dynamic_translations.dart';
@@ -95,6 +96,7 @@ class MyApp extends StatelessWidget {
     return ResponsiveSizer(
       builder: (context, orientation, screenType) {
         return GetMaterialApp(
+          navigatorObservers: <NavigatorObserver>[appRouteObserver],
           builder: (context, child) => ScrollConfiguration(behavior: MyBehavior(), child: child!),
           translations: Get.find<DynamicTranslations>(),
           locale: Locale(SessionManager.instance.getLang()),

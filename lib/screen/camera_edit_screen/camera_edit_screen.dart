@@ -1,6 +1,7 @@
 import 'package:figma_squircle_updated/figma_squircle.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:stakBread/common/navigation/app_route_observer.dart';
 import 'package:stakBread/common/widget/custom_border_round_icon.dart';
 import 'package:stakBread/common/widget/loader_widget.dart';
 import 'package:stakBread/common/widget/text_button_custom.dart';
@@ -17,14 +18,51 @@ import 'package:stakBread/utilities/text_style_custom.dart';
 import 'package:stakBread/utilities/color_res.dart';
 import 'package:video_player/video_player.dart';
 
-class CameraEditScreen extends StatelessWidget {
+class CameraEditScreen extends StatefulWidget {
   final PostStoryContent content;
 
   const CameraEditScreen({super.key, required this.content});
 
   @override
+  State<CameraEditScreen> createState() => _CameraEditScreenState();
+}
+
+class _CameraEditScreenState extends State<CameraEditScreen> with RouteAware {
+  late final CameraEditScreenController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = Get.put(CameraEditScreenController(widget.content.obs));
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final route = ModalRoute.of(context);
+    if (route is PageRoute<dynamic>) {
+      appRouteObserver.subscribe(this, route);
+    }
+  }
+
+  @override
+  void dispose() {
+    appRouteObserver.unsubscribe(this);
+    super.dispose();
+  }
+
+  @override
+  void didPushNext() {
+    _controller.videoSurfaceAllowed.value = false;
+  }
+
+  @override
+  void didPopNext() {
+    _controller.videoSurfaceAllowed.value = true;
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final controller = Get.put(CameraEditScreenController(content.obs));
     return Scaffold(
       body: SafeArea(
         minimum: const EdgeInsets.symmetric(vertical: 10),
@@ -36,19 +74,19 @@ class CameraEditScreen extends StatelessWidget {
                     const EdgeInsets.symmetric(horizontal: 6.0, vertical: 20),
                 child: Stack(
                   children: [
-                    GenerateContentView(controller: controller),
+                    GenerateContentView(controller: _controller),
                     Column(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        CameraEditTopViewTools(controller: controller),
-                        FilterAndMusicView(controller: controller)
+                        CameraEditTopViewTools(controller: _controller),
+                        FilterAndMusicView(controller: _controller)
                       ],
                     ),
                   ],
                 ),
               ),
             ),
-            CameraEditActionButtons(controller: controller),
+            CameraEditActionButtons(controller: _controller),
           ],
         ),
       ),
@@ -210,17 +248,62 @@ class CameraEditVideoView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final controller = Get.find<CameraEditScreenController>();
+    // Outer Obx: only re-build when the player is created/ready — not on every filter matrix change.
+    return Obx(() {
+      if (!controller.videoSurfaceAllowed.value) {
+        return Container(
+          decoration: ShapeDecoration(
+            color: ColorRes.blackPure,
+            shape: SmoothRectangleBorder(
+              borderRadius: SmoothBorderRadius(
+                cornerRadius: 15,
+                cornerSmoothing: 1,
+              ),
+            ),
+          ),
+        );
+      }
+      final vpc = controller.videoPlayerController.value;
+      if (vpc == null || !vpc.value.isInitialized) {
+        return const LoaderWidget();
+      }
+      return _CameraEditFilteredVideoLayer(
+        controller: controller,
+        videoController: vpc,
+      );
+    });
+  }
+}
+
+/// Filter matrix changes must not rebuild the [VideoPlayer] subtree (Android ImageReader max buffers).
+class _CameraEditFilteredVideoLayer extends StatelessWidget {
+  final CameraEditScreenController controller;
+  final VideoPlayerController videoController;
+
+  const _CameraEditFilteredVideoLayer({
+    required this.controller,
+    required this.videoController,
+  });
+
+  @override
+  Widget build(BuildContext context) {
     return Obx(() {
       return ColorFiltered(
         colorFilter: ColorFilter.matrix(controller.selectedFilter.value),
         child: Container(
           decoration: ShapeDecoration(
-              shape: SmoothRectangleBorder(
-                  borderRadius: SmoothBorderRadius(
-                      cornerRadius: 15, cornerSmoothing: 1))),
-          child: Obx(() => CustomVideoPlayer(
-              videoPlayerController: controller.videoPlayerController.value,
-              onPlayPause: controller.onPlayPauseToggle)),
+            shape: SmoothRectangleBorder(
+              borderRadius: SmoothBorderRadius(
+                cornerRadius: 15,
+                cornerSmoothing: 1,
+              ),
+            ),
+          ),
+          child: CustomVideoPlayer(
+            key: ValueKey<Object>(videoController),
+            videoPlayerController: videoController,
+            onPlayPause: controller.onPlayPauseToggle,
+          ),
         ),
       );
     });
@@ -231,10 +314,11 @@ class CustomVideoPlayer extends StatelessWidget {
   final VideoPlayerController? videoPlayerController;
   final VoidCallback onPlayPause;
 
-  const CustomVideoPlayer(
-      {super.key,
-      required this.videoPlayerController,
-      required this.onPlayPause});
+  const CustomVideoPlayer({
+    super.key,
+    required this.videoPlayerController,
+    required this.onPlayPause,
+  });
 
   @override
   Widget build(BuildContext context) {

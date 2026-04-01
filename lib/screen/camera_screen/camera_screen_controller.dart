@@ -355,6 +355,7 @@ class CameraScreenController extends BaseController
         }
         file = XFile(videoPath);
       }
+      await Future<void>.delayed(Duration.zero);
       final XFile thumbnailPath =
           await MediaPickerHelper.shared.extractThumbnail(videoPath: file.path);
       MediaFile mediaFile = MediaFile(

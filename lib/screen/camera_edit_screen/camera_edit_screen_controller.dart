@@ -48,6 +48,10 @@ class CameraEditScreenController extends BaseController {
   Rx<List<double>> selectedFilter = Rx([]);
   Rx<VideoPlayerController?> videoPlayerController =
       Rx<VideoPlayerController?>(null);
+
+  /// False while another route covers camera edit (e.g. create post / preview).
+  /// Drops the [VideoPlayer] from the tree so Android does not exhaust ImageReader buffers.
+  final RxBool videoSurfaceAllowed = true.obs;
   List<LinearGradient> storyGradientColor = GenerateColor.instance.gradientList;
 
   PlayerController audioPlayer = PlayerController();
@@ -58,6 +62,10 @@ class CameraEditScreenController extends BaseController {
   int selectStorySecond = AppRes.storyDurations.first;
 
   Timer? _timer;
+
+  /// Prevents stacked loop restarts — listener runs every frame; near end this
+  /// used to call [_restartVideoAndAudio] hundreds of times → ImageReader OOM.
+  bool _videoLoopRestartInProgress = false;
 
   RxBool isFilterShow = false.obs;
   RxBool isMergingVideo = false.obs;
@@ -150,8 +158,10 @@ class CameraEditScreenController extends BaseController {
       return;
     }
 
-    videoPlayerController.value =
-        VideoPlayerController.file(File(content.value.content ?? ''));
+    videoPlayerController.value = VideoPlayerController.file(
+      File(content.value.content ?? ''),
+      videoPlayerOptions: VideoPlayerOptions(mixWithOthers: true),
+    );
 
     await videoPlayerController.value?.initialize();
 
@@ -185,19 +195,24 @@ class CameraEditScreenController extends BaseController {
   void _handleVideoCompletion() {
     final controller = videoPlayerController.value;
     if (controller == null || !controller.value.isInitialized) return;
+    if (_videoLoopRestartInProgress) return;
 
     final position = controller.value.position;
     final duration = controller.value.duration;
+    if (duration == Duration.zero) return;
 
-    final isVideoComplete = (duration - position).inMilliseconds.abs() <
-        500; // Allow small margin (e.g., 500ms)
+    final isVideoComplete =
+        (duration - position).inMilliseconds.abs() < 500; // end window
 
     if (!isVideoComplete) return;
-    Loggers.error('_handleVideoCompletion');
+
     switch (content.value.type) {
       case PostStoryContentType.reel:
       case PostStoryContentType.storyVideo:
-        _restartVideoAndAudio();
+        _videoLoopRestartInProgress = true;
+        unawaited(_restartVideoAndAudio().whenComplete(() {
+          _videoLoopRestartInProgress = false;
+        }));
         break;
       case PostStoryContentType.storyText:
       case PostStoryContentType.storyImage:
@@ -253,6 +268,7 @@ class CameraEditScreenController extends BaseController {
 
   void _disposeControllers() {
     _timer?.cancel();
+    _videoLoopRestartInProgress = false;
     audioPlayer.release();
     audioPlayer.dispose();
     videoPlayerController.value?.removeListener(_handleVideoCompletion);
@@ -291,6 +307,7 @@ class CameraEditScreenController extends BaseController {
   }
 
   Future<void> handleContentUpload() async {
+    await Future<void>.delayed(Duration.zero);
     final currentContent = content.value;
     if (currentContent.type == PostStoryContentType.reel) {
       final videoPath = currentContent.content ?? '';
@@ -314,6 +331,7 @@ class CameraEditScreenController extends BaseController {
 
   /// Entry point for post upload after moderation check
   Future<void> handleReelUpload() async {
+    await Future<void>.delayed(Duration.zero);
     final hasAudio = content.value.sound != null;
     isMergingVideo.value = true;
 
@@ -418,6 +436,7 @@ class CameraEditScreenController extends BaseController {
   /// Extracts thumbnail and navigates to the CreateFeed screen for reels
   Future<void> _goToCreateFeedScreen(String videoFilePath) async {
     try {
+      await Future<void>.delayed(Duration.zero);
       // Run both VideoCompress-backed extractions in parallel (was serial → long freeze).
       final results = await Future.wait([
         MediaPickerHelper.shared.extractThumbnailByte(videoPath: videoFilePath),

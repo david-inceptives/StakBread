@@ -2,6 +2,7 @@ import 'dart:math' as math;
 
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
+import 'package:stakBread/model/store/cart_model.dart';
 import 'package:stakBread/model/store/store_product_model.dart';
 
 class CartItem {
@@ -13,12 +14,22 @@ class CartItem {
   /// Selected attribute value ids for this line (API `attribute_values`).
   final List<int> selectedAttributeValueIds;
 
+  /// From fetch cart line `item_total` (quantity × unit, as returned by API).
+  final double? serverLineItemTotal;
+  /// From fetch cart line `shipping_fee` (per-line fee from API).
+  final double? serverLineShippingFee;
+  /// From fetch cart line `delivery_days`.
+  final int? serverLineDeliveryDays;
+
   CartItem({
     required this.product,
     this.quantity = 1,
     this.variantText,
     this.serverCartId,
     this.selectedAttributeValueIds = const [],
+    this.serverLineItemTotal,
+    this.serverLineShippingFee,
+    this.serverLineDeliveryDays,
   });
 
   double get linePrice {
@@ -36,6 +47,9 @@ class CartItem {
 class CartController extends GetxController {
   final RxList<CartItem> items = <CartItem>[].obs;
 
+  /// Set from POST [fetchCart] `data` totals; drives checkout subtotal/shipping/grand.
+  final Rx<CartSummary?> lastServerSummary = Rx<CartSummary?>(null);
+
   static List<int> _normalizeAttributeIds(List<int>? ids) {
     final out = (ids ?? []).where((e) => e > 0).toList()..sort();
     return out;
@@ -51,24 +65,45 @@ class CartController extends GetxController {
 
   int get totalItemCount => items.fold(0, (sum, e) => sum + e.quantity);
 
-  double get subtotal => items.fold(0.0, (sum, e) => sum + e.linePrice);
+  double get _lineSubtotal =>
+      items.fold(0.0, (sum, e) => sum + (e.serverLineItemTotal ?? e.linePrice));
 
-  /// Sum of `shipping_fee` × quantity per line (from product detail / cart product).
-  double get totalShippingFee => items.fold(0.0, (sum, e) {
+  /// Sum of shipping from lines when no cart-level summary (uses API line `shipping_fee` when present).
+  double get _lineShippingSum => items.fold(0.0, (sum, e) {
+        if (e.serverLineShippingFee != null) {
+          return sum + e.serverLineShippingFee!;
+        }
         final fee = e.product.shippingFee;
         if (fee == null || fee < 0) return sum;
         return sum + fee * e.quantity;
       });
 
+  /// Subtotal for checkout UI (cart API `sub_total` when available).
+  double get subtotal =>
+      lastServerSummary.value != null
+          ? lastServerSummary.value!.subTotal
+          : _lineSubtotal;
+
+  /// Shipping for checkout UI (cart API `total_shipping_fee` when available).
+  double get totalShippingFee =>
+      lastServerSummary.value != null
+          ? lastServerSummary.value!.totalShippingFee
+          : _lineShippingSum;
+
   /// Sum of `delivery_days` across cart lines (each line once, not × quantity).
   int get totalDeliveryDaysSum => items.fold(0, (sum, e) {
-        final d = e.product.deliveryDays;
+        final d = e.serverLineDeliveryDays ?? e.product.deliveryDays;
         if (d == null || d < 0) return sum;
         return sum + d;
       });
 
+  double get _grandBeforeCoupon =>
+      lastServerSummary.value != null
+          ? lastServerSummary.value!.grandTotal
+          : (_lineSubtotal + _lineShippingSum);
+
   double get total =>
-      math.max(0.0, subtotal + totalShippingFee - couponDiscountAmount.value);
+      math.max(0.0, _grandBeforeCoupon - couponDiscountAmount.value);
 
   void setAppliedCoupon(String code, double discountAmount) {
     appliedCouponCode.value = code;
@@ -93,8 +128,9 @@ class CartController extends GetxController {
   }
 
   /// Replaces in-memory cart with server state from [fetchCart].
-  void replaceAllFromServer(List<CartItem> newItems) {
+  void replaceAllFromServer(List<CartItem> newItems, {CartSummary? summary}) {
     clearCoupon();
+    lastServerSummary.value = newItems.isEmpty ? null : summary;
     items.assignAll(newItems);
     items.refresh();
   }
@@ -113,8 +149,10 @@ class CartController extends GetxController {
       if (serverCartId != null) {
         items[existing].serverCartId = serverCartId;
       }
+      lastServerSummary.value = null;
       items.refresh();
     } else {
+      lastServerSummary.value = null;
       items.add(CartItem(
         product: product,
         quantity: quantity,
@@ -132,6 +170,8 @@ class CartController extends GetxController {
           e.product.id == productId &&
           _sameAttributeSelection(e.selectedAttributeValueIds, ids),
     );
+    lastServerSummary.value = null;
+    items.refresh();
   }
 
   void updateQuantity(String productId, int quantity, {List<int>? selectedAttributeValueIds}) {
@@ -143,6 +183,7 @@ class CartController extends GetxController {
     final i = _indexOf(productId, ids);
     if (i >= 0) {
       items[i].quantity = quantity;
+      lastServerSummary.value = null;
       items.refresh();
     }
   }
@@ -152,6 +193,7 @@ class CartController extends GetxController {
     final i = _indexOf(productId, ids);
     if (i >= 0) {
       items[i].quantity++;
+      lastServerSummary.value = null;
       items.refresh();
     }
   }
@@ -164,6 +206,7 @@ class CartController extends GetxController {
         removeItem(productId, selectedAttributeValueIds: ids);
       } else {
         items[i].quantity--;
+        lastServerSummary.value = null;
         items.refresh();
       }
     }

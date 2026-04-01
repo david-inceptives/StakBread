@@ -97,10 +97,10 @@ class DashboardScreenController extends BaseController with GetSingleTickerProvi
   /// Refresh local cart from POST [fetchCart] when home (dashboard) is ready.
   Future<void> _syncCartFromServer() async {
     try {
-      final list = await StoreService.instance.fetchCartItemsEnriched();
+      final r = await StoreService.instance.fetchCartItemsEnriched();
       final cart =
           Get.isRegistered<CartController>() ? Get.find<CartController>() : Get.put(CartController());
-      cart.replaceAllFromServer(list);
+      cart.replaceAllFromServer(r.items, summary: r.summary);
     } catch (_) {}
   }
 

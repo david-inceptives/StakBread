@@ -1,4 +1,5 @@
 import 'package:image_picker/image_picker.dart';
+import 'package:stakBread/common/controller/base_controller.dart';
 import 'package:stakBread/common/manager/logger.dart';
 import 'package:stakBread/common/manager/session_manager.dart';
 import 'package:stakBread/common/service/api/api_service.dart';
@@ -9,9 +10,18 @@ import 'package:stakBread/model/order/sold_order_model.dart';
 import 'package:stakBread/model/store/product_attribute_model.dart';
 import 'package:stakBread/model/store/product_review_model.dart';
 import 'package:stakBread/model/store/shop_banner_model.dart';
+import 'package:stakBread/model/store/cart_model.dart';
 import 'package:stakBread/model/store/store_product_category.dart';
 import 'package:stakBread/model/store/store_product_model.dart';
 import 'package:stakBread/screen/store_screen/cart_controller.dart';
+
+/// Result of POST [WebService.store.fetchCart].
+class CartFetchResult {
+  const CartFetchResult({required this.items, this.summary});
+
+  final List<CartItem> items;
+  final CartSummary? summary;
+}
 
 /// Result of POST [WebService.store.applyCoupon].
 class CouponApplyResult {
@@ -453,31 +463,45 @@ class StoreService {
   Future<void> updateCart({
     required int cartId,
     required int quantity,
+    bool showLoader = true,
   }) async {
-    final decoded = await ApiService.instance.call<Map<String, dynamic>>(
-      url: WebService.store.updateCart,
-      param: {
-        'cart_id': cartId,
-        'quantity': quantity,
-      },
-      fromJson: (json) => json,
-    );
-    if (decoded['status'] != true) {
-      throw Exception(decoded['message']?.toString() ?? 'Update cart failed');
+    if (showLoader) BaseController.share.showLoader();
+    try {
+      final decoded = await ApiService.instance.call<Map<String, dynamic>>(
+        url: WebService.store.updateCart,
+        param: {
+          'cart_id': cartId,
+          'quantity': quantity,
+        },
+        fromJson: (json) => json,
+      );
+      if (decoded['status'] != true) {
+        throw Exception(decoded['message']?.toString() ?? 'Update cart failed');
+      }
+    } finally {
+      if (showLoader) BaseController.share.stopLoader();
     }
   }
 
   /// POST `form-data`: `cart_id` — remove line when quantity reaches 0.
-  Future<void> deleteFromCart({required int cartId}) async {
-    final decoded = await ApiService.instance.call<Map<String, dynamic>>(
-      url: WebService.store.deleteFromCart,
-      param: {
-        'cart_id': cartId,
-      },
-      fromJson: (json) => json,
-    );
-    if (decoded['status'] != true) {
-      throw Exception(decoded['message']?.toString() ?? 'Delete from cart failed');
+  Future<void> deleteFromCart({
+    required int cartId,
+    bool showLoader = true,
+  }) async {
+    if (showLoader) BaseController.share.showLoader();
+    try {
+      final decoded = await ApiService.instance.call<Map<String, dynamic>>(
+        url: WebService.store.deleteFromCart,
+        param: {
+          'cart_id': cartId,
+        },
+        fromJson: (json) => json,
+      );
+      if (decoded['status'] != true) {
+        throw Exception(decoded['message']?.toString() ?? 'Delete from cart failed');
+      }
+    } finally {
+      if (showLoader) BaseController.share.stopLoader();
     }
   }
 
@@ -495,7 +519,7 @@ class StoreService {
       final serverId = item.serverCartId;
       if (item.product.isNetworkImage && serverId != null) {
         try {
-          await deleteFromCart(cartId: serverId);
+          await deleteFromCart(cartId: serverId, showLoader: false);
         } catch (_) {}
       }
     }
@@ -503,7 +527,7 @@ class StoreService {
   }
 
   /// POST (server route does not support GET) — full cart for syncing local [CartController].
-  Future<List<CartItem>> fetchCartItems() async {
+  Future<CartFetchResult> fetchCartItems() async {
     final decoded = await ApiService.instance.call<Map<String, dynamic>>(
       url: WebService.store.fetchCart,
       param: {},
@@ -513,22 +537,28 @@ class StoreService {
       throw Exception(decoded['message']?.toString() ?? 'Fetch cart failed');
     }
     final data = decoded['data'];
-    if (data is! Map<String, dynamic>) return [];
+    if (data is! Map<String, dynamic>) {
+      return const CartFetchResult(items: []);
+    }
+    final summary = CartSummary.tryFromDataMap(data);
     final raw = data['cart_items'];
-    if (raw is! List) return [];
+    if (raw is! List) {
+      return CartFetchResult(items: const [], summary: summary);
+    }
     final out = <CartItem>[];
     for (final e in raw) {
       if (e is! Map<String, dynamic>) continue;
       final item = _cartItemFromLine(e);
       if (item != null) out.add(item);
     }
-    return out;
+    return CartFetchResult(items: out, summary: summary);
   }
 
   /// [fetchCartItems] then GET product detail per unique id to fill [StoreProduct.deliveryDays] / [shippingFee].
-  Future<List<CartItem>> fetchCartItemsEnriched() async {
-    final items = await fetchCartItems();
-    if (items.isEmpty) return items;
+  Future<CartFetchResult> fetchCartItemsEnriched() async {
+    final result = await fetchCartItems();
+    final items = result.items;
+    if (items.isEmpty) return result;
     final ids = <String>{};
     for (final e in items) {
       if (e.product.id.isNotEmpty) ids.add(e.product.id);
@@ -540,20 +570,26 @@ class StoreService {
         if (d != null) detailById[id] = d;
       } catch (_) {}
     }));
-    if (detailById.isEmpty) return items;
-    return items
-        .map((item) {
-          final d = detailById[item.product.id];
-          if (d == null) return item;
-          return CartItem(
-            product: item.product.mergeFromDetailFetch(d),
-            quantity: item.quantity,
-            variantText: item.variantText,
-            serverCartId: item.serverCartId,
-            selectedAttributeValueIds: item.selectedAttributeValueIds,
-          );
-        })
-        .toList();
+    if (detailById.isEmpty) return result;
+    return CartFetchResult(
+      summary: result.summary,
+      items: items
+          .map((item) {
+            final d = detailById[item.product.id];
+            if (d == null) return item;
+            return CartItem(
+              product: item.product.mergeFromDetailFetch(d),
+              quantity: item.quantity,
+              variantText: item.variantText,
+              serverCartId: item.serverCartId,
+              selectedAttributeValueIds: item.selectedAttributeValueIds,
+              serverLineItemTotal: item.serverLineItemTotal,
+              serverLineShippingFee: item.serverLineShippingFee,
+              serverLineDeliveryDays: item.serverLineDeliveryDays,
+            );
+          })
+          .toList(),
+    );
   }
 
   /// POST `form-data`: `code`.
@@ -840,6 +876,14 @@ class StoreService {
     return out;
   }
 
+  static double? _parseCartLineAmount(dynamic v) {
+    if (v == null) return null;
+    if (v is num) return v.toDouble();
+    return double.tryParse(
+      v.toString().replaceAll(RegExp(r'[^\d.-]'), ''),
+    );
+  }
+
   static CartItem? _cartItemFromLine(Map<String, dynamic> line) {
     final qty = int.tryParse(line['quantity']?.toString() ?? '0') ?? 0;
     if (qty < 1) return null;
@@ -847,12 +891,19 @@ class StoreService {
     final selectedIds = _attributeValueIdsFromCartLine(line);
     final product = StoreProduct.fromCartLine(line);
     if (product.id.isEmpty) return null;
+    final itemTotal = _parseCartLineAmount(line['item_total']);
+    final lineShip = _parseCartLineAmount(line['shipping_fee']);
+    final ddRaw = line['delivery_days'];
     return CartItem(
       product: product,
       quantity: qty,
       variantText: product.summaryForSelectedAttributeValueIds(selectedIds),
       serverCartId: cartRowId,
       selectedAttributeValueIds: selectedIds,
+      serverLineItemTotal: itemTotal,
+      serverLineShippingFee: lineShip,
+      serverLineDeliveryDays:
+          ddRaw == null ? null : int.tryParse(ddRaw.toString()),
     );
   }
 }

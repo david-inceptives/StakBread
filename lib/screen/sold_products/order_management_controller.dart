@@ -57,43 +57,6 @@ class OrderManagementController extends GetxController {
     selectedTabIndex.value = index;
   }
 
-  Future<void> onCancelOrder(OrderItemModel order) async {
-    final reason = await Get.dialog<String?>(
-      const CancelOrderReasonDialog(),
-      barrierDismissible: false,
-    );
-
-    if (reason == null) return;
-    if (reason.isEmpty) {
-      BaseController.share.showSnackBar(LKey.fieldRequired.tr);
-      return;
-    }
-
-    BaseController.share.showLoader();
-    try {
-      final res = await StoreService.instance.cancelOrder(
-        orderId: order.id,
-        cancelReason: reason,
-      );
-      BaseController.share.stopLoader();
-      if (res.status == true) {
-        BaseController.share.showSnackBar(
-          (res.message != null && res.message!.isNotEmpty)
-              ? res.message
-              : LKey.orderCancelledSuccess.tr,
-        );
-        await loadOrders();
-      } else {
-        BaseController.share.showSnackBar(
-            res.message ?? LKey.somethingWentWrong.tr);
-      }
-    } catch (e) {
-      BaseController.share.stopLoader();
-      BaseController.share.showSnackBar(
-          e.toString().replaceFirst('Exception: ', ''));
-    }
-  }
-
   Future<void> onAcceptPendingOrder(OrderItemModel order) async {
     if (order.status != OrderStatus.pending) return;
     final pid = order.primaryProductId?.trim();

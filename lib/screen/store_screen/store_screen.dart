@@ -226,9 +226,19 @@ class StoreScreen extends StatelessWidget {
     );
   }
 
+  void _onBannerBuyNow(ShopBanner banner) {
+    if (banner.hasLinkedProduct) {
+      Get.to(() => ProductDetailScreen(product: banner.linkedProduct!));
+      return;
+    }
+    if (banner.hasExternalLink) {
+      banner.link!.trim().lunchUrl;
+    }
+  }
+
   Widget _buildShopBannerSlide(ShopBanner banner) {
     final imageUrl = banner.imageUrl?.addBaseURL();
-    final hasLink = banner.link != null && banner.link!.trim().isNotEmpty;
+    final showBuy = banner.showBuyNowButton;
     return Stack(
       fit: StackFit.expand,
       children: [
@@ -268,18 +278,18 @@ class StoreScreen extends StatelessWidget {
                 Text(
                   banner.title,
                   style: TextStyleCustom.unboundedBold700(
-                    fontSize: 15,
+                    fontSize: 19,
                     color: ColorRes.whitePure,
                   ),
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                 ),
               if (banner.description.trim().isNotEmpty) ...[
-                const SizedBox(height: 5),
+                const SizedBox(height: 6),
                 Text(
                   banner.description,
                   style: TextStyleCustom.outFitRegular400(
-                    fontSize: 11,
+                    fontSize: 13,
                     color: ColorRes.whitePure.withValues(alpha: 0.95),
                   ),
                   maxLines: 2,
@@ -287,7 +297,7 @@ class StoreScreen extends StatelessWidget {
                 ),
               ],
               const Spacer(),
-              if (hasLink)
+              if (showBuy)
                 Material(
                   color: ColorRes.whitePure,
                   shape: RoundedRectangleBorder(
@@ -295,7 +305,7 @@ class StoreScreen extends StatelessWidget {
                     side: const BorderSide(color: ColorRes.green, width: 1.5),
                   ),
                   child: InkWell(
-                    onTap: () => banner.link!.trim().lunchUrl,
+                    onTap: () => _onBannerBuyNow(banner),
                     borderRadius: BorderRadius.circular(12),
                     child: Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
@@ -341,16 +351,16 @@ class StoreScreen extends StatelessWidget {
                   Text(
                     LKey.storeBannerTitle.tr,
                     style: TextStyleCustom.unboundedBold700(
-                      fontSize: 15,
+                      fontSize: 19,
                       color: ColorRes.whitePure,
                     ),
                     maxLines: 2,
                   ),
-                  const SizedBox(height: 5),
+                  const SizedBox(height: 6),
                   Text(
                     LKey.storeBannerSubtitle.tr,
                     style: TextStyleCustom.outFitRegular400(
-                      fontSize: 10,
+                      fontSize: 13,
                       color: ColorRes.whitePure.withValues(alpha: 0.95),
                     ),
                     maxLines: 2,

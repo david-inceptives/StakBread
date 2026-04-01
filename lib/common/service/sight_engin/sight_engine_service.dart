@@ -6,6 +6,7 @@ import 'package:flutter_native_video_trimmer/flutter_native_video_trimmer.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
+import 'package:path/path.dart' as p;
 import 'package:stakBread/common/controller/base_controller.dart';
 import 'package:stakBread/common/manager/logger.dart';
 import 'package:stakBread/common/manager/session_manager.dart';
@@ -35,6 +36,7 @@ class SightEngineService {
       return;
     }
     BaseController.share.showLoader();
+    await Future<void>.delayed(Duration.zero);
     var request = http.MultipartRequest('POST',
         Uri.parse('https://api.sightengine.com/1.0/check-workflow.json'));
 
@@ -45,14 +47,15 @@ class SightEngineService {
     request.fields['api_secret'] =
         SessionManager.instance.getSettings()?.sightEngineApiSecret ?? '';
 
-    for (XFile xFile in xFiles) {
-      File file = File(xFile.path);
+    for (final xFile in xFiles) {
+      final file = File(xFile.path);
+      final length = await file.length();
       request.files.add(
         http.MultipartFile(
           'media',
-          file.readAsBytes().asStream(),
-          file.lengthSync(),
-          filename: file.path.split("/").last,
+          file.openRead(),
+          length,
+          filename: p.basename(file.path),
         ),
       );
     }
@@ -94,8 +97,10 @@ class SightEngineService {
       return;
     }
 
-    File file = File(xFile.path);
+    var file = File(xFile.path);
     BaseController.share.showLoader();
+    await Future<void>.delayed(Duration.zero);
+
     if (duration > AppRes.sightEngineCropSec) {
       final videoTrimmer = VideoTrimmer();
       try {
@@ -108,7 +113,14 @@ class SightEngineService {
         endTimeMs: AppRes.sightEngineCropSec * 1000,
         includeAudio: false,
       );
-      file = File(trimmedPath ?? '');
+      if (trimmedPath != null && trimmedPath.isNotEmpty) {
+        file = File(trimmedPath);
+      } else {
+        Loggers.warning(
+          'SightEngine trim failed; using full clip (may be slower)',
+        );
+      }
+      await Future<void>.delayed(Duration.zero);
     }
 
     var request = http.MultipartRequest(
@@ -123,10 +135,14 @@ class SightEngineService {
     request.fields['api_secret'] =
         SessionManager.instance.getSettings()?.sightEngineApiSecret ?? '';
 
+    final mediaLength = await file.length();
     request.files.add(
       http.MultipartFile(
-          'media', file.readAsBytes().asStream(), file.lengthSync(),
-          filename: file.path.split("/").last),
+        'media',
+        file.openRead(),
+        mediaLength,
+        filename: p.basename(file.path),
+      ),
     );
 
     var response = await request.send();

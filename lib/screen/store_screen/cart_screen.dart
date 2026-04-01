@@ -130,8 +130,8 @@ class _CartScreenState extends State<CartScreen> {
   Future<void> _refreshCartFromServer() async {
     Get.put(CartController());
     try {
-      final list = await StoreService.instance.fetchCartItemsEnriched();
-      Get.find<CartController>().replaceAllFromServer(list);
+      final r = await StoreService.instance.fetchCartItemsEnriched();
+      Get.find<CartController>().replaceAllFromServer(r.items, summary: r.summary);
     } catch (_) {}
   }
 
@@ -152,8 +152,17 @@ class _CartScreenState extends State<CartScreen> {
       CartController cart, String productId, List<int> selectedAttributeValueIds) async {
     final i = cart.findItemIndex(productId, selectedAttributeValueIds);
     if (i < 0) return;
-    final serverId = cart.items[i].serverCartId;
-    final isNet = cart.items[i].product.isNetworkImage;
+    final item = cart.items[i];
+    final stock = item.product.stock;
+    final nextQty = item.quantity + 1;
+    if (stock != null && nextQty > stock) {
+      BaseController.share.showSnackBar(
+        LKey.stockLimitReached.trParams({'count': '$stock'}),
+      );
+      return;
+    }
+    final serverId = item.serverCartId;
+    final isNet = item.product.isNetworkImage;
     cart.incrementQuantity(productId, selectedAttributeValueIds: selectedAttributeValueIds);
     if (!isNet || serverId == null) return;
     final j = cart.findItemIndex(productId, selectedAttributeValueIds);
@@ -163,6 +172,7 @@ class _CartScreenState extends State<CartScreen> {
         cartId: serverId,
         quantity: cart.items[j].quantity,
       );
+      await _refreshCartFromServer();
     } catch (e) {
       BaseController.share.showSnackBar(
         e.toString().replaceFirst('Exception: ', ''),
@@ -188,6 +198,7 @@ class _CartScreenState extends State<CartScreen> {
           quantity: nextQty,
         );
       }
+      await _refreshCartFromServer();
     } catch (e) {
       BaseController.share.showSnackBar(
         e.toString().replaceFirst('Exception: ', ''),
@@ -239,6 +250,7 @@ class _CartScreenState extends State<CartScreen> {
             ),
             Expanded(
               child: Obx(() {
+                cart.lastServerSummary.value;
                 if (cart.items.isEmpty) {
                   return _buildEmptyCartContent();
                 }
@@ -475,11 +487,14 @@ class _CartScreenState extends State<CartScreen> {
   }
 
   Widget _buildDelivery(CartController cart) {
+    final cartDays = cart.lastServerSummary.value?.deliveryDays;
     final daysSum = cart.totalDeliveryDaysSum;
     final shipping = cart.totalShippingFee;
-    final daysLabel = daysSum > 0
-        ? LKey.cartTotalDeliveryDays.trParams({'days': '$daysSum'})
-        : LKey.regularDelivery.tr;
+    final daysLabel = (cartDays != null && cartDays > 0)
+        ? LKey.cartTotalDeliveryDays.trParams({'days': '$cartDays'})
+        : (daysSum > 0
+            ? LKey.cartTotalDeliveryDays.trParams({'days': '$daysSum'})
+            : LKey.regularDelivery.tr);
     return Container(
       color: Colors.transparent,
       padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 16),

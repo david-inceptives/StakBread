@@ -377,24 +377,11 @@ class _PurchasedOrderCard extends StatelessWidget {
           ],
           if (order.status == PurchasedOrderStatus.toShip) ...[
             const SizedBox(height: 12),
-            Row(
-              children: [
-                Expanded(
-                  child: _ActionButton(
-                    label: LKey.cancel.tr,
-                    onPressed: () => controller.onCancelOrder(order),
-                    filled: false,
-                  ),
-                ),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: _ActionButton(
-                    label: LKey.chat.tr,
-                    onPressed: () => controller.onChat(order),
-                    filled: true,
-                  ),
-                ),
-              ],
+            _ActionButton(
+              label: LKey.chat.tr,
+              onPressed: () => controller.onChat(order),
+              filled: true,
+              expandWidth: true,
             ),
           ],
           if (order.status == PurchasedOrderStatus.completed) ...[

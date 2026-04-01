@@ -73,8 +73,8 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
           await _loadReviews();
           if (!mounted) return;
           try {
-            final list = await StoreService.instance.fetchCartItemsEnriched();
-            cart.replaceAllFromServer(list);
+            final r = await StoreService.instance.fetchCartItemsEnriched();
+            cart.replaceAllFromServer(r.items, summary: r.summary);
           } catch (_) {}
           if (!mounted) return;
           _syncFromCartIfNeeded();
@@ -353,8 +353,8 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                       _loadReviews(),
                     ]);
                     try {
-                      final list = await StoreService.instance.fetchCartItemsEnriched();
-                      cart.replaceAllFromServer(list);
+                      final r = await StoreService.instance.fetchCartItemsEnriched();
+                      cart.replaceAllFromServer(r.items, summary: r.summary);
                     } catch (_) {}
                     if (mounted) _syncFromCartIfNeeded();
                   }

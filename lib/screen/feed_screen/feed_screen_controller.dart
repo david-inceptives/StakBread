@@ -52,19 +52,27 @@ class FeedScreenController extends BaseController {
     isStoriesLoading.value = false;
   }
 
+  int? _lastItemIdForPage({required bool isEmpty}) {
+    if (isEmpty) return null;
+    if (posts.isEmpty) return null;
+    return posts.last.id?.toInt();
+  }
+
   Future<void> fetchDiscoverPost({bool isEmpty = false}) async {
     if (isLoading.value) return;
     isLoading.value = true;
-    List<Post> _post =
-        await PostService.instance.fetchPostsDiscover(type: PostType.posts);
+    final lastId = _lastItemIdForPage(isEmpty: isEmpty);
+    List<Post> _post = await PostService.instance.fetchPostsDiscover(
+        type: PostType.posts, lastItemId: lastId);
     _addDataInPostList(_post, isEmpty);
   }
 
   Future<void> _fetchPostsFollowing({bool isEmpty = false}) async {
     if (isLoading.value) return;
     isLoading.value = true;
-    List<Post> _post =
-        await PostService.instance.fetchPostsFollowing(type: PostType.posts);
+    final lastId = _lastItemIdForPage(isEmpty: isEmpty);
+    List<Post> _post = await PostService.instance.fetchPostsFollowing(
+        type: PostType.posts, lastItemId: lastId);
     _addDataInPostList(_post, isEmpty);
   }
 
@@ -74,10 +82,12 @@ class FeedScreenController extends BaseController {
     Position position = await LocationService.instance
         .getCurrentLocation(isPermissionDialogShow: true);
 
+    final lastId = _lastItemIdForPage(isEmpty: isEmpty);
     List<Post> _post = await PostService.instance.fetchPostsNearBy(
         type: PostType.posts,
         placeLat: position.latitude,
-        placeLon: position.longitude);
+        placeLon: position.longitude,
+        lastItemId: lastId);
 
     _addDataInPostList(_post, isEmpty);
   }
@@ -86,7 +96,20 @@ class FeedScreenController extends BaseController {
     if (isEmpty) {
       posts.clear();
     }
-    posts.addAll(newList);
+    if (newList.isEmpty) {
+      await Future.delayed(const Duration(milliseconds: 200));
+      isLoading.value = false;
+      return;
+    }
+    if (isEmpty) {
+      posts.addAll(newList);
+    } else {
+      final existingIds = posts.map((p) => p.id).toSet();
+      final toAdd = newList
+          .where((p) => p.id != null && !existingIds.contains(p.id))
+          .toList();
+      posts.addAll(toAdd);
+    }
 
     await Future.delayed(const Duration(milliseconds: 200));
     isLoading.value = false;
@@ -183,17 +206,19 @@ class FeedScreenController extends BaseController {
   }
 
   Future<void> _loadMoreData() async {
-    if (postScrollController.position.pixels >=
-            (postScrollController.position.maxScrollExtent - 300) &&
-        !isLoading.value) {
-      switch (selectedPostCategory.value) {
-        case PostCategory.discover:
-          await fetchDiscoverPost();
-        case PostCategory.nearby:
-          await _fetchPostsNearBy();
-        case PostCategory.following:
-          await _fetchPostsFollowing();
-      }
+    if (!postScrollController.hasClients) return;
+    final pos = postScrollController.position;
+    if (pos.maxScrollExtent <= 0) return;
+    if (pos.pixels < pos.maxScrollExtent - 300) return;
+    if (isLoading.value) return;
+
+    switch (selectedPostCategory.value) {
+      case PostCategory.discover:
+        await fetchDiscoverPost();
+      case PostCategory.nearby:
+        await _fetchPostsNearBy();
+      case PostCategory.following:
+        await _fetchPostsFollowing();
     }
   }
 

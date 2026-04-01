@@ -345,23 +345,27 @@ class ApiService {
           }
         }
 
-        filesMap.forEach((keyName, files) {
-          for (var xFile in files) {
+        // Stream files (avoid readAsBytes: large reels were freezing the app / OOM).
+        for (final entry in filesMap.entries) {
+          final keyName = entry.key;
+          for (final xFile in entry.value) {
             if (xFile != null && xFile.path.isNotEmpty) {
               final file = File(xFile.path);
               final filename = (xFile.name.isNotEmpty)
                   ? xFile.name
                   : p.basename(xFile.path);
-              final multipartFile = http.MultipartFile(
-                keyName,
-                file.readAsBytes().asStream(),
-                file.lengthSync(),
-                filename: filename,
+              final length = await file.length();
+              request.files.add(
+                http.MultipartFile(
+                  keyName,
+                  file.openRead(),
+                  length,
+                  filename: filename,
+                ),
               );
-              request.files.add(multipartFile);
             }
           }
-        });
+        }
 
         if (hop == 0) {
           Loggers.info("URL : $url");
