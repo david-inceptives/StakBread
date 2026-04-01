@@ -23,6 +23,27 @@ class _Order {
 
   /// POST after Stripe PaymentSheet success.
   String get confirmPayment => "${apiURL}order/confirmPayment";
+
+  /// POST — seller's sold orders (`data` list).
+  String get fetchMySoldOrders => "${apiURL}order/fetchMySoldOrders";
+
+  /// POST — buyer's purchased orders (`data` list, same row shape as sold).
+  String get fetchMyPurchasedOrders => "${apiURL}order/fetchMyPurchasedOrders";
+
+  /// POST multipart form-data: `order_id`, `cancel_reason` (pending orders).
+  String get cancelOrder => "${apiURL}order/cancelOrder";
+
+  /// POST multipart: `order_id`, `product_id`, `rating` (seller).
+  String get acceptOrder => "${apiURL}order/acceptOrder";
+
+  /// POST multipart: `order_id`, `cancel_reason` (seller reject).
+  String get rejectOrder => "${apiURL}order/rejectOrder";
+
+  /// POST multipart: `order_id` (seller — mark completed / delivered).
+  String get completeOrder => "${apiURL}order/completeOrder";
+
+  /// POST multipart: `product_id`, `reason` (buyer/seller).
+  String get reportProduct => "${apiURL}order/reportProduct";
 }
 
 class _Resume {
@@ -46,6 +67,9 @@ class _Store {
 
   String get topSellingProducts => "${apiURL}products/topSelling";
 
+  /// GET — `data[]` shop promo banners (`image`, `title`, `desc`, `link`).
+  String get shopBanners => "${apiURL}shopBanners";
+
   String productReviews(String productId) => "${apiURL}productReviews/$productId";
 
   String get addToCart => "${apiURL}addToCart";
@@ -66,7 +90,7 @@ class _Store {
 
   String productsByCategory(String categoryId) => "${apiURL}productsByCategory/$categoryId";
 
-  /// POST `form-data`: name, category_id, price, stock, description, is_featured, `images[]`, `attribute_value_ids[]`.
+  /// POST `form-data`: name, category_id, price, stock, delivery_days, shipping_fee, description, is_featured, `images[]`, `attribute_value_ids[]`.
   String get addProduct => "${apiURL}addProduct";
 
   /// POST `multipart/form-data`: product_id + same fields as [addProduct].
@@ -74,6 +98,9 @@ class _Store {
 
   /// POST `form-data`: product_id
   String get deleteProduct => "${apiURL}deleteProduct";
+
+  /// POST form-data: `product_id`, `rating`, `review`.
+  String get addReview => "${apiURL}addReview";
 }
 
 class _Common {

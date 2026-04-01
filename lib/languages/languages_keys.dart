@@ -141,6 +141,7 @@ class LKey {
   static const String delivery = "Delivery";
   static const String regularDelivery = "Regular Delivery";
   static const String deliveryDays = "3-6 days";
+  static const String cartTotalDeliveryDays = "Total delivery: @days days";
   static const String address = "Address";
   static const String pleaseEnterDeliveryAddress =
       "Please enter your delivery address";
@@ -154,6 +155,7 @@ class LKey {
   static const String discount = "Discount";
   static const String retry = "Retry";
   static const String yourCode = "Your code";
+  static const String subtotal = "Subtotal";
   static const String totalPrice = "Total Price";
   static const String includeTaxes = "Include taxes";
   static const String paymentDetails = "Payment Details";
@@ -178,6 +180,8 @@ class LKey {
   static const String uploadProductSuccess = "Product uploaded successfully.";
   static const String productCategory = "Category";
   static const String productStock = "Stock quantity";
+  static const String productDeliveryDays = "Delivery days";
+  static const String shippingFee = "Shipping fee";
   static const String productFeatured = "Featured product";
   static const String selectCategory = "Select category";
   static const String loadingCategories = "Loading categories…";
@@ -743,12 +747,19 @@ class LKey {
   // Orders Management (Sold Products)
   static const String ordersManagement = "Orders Management";
   static const String toShip = "To Ship";
+  static const String completeOrder = "Complete order";
   static const String reimbursed = "Reimbursed";
   static const String placedOn = "Placed On";
   static const String cancelOrder = "CANCEL ORDER";
+  static const String enterCancelReason = "Enter cancellation reason";
+  static const String orderCancelledSuccess = "Order cancelled successfully.";
   static const String cancel = "CANCEL";
   static const String chat = "CHAT";
   static const String review = "REVIEW";
+  static const String yourRating = "Your rating";
+  static const String writeYourReview = "Write your review";
+  static const String reviewSubmittedSuccess =
+      "Review submitted successfully.";
   static const String received = "Received";
   static const String pendingForApproval = "Pending for Approval";
   static const String productFromStore = "Product 01 From";

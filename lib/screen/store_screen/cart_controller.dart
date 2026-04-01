@@ -49,14 +49,26 @@ class CartController extends GetxController {
   final RxDouble couponDiscountAmount = 0.0.obs;
   final RxString appliedCouponCode = ''.obs;
 
-  static const double deliveryFee = 10.0;
-
   int get totalItemCount => items.fold(0, (sum, e) => sum + e.quantity);
 
   double get subtotal => items.fold(0.0, (sum, e) => sum + e.linePrice);
 
+  /// Sum of `shipping_fee` × quantity per line (from product detail / cart product).
+  double get totalShippingFee => items.fold(0.0, (sum, e) {
+        final fee = e.product.shippingFee;
+        if (fee == null || fee < 0) return sum;
+        return sum + fee * e.quantity;
+      });
+
+  /// Sum of `delivery_days` across cart lines (each line once, not × quantity).
+  int get totalDeliveryDaysSum => items.fold(0, (sum, e) {
+        final d = e.product.deliveryDays;
+        if (d == null || d < 0) return sum;
+        return sum + d;
+      });
+
   double get total =>
-      math.max(0.0, subtotal + deliveryFee - couponDiscountAmount.value);
+      math.max(0.0, subtotal + totalShippingFee - couponDiscountAmount.value);
 
   void setAppliedCoupon(String code, double discountAmount) {
     appliedCouponCode.value = code;

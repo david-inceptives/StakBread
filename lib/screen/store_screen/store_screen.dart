@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:stakBread/common/extensions/string_extension.dart';
 import 'package:stakBread/languages/languages_keys.dart';
+import 'package:stakBread/model/store/shop_banner_model.dart';
 import 'package:stakBread/screen/dashboard_screen/dashboard_screen_controller.dart';
 import 'package:stakBread/screen/notification_screen/notification_screen.dart';
 import 'package:stakBread/screen/search_screen/search_screen.dart';
@@ -37,6 +38,8 @@ class StoreScreen extends StatelessWidget {
           final loading = controller.isLoadingProductsForYou.value;
           final topPreview = controller.topSellingPreview;
           final topLoading = controller.isLoadingTopSelling.value;
+          controller.shopBanners.length;
+          controller.isLoadingShopBanners.value;
           return RefreshIndicator(
             color: ColorRes.green,
             onRefresh: () => controller.refreshStoreHome(),
@@ -44,7 +47,7 @@ class StoreScreen extends StatelessWidget {
               physics: const AlwaysScrollableScrollPhysics(),
               slivers: [
               SliverToBoxAdapter(child: _buildTopBar(notifCount, controller, cartController)),
-              SliverToBoxAdapter(child: _buildBanner()),
+              SliverToBoxAdapter(child: _buildStoreBanner(controller)),
               SliverToBoxAdapter(child: _buildCategories(controller)),
               SliverToBoxAdapter(child: _buildSectionHeader(
                 LKey.productsForYou.tr,
@@ -177,7 +180,143 @@ class StoreScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildBanner() {
+  Widget _buildStoreBanner(StoreScreenController controller) {
+    final loading = controller.isLoadingShopBanners.value;
+    final list = controller.shopBanners;
+    if (loading && list.isEmpty) {
+      return Container(
+        margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        height: 160,
+        decoration: ShapeDecoration(
+          color: ColorRes.green,
+          shape: SmoothRectangleBorder(
+            borderRadius: SmoothBorderRadius(cornerRadius: 24),
+          ),
+        ),
+        child: const Center(
+          child: SizedBox(
+            width: 28,
+            height: 28,
+            child: CircularProgressIndicator(
+              strokeWidth: 2,
+              color: ColorRes.whitePure,
+            ),
+          ),
+        ),
+      );
+    }
+    if (list.isEmpty) {
+      return _buildStoreBannerFallback();
+    }
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      height: 160,
+      decoration: ShapeDecoration(
+        shape: SmoothRectangleBorder(
+          borderRadius: SmoothBorderRadius(cornerRadius: 24),
+        ),
+      ),
+      clipBehavior: Clip.antiAlias,
+      child: list.length == 1
+          ? _buildShopBannerSlide(list.first)
+          : PageView.builder(
+              itemCount: list.length,
+              itemBuilder: (context, index) => _buildShopBannerSlide(list[index]),
+            ),
+    );
+  }
+
+  Widget _buildShopBannerSlide(ShopBanner banner) {
+    final imageUrl = banner.imageUrl?.addBaseURL();
+    final hasLink = banner.link != null && banner.link!.trim().isNotEmpty;
+    return Stack(
+      fit: StackFit.expand,
+      children: [
+        if (imageUrl != null && imageUrl.isNotEmpty)
+          CachedNetworkImage(
+            imageUrl: imageUrl,
+            fit: BoxFit.cover,
+            placeholder: (_, __) => Container(color: ColorRes.green),
+            errorWidget: (_, __, ___) => Container(color: ColorRes.green),
+          )
+        else
+          Container(color: ColorRes.green),
+        Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.centerLeft,
+              end: Alignment.centerRight,
+              colors: [
+                ColorRes.green.withValues(alpha: 0.94),
+                ColorRes.green.withValues(alpha: 0.55),
+                ColorRes.green.withValues(alpha: 0.12),
+              ],
+              stops: const [0.0, 0.42, 0.85],
+            ),
+          ),
+        ),
+        Positioned(
+          left: 16,
+          top: 18,
+          right: 24,
+          bottom: 14,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.max,
+            children: [
+              if (banner.title.trim().isNotEmpty)
+                Text(
+                  banner.title,
+                  style: TextStyleCustom.unboundedBold700(
+                    fontSize: 15,
+                    color: ColorRes.whitePure,
+                  ),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              if (banner.description.trim().isNotEmpty) ...[
+                const SizedBox(height: 5),
+                Text(
+                  banner.description,
+                  style: TextStyleCustom.outFitRegular400(
+                    fontSize: 11,
+                    color: ColorRes.whitePure.withValues(alpha: 0.95),
+                  ),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ],
+              const Spacer(),
+              if (hasLink)
+                Material(
+                  color: ColorRes.whitePure,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    side: const BorderSide(color: ColorRes.green, width: 1.5),
+                  ),
+                  child: InkWell(
+                    onTap: () => banner.link!.trim().lunchUrl,
+                    borderRadius: BorderRadius.circular(12),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                      child: Text(
+                        LKey.buyNow.tr,
+                        style: TextStyleCustom.outFitSemiBold600(
+                          fontSize: 12,
+                          color: ColorRes.green,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildStoreBannerFallback() {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       height: 160,
@@ -191,7 +330,6 @@ class StoreScreen extends StatelessWidget {
         borderRadius: BorderRadius.circular(24),
         child: Stack(
           children: [
-            // Left: headline, tagline, Buy Now button
             Positioned(
               left: 10,
               top: 20,
@@ -242,7 +380,6 @@ class StoreScreen extends StatelessWidget {
                 ],
               ),
             ),
-            // Right: model image (overlaps slightly into text area)
             Positioned(
               right: 0,
               top: 0,
@@ -252,7 +389,6 @@ class StoreScreen extends StatelessWidget {
                 AssetRes.storeBannerModel,
                 fit: BoxFit.contain,
                 alignment: Alignment.centerRight,
-
               ),
             ),
           ],

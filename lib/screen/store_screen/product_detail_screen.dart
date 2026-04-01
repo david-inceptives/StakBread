@@ -73,7 +73,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
           await _loadReviews();
           if (!mounted) return;
           try {
-            final list = await StoreService.instance.fetchCartItems();
+            final list = await StoreService.instance.fetchCartItemsEnriched();
             cart.replaceAllFromServer(list);
           } catch (_) {}
           if (!mounted) return;
@@ -204,7 +204,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                 border: Border.all(color: Colors.black12),
               ),
             ),
-            const SizedBox(width: 8),
+              SizedBox(width: hex == null?8:0),
           ],
           if (!hideHexText)
             Text(
@@ -353,7 +353,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                       _loadReviews(),
                     ]);
                     try {
-                      final list = await StoreService.instance.fetchCartItems();
+                      final list = await StoreService.instance.fetchCartItemsEnriched();
                       cart.replaceAllFromServer(list);
                     } catch (_) {}
                     if (mounted) _syncFromCartIfNeeded();

@@ -1,6 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:stakBread/common/enum/chat_enum.dart';
+import 'package:stakBread/common/extensions/list_extension.dart';
+import 'package:stakBread/common/extensions/user_extension.dart';
+import 'package:stakBread/common/manager/session_manager.dart';
+import 'package:stakBread/model/chat/chat_thread.dart';
 import 'package:stakBread/model/user_model/user_model.dart';
+import 'package:stakBread/screen/chat_screen/chat_screen.dart';
 import 'package:stakBread/screen/profile_screen/profile_screen.dart';
 
 Future<T?> navigateWithController<T, C extends GetxController>({
@@ -29,5 +35,33 @@ class NavigationService {
             isTopBarVisible: isTopBarVisible,
             onUserUpdate: onUserUpdate),
         preventDuplicates: false);
+  }
+
+  /// Same flow as profile “Message”: [ChatScreen] with approved thread + [User.appUser].
+  void openChatWithUser(User otherUser) {
+    final uid = otherUser.id;
+    if (uid == null || uid <= 0) return;
+
+    final conversation = ChatThread(
+      id: DateTime.now().millisecondsSinceEpoch.toString(),
+      lastMsg: '',
+      msgCount: 0,
+      isDeleted: false,
+      deletedId: 0,
+      iAmBlocked: false,
+      iBlocked: otherUser.isBlock ?? false,
+      requestType: UserRequestAction.accept.title,
+      chatType: ChatType.approved,
+      conversationId: [
+        SessionManager.instance.getUserID(),
+        uid,
+      ].conversationId,
+      userId: uid,
+    );
+    conversation.chatUser = otherUser.appUser;
+    Get.to(
+      () => ChatScreen(conversationUser: conversation, user: otherUser),
+      preventDuplicates: false,
+    );
   }
 }

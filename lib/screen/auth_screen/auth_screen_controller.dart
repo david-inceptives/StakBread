@@ -308,11 +308,9 @@ class AuthScreenController extends BaseController {
     DebounceAction.shared.call(() async {
       SessionManager.instance.setLogin(true);
       SessionManager.instance.setUser(data);
+      // Interest screen only once right after signup (`new_register` from API), not on every login.
       final isNewRegister = data?.newRegister == true;
-      final userId = data?.id?.toInt();
-      final hasNotCompletedInterest =
-          userId != null && !SessionManager.instance.hasCompletedInterestScreen(userId);
-      if (isNewRegister || hasNotCompletedInterest) {
+      if (isNewRegister) {
         Get.offAll(() => InterestScreen(myUser: data));
       } else {
         Get.offAll(() => DashboardScreen(myUser: data));

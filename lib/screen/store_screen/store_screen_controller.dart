@@ -3,6 +3,7 @@ import 'package:stakBread/common/controller/base_controller.dart';
 import 'package:stakBread/common/manager/logger.dart';
 import 'package:stakBread/common/service/api/store_service.dart';
 import 'package:stakBread/languages/languages_keys.dart';
+import 'package:stakBread/model/store/shop_banner_model.dart';
 import 'package:stakBread/model/store/store_product_category.dart';
 import 'package:stakBread/model/store/store_product_model.dart';
 
@@ -22,6 +23,9 @@ class StoreScreenController extends BaseController {
 
   final RxList<StoreProductCategory> productCategories = <StoreProductCategory>[].obs;
   final RxBool isLoadingCategories = false.obs;
+
+  final RxList<ShopBanner> shopBanners = <ShopBanner>[].obs;
+  final RxBool isLoadingShopBanners = false.obs;
 
   /// Up to [storeHomeSectionMaxItems] items for the store home section.
   List<StoreProduct> get productsForYouPreview {
@@ -43,6 +47,7 @@ class StoreScreenController extends BaseController {
     loadProductsForYou();
     loadTopSellingProducts();
     loadProductCategories();
+    loadShopBanners();
   }
 
   /// [silent]: no loading indicators, no error snackbars — lists update in place (e.g. pull-to-refresh).
@@ -92,9 +97,29 @@ class StoreScreenController extends BaseController {
       loadProductsForYou(silent: silent),
       loadTopSellingProducts(silent: silent),
       loadProductCategories(silent: silent),
+      loadShopBanners(silent: silent),
     ]);
     if (silent && results.every((e) => e)) {
       showSmallCenterToast(LKey.refreshed.tr, second: 1);
+    }
+  }
+
+  /// [silent]: no loading indicators / snackbars (e.g. pull-to-refresh).
+  Future<bool> loadShopBanners({bool silent = false}) async {
+    if (!silent) isLoadingShopBanners.value = true;
+    try {
+      final list = await StoreService.instance.fetchShopBanners();
+      shopBanners.assignAll(list);
+      return true;
+    } catch (e) {
+      if (silent) {
+        Loggers.error('loadShopBanners (silent): $e');
+      } else {
+        showSnackBar(e.toString().replaceFirst('Exception: ', ''));
+      }
+      return false;
+    } finally {
+      if (!silent) isLoadingShopBanners.value = false;
     }
   }
 

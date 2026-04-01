@@ -85,12 +85,18 @@ class SplashScreenController extends BaseController {
       }
 
       if (SessionManager.instance.isLogin()) {
-        UserService.instance.fetchUserDetails(userId: SessionManager.instance.getUserID()).then((value) {
+        UserService.instance
+            .fetchUserDetails(userId: SessionManager.instance.getUserID())
+            .then((value) {
           if (value != null) {
             Get.off(() => DashboardScreen(myUser: value));
           } else {
             Get.off(() => const LoginScreen());
           }
+        }).catchError((Object e, StackTrace st) {
+          Loggers.error('Splash fetchUserDetails: $e\n$st');
+          SessionManager.instance.clearSomeKey();
+          Get.off(() => const LoginScreen());
         });
       } else {
         bool isLanguageSelect = SessionManager.instance.getBool(SessionKeys.isLanguageScreenSelect);

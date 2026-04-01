@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:image_picker/image_picker.dart';
 import 'package:stakBread/common/controller/base_controller.dart';
 import 'package:stakBread/common/controller/firebase_firestore_controller.dart';
+import 'package:stakBread/common/manager/logger.dart';
 import 'package:stakBread/common/manager/session_manager.dart';
 import 'package:stakBread/common/service/api/api_service.dart';
 import 'package:stakBread/common/service/utils/params.dart';
@@ -108,16 +109,38 @@ class UserService {
   }
 
   Future<User?> fetchUserDetails({int? userId, Function()? onError}) async {
-    UserModel userModel = await ApiService.instance.call(
+    final resolvedId = userId ?? SessionManager.instance.getUserID();
+    final isMe =
+        userId == null || userId == SessionManager.instance.getUserID();
+
+    try {
+      final userModel = await ApiService.instance.call(
         url: WebService.user.fetchUserDetails,
-        param: {Params.userId: userId ?? SessionManager.instance.getUserID()},
+        param: {Params.userId: resolvedId},
         fromJson: UserModel.fromJson,
-        onError: onError);
-    if (userModel.status == true &&
-        userId == SessionManager.instance.getUserID()) {
-      SessionManager.instance.setUser(userModel.data);
+        onError: onError,
+      );
+
+      if (userModel.status == true && userModel.data != null) {
+        if (isMe) {
+          SessionManager.instance.setUser(userModel.data);
+        }
+        return userModel.data;
+      }
+
+      if (isMe) {
+        SessionManager.instance.clearSomeKey();
+      }
+      onError?.call();
+      return null;
+    } catch (e, st) {
+      Loggers.error('fetchUserDetails failed: $e\n$st');
+      if (isMe) {
+        SessionManager.instance.clearSomeKey();
+      }
+      onError?.call();
+      return null;
     }
-    return userModel.data;
   }
 
   /// POST [WebService.user.fetchTrendingCreators] — trending creators for Explore.

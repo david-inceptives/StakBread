@@ -8,6 +8,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:stakBread/common/controller/base_controller.dart';
 import 'package:stakBread/common/service/api/store_service.dart';
+import 'package:stakBread/screen/dashboard_screen/dashboard_screen_controller.dart';
 import 'package:stakBread/common/widget/custom_app_bar.dart';
 import 'package:stakBread/languages/languages_keys.dart';
 import 'package:stakBread/model/store/product_attribute_model.dart';
@@ -31,6 +32,8 @@ class _UploadProductScreenState extends State<UploadProductScreen> {
   final _descController = TextEditingController();
   final _priceController = TextEditingController();
   final _stockController = TextEditingController();
+  final _deliveryDaysController = TextEditingController(text: '1');
+  final _shippingFeeController = TextEditingController(text: '0');
   final _picker = ImagePicker();
 
   final List<XFile> _images = [];
@@ -60,6 +63,9 @@ class _UploadProductScreenState extends State<UploadProductScreen> {
       _descController.text = p.detailDescription ?? p.description;
       _priceController.text = (p.price ?? '').replaceAll('\$', '').trim();
       _stockController.text = p.stock?.toString() ?? '';
+      _deliveryDaysController.text =
+          p.deliveryDays?.toString() ?? '1';
+      _shippingFeeController.text = p.shippingFee?.toString() ?? '0';
       _selectedCategoryId = p.categoryId;
       _isFeatured = p.isFeatured;
       _existingImageUrls
@@ -81,6 +87,8 @@ class _UploadProductScreenState extends State<UploadProductScreen> {
     _descController.dispose();
     _priceController.dispose();
     _stockController.dispose();
+    _deliveryDaysController.dispose();
+    _shippingFeeController.dispose();
     super.dispose();
   }
 
@@ -186,6 +194,16 @@ class _UploadProductScreenState extends State<UploadProductScreen> {
       BaseController.share.showSnackBar(LKey.fieldRequired.tr);
       return;
     }
+    final deliveryDays = int.tryParse(_deliveryDaysController.text.trim());
+    final shippingFee = int.tryParse(_shippingFeeController.text.trim());
+    if (deliveryDays == null || deliveryDays < 0) {
+      BaseController.share.showSnackBar(LKey.fieldRequired.tr);
+      return;
+    }
+    if (shippingFee == null || shippingFee < 0) {
+      BaseController.share.showSnackBar(LKey.fieldRequired.tr);
+      return;
+    }
 
     final attributeValueIds =
         _selectedAttributeValueIds.map((id) => '$id').toList();
@@ -200,6 +218,8 @@ class _UploadProductScreenState extends State<UploadProductScreen> {
               categoryId: _selectedCategoryId!,
               price: price.toStringAsFixed(2),
               stock: '$stock',
+              deliveryDays: '$deliveryDays',
+              shippingFee: '$shippingFee',
               description: _descController.text.trim(),
               isFeatured: _isFeatured,
               images: List<XFile>.from(_images),
@@ -210,6 +230,8 @@ class _UploadProductScreenState extends State<UploadProductScreen> {
               categoryId: _selectedCategoryId!,
               price: price.toStringAsFixed(2),
               stock: '$stock',
+              deliveryDays: '$deliveryDays',
+              shippingFee: '$shippingFee',
               description: _descController.text.trim(),
               isFeatured: _isFeatured,
               images: List<XFile>.from(_images),
@@ -223,7 +245,13 @@ class _UploadProductScreenState extends State<UploadProductScreen> {
               ? model.message
               : LKey.uploadProductSuccess.tr,
         );
-        Get.back();
+        if (!mounted) return;
+        if (Get.isRegistered<DashboardScreenController>()) {
+          Navigator.of(context).popUntil((route) => route.isFirst);
+          Get.find<DashboardScreenController>().onChanged(0);
+        } else {
+          Get.back();
+        }
       } else {
         BaseController.share.showSnackBar(model.message ?? LKey.somethingWentWrong.tr);
       }
@@ -260,6 +288,8 @@ class _UploadProductScreenState extends State<UploadProductScreen> {
                   _descController.clear();
                   _priceController.clear();
                   _stockController.clear();
+                  _deliveryDaysController.text = '1';
+                  _shippingFeeController.text = '0';
                   _selectedCategoryId = null;
                   _isFeatured = false;
                 });
@@ -457,6 +487,48 @@ class _UploadProductScreenState extends State<UploadProductScreen> {
                             }
                             final n = int.tryParse(v.trim());
                             if (n == null || n < 1) {
+                              return LKey.fieldRequired.tr;
+                            }
+                            return null;
+                          },
+                        ),
+                        SizedBox(height: 1.2.h),
+                        TextFormField(
+                          controller: _deliveryDaysController,
+                          keyboardType: TextInputType.number,
+                          inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                          style: TextStyleCustom.outFitRegular400(
+                            color: ColorRes.textDarkGrey,
+                            fontSize: 15.sp,
+                          ),
+                          decoration: _fieldDecoration(LKey.productDeliveryDays.tr),
+                          validator: (v) {
+                            if (v == null || v.trim().isEmpty) {
+                              return LKey.fieldRequired.tr;
+                            }
+                            final n = int.tryParse(v.trim());
+                            if (n == null || n < 0) {
+                              return LKey.fieldRequired.tr;
+                            }
+                            return null;
+                          },
+                        ),
+                        SizedBox(height: 1.2.h),
+                        TextFormField(
+                          controller: _shippingFeeController,
+                          keyboardType: TextInputType.number,
+                          inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                          style: TextStyleCustom.outFitRegular400(
+                            color: ColorRes.textDarkGrey,
+                            fontSize: 15.sp,
+                          ),
+                          decoration: _fieldDecoration(LKey.shippingFee.tr),
+                          validator: (v) {
+                            if (v == null || v.trim().isEmpty) {
+                              return LKey.fieldRequired.tr;
+                            }
+                            final n = int.tryParse(v.trim());
+                            if (n == null || n < 0) {
                               return LKey.fieldRequired.tr;
                             }
                             return null;

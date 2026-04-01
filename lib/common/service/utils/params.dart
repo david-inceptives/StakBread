@@ -97,14 +97,29 @@ class Params {
   static const String resumePdfFile = 'pdf_file';
   static const String resumeVideoFile = 'video_file';
 
+  /// POST [updateProduct], [deleteProduct], etc.
+  static const String productId = 'product_id';
+
   /// POST [addProduct] multipart — scalar fields + [addProductImages] + repeated [addProductAttributeValueIds].
   static const String addProductName = 'name';
   static const String addProductPrice = 'price';
   static const String addProductStock = 'stock';
+  static const String addProductDeliveryDays = 'delivery_days';
+  static const String addProductShippingFee = 'shipping_fee';
   static const String addProductIsFeatured = 'is_featured';
   static const String addProductImages = 'images[]';
   static const String addProductAttributeValueIds = 'attribute_value_ids[]';
 
   /// POST [addToCart] — repeated ids (selected attribute values).
   static const String cartAttributeValues = 'attribute_values[]';
+
+  /// POST [order/cancelOrder] — form-data.
+  static const String orderId = 'order_id';
+  static const String cancelReason = 'cancel_reason';
+
+  /// POST [order/acceptOrder].
+  static const String rating = 'rating';
+
+  /// POST [addReview] — review body text.
+  static const String review = 'review';
 }

@@ -73,10 +73,8 @@ class InterestScreenController extends BaseController {
   }
 
   void _markInterestCompletedAndGoToDashboard() {
-    final userId = myUser?.id?.toInt();
-    if (userId != null) {
-      SessionManager.instance.setInterestScreenCompleted(userId);
-    }
+    // Session already has user after login; avoids missing flag when [myUser.id] is absent.
+    SessionManager.instance.setInterestScreenCompleted();
     _goToDashboard();
   }
 

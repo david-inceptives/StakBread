@@ -318,6 +318,7 @@ class ApiService {
 
     header[Params.authToken] = SessionManager.instance.getAuthToken();
     final headerCopy = Map<String, String>.from(header);
+    headerCopy[Params.accept] = 'application/json';
 
     var uri = Uri.parse(url);
     final pinnedHost = uri.host;

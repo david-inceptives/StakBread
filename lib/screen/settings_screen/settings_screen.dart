@@ -107,7 +107,7 @@ class SettingsScreen extends StatelessWidget {
                       title: LKey.productsPurchased.tr,
                       onTap: () => Get.to(() => const ProductPurchasedScreen()),
                     ),
-                    _SectionHeader(title: LKey.paymentAndBilling.tr),
+                    /*__SectionHeader(title: LKey.paymentAndBilling.tr),
                     _SettingTile(
                       title: LKey.savedCardsPaymentMethods.tr,
                       onTap: () {},
@@ -116,7 +116,7 @@ class SettingsScreen extends StatelessWidget {
                       title: LKey.transactionHistory.tr,
                       onTap: () => Get.to(() => const WithdrawalsScreen()),
                     ),
-                    /*_SettingTile(
+                    SettingTile(
                       title: LKey.subscriptionIfApplicable.tr,
                       onTap: () => Get.to<bool>(
                             () => SubscriptionScreen(onUpdateUser: onUpdateUser),

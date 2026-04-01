@@ -130,7 +130,7 @@ class _CartScreenState extends State<CartScreen> {
   Future<void> _refreshCartFromServer() async {
     Get.put(CartController());
     try {
-      final list = await StoreService.instance.fetchCartItems();
+      final list = await StoreService.instance.fetchCartItemsEnriched();
       Get.find<CartController>().replaceAllFromServer(list);
     } catch (_) {}
   }
@@ -250,7 +250,7 @@ class _CartScreenState extends State<CartScreen> {
                       const SizedBox(height: 12),
                       _buildCartItems(cart),
                       const SizedBox(height: 16),
-                      _buildDelivery(),
+                      _buildDelivery(cart),
                       _buildDivider(),
                       _buildAddress(),
                       _buildDivider(),
@@ -474,34 +474,30 @@ class _CartScreenState extends State<CartScreen> {
     );
   }
 
-  Widget _buildDelivery() {
+  Widget _buildDelivery(CartController cart) {
+    final daysSum = cart.totalDeliveryDaysSum;
+    final shipping = cart.totalShippingFee;
+    final daysLabel = daysSum > 0
+        ? LKey.cartTotalDeliveryDays.trParams({'days': '$daysSum'})
+        : LKey.regularDelivery.tr;
     return Container(
       color: Colors.transparent,
       padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 16),
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Row(
-                  children: [
-                    Expanded(
-                      child: Text(
-                        LKey.delivery.tr,
-                        style: TextStyleCustom.outFitSemiBold600(fontSize: 16, color: ColorRes.textDarkGrey),
-                      ),
-                    ),
-
-                  ],
-                ),
                 Text(
-                  LKey.regularDelivery.tr,
+                  LKey.delivery.tr,
+                  style: TextStyleCustom.outFitSemiBold600(fontSize: 16, color: ColorRes.textDarkGrey),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  daysLabel,
                   style: TextStyleCustom.outFitRegular400(fontSize: 14, color: ColorRes.textDarkGrey),
-                ),
-                Text(
-                  LKey.deliveryDays.tr,
-                  style: TextStyleCustom.outFitRegular400(fontSize: 13, color: ColorRes.textLightGrey),
                 ),
               ],
             ),
@@ -509,20 +505,13 @@ class _CartScreenState extends State<CartScreen> {
           Column(
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
-              TextButton(
-                onPressed: () {},
-                style: TextButton.styleFrom(
-                  padding: const EdgeInsets.only(top: 0),
-                  minimumSize: Size.zero,
-                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                ),
-                child: Text(
-                  LKey.edit.tr,
-                  style: TextStyleCustom.outFitRegular400(fontSize: 14, color: ColorRes.textLightGrey),
-                ),
-              ),
               Text(
-                '\$10',
+                LKey.shippingFee.tr,
+                style: TextStyleCustom.outFitRegular400(fontSize: 13, color: ColorRes.textLightGrey),
+              ),
+              const SizedBox(height: 4),
+              Text(
+                '\$${shipping.toStringAsFixed(0)}',
                 style: TextStyleCustom.outFitSemiBold600(fontSize: 15, color: ColorRes.textDarkGrey),
               ),
             ],
@@ -674,12 +663,41 @@ class _CartScreenState extends State<CartScreen> {
 
   Widget _buildTotal(CartController cart) {
     final discount = cart.couponDiscountAmount.value;
+    final shipping = cart.totalShippingFee;
     final totalStr = '\$${cart.total.toStringAsFixed(0)}';
     return Container(
       color: Colors.transparent,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                LKey.subtotal.tr,
+                style: TextStyleCustom.outFitRegular400(fontSize: 14, color: ColorRes.textDarkGrey),
+              ),
+              Text(
+                '\$${cart.subtotal.toStringAsFixed(0)}',
+                style: TextStyleCustom.outFitSemiBold600(fontSize: 14, color: ColorRes.textDarkGrey),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                LKey.shippingFee.tr,
+                style: TextStyleCustom.outFitRegular400(fontSize: 14, color: ColorRes.textDarkGrey),
+              ),
+              Text(
+                '\$${shipping.toStringAsFixed(0)}',
+                style: TextStyleCustom.outFitSemiBold600(fontSize: 14, color: ColorRes.textDarkGrey),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
           if (discount > 0) ...[
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,

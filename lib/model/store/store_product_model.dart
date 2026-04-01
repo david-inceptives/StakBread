@@ -174,6 +174,8 @@ class StoreProduct {
   final int? variantId;
 
   final int? stock;
+  final int? deliveryDays;
+  final int? shippingFee;
   final bool isFeatured;
   final String? categoryId;
   final String? categoryTitle;
@@ -196,6 +198,8 @@ class StoreProduct {
     this.isNetworkImage = false,
     this.variantId,
     this.stock,
+    this.deliveryDays,
+    this.shippingFee,
     this.isFeatured = false,
     this.categoryId,
     this.categoryTitle,
@@ -203,6 +207,32 @@ class StoreProduct {
     this.attributeValues = const [],
     this.sellerUserId,
   });
+
+  /// Merges [deliveryDays], [shippingFee], [stock] from product detail API into cart-line product.
+  StoreProduct mergeFromDetailFetch(StoreProduct detail) {
+    return StoreProduct(
+      id: id,
+      title: title,
+      description: description,
+      imageUrl: imageUrl,
+      imagePath: imagePath,
+      rating: rating,
+      price: price,
+      detailDescription: detailDescription,
+      thumbnailPaths: thumbnailPaths,
+      isNetworkImage: isNetworkImage,
+      variantId: variantId,
+      stock: detail.stock ?? stock,
+      deliveryDays: detail.deliveryDays ?? deliveryDays,
+      shippingFee: detail.shippingFee ?? shippingFee,
+      isFeatured: isFeatured,
+      categoryId: categoryId,
+      categoryTitle: categoryTitle,
+      reviews: reviews,
+      attributeValues: attributeValues,
+      sellerUserId: sellerUserId,
+    );
+  }
 
   /// Groups [attributeValues] by attribute name for UI chips.
   Map<String, List<StoreProductAttributeValue>> get attributeValuesByGroup {
@@ -252,6 +282,8 @@ class StoreProduct {
       isNetworkImage: base.isNetworkImage,
       variantId: variantId,
       stock: base.stock,
+      deliveryDays: base.deliveryDays,
+      shippingFee: base.shippingFee,
       isFeatured: base.isFeatured,
       categoryId: base.categoryId,
       categoryTitle: base.categoryTitle,
@@ -301,6 +333,12 @@ class StoreProduct {
     final stockVal = json['stock'];
     final stock = stockVal == null ? null : int.tryParse(stockVal.toString());
 
+    final ddVal = json['delivery_days'];
+    final deliveryDays =
+        ddVal == null ? null : int.tryParse(ddVal.toString());
+    final sfVal = json['shipping_fee'];
+    final shippingFee = sfVal == null ? null : int.tryParse(sfVal.toString());
+
     final featured = json['is_featured'];
     final isFeatured = featured == 1 || featured == true;
 
@@ -325,6 +363,8 @@ class StoreProduct {
       isNetworkImage: primary != null,
       variantId: variantId,
       stock: stock,
+      deliveryDays: deliveryDays,
+      shippingFee: shippingFee,
       isFeatured: isFeatured,
       categoryId: categoryIdStr,
       categoryTitle: categoryTitle,

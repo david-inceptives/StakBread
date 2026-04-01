@@ -5,8 +5,10 @@ import 'package:stakBread/common/service/api/api_service.dart';
 import 'package:stakBread/common/service/utils/params.dart';
 import 'package:stakBread/common/service/utils/web_service.dart';
 import 'package:stakBread/model/general/status_model.dart';
+import 'package:stakBread/model/order/sold_order_model.dart';
 import 'package:stakBread/model/store/product_attribute_model.dart';
 import 'package:stakBread/model/store/product_review_model.dart';
+import 'package:stakBread/model/store/shop_banner_model.dart';
 import 'package:stakBread/model/store/store_product_category.dart';
 import 'package:stakBread/model/store/store_product_model.dart';
 import 'package:stakBread/screen/store_screen/cart_controller.dart';
@@ -132,6 +134,27 @@ class StoreService {
       if (item is Map<String, dynamic>) {
         final c = StoreProductCategory.fromJson(item);
         if (c.id.isNotEmpty) out.add(c);
+      }
+    }
+    return out;
+  }
+
+  /// GET `shopBanners` — `data[]` with `image`, `title`, `desc`, optional `link`.
+  Future<List<ShopBanner>> fetchShopBanners() async {
+    final decoded = await ApiService.instance.callGetAuthenticated<Map<String, dynamic>>(
+      url: WebService.store.shopBanners,
+      fromJson: (json) => json,
+    );
+    if (decoded['status'] != true) {
+      throw Exception(decoded['message']?.toString() ?? 'Failed to load banners');
+    }
+    final raw = decoded['data'];
+    if (raw is! List) return [];
+    final out = <ShopBanner>[];
+    for (final item in raw) {
+      if (item is Map<String, dynamic>) {
+        final b = ShopBanner.fromJson(item);
+        if (b.active) out.add(b);
       }
     }
     return out;
@@ -280,12 +303,14 @@ class StoreService {
     return list;
   }
 
-  /// POST `addProduct` — multipart: name, category_id, price, stock, description, is_featured (0/1), `images[]`, optional repeated `attribute_value_ids[]`.
+  /// POST `addProduct` — multipart: name, category_id, price, stock, delivery_days, shipping_fee, description, is_featured (0/1), `images[]`, optional repeated `attribute_value_ids[]`.
   Future<StatusModel> addProduct({
     required String name,
     required String categoryId,
     required String price,
     required String stock,
+    required String deliveryDays,
+    required String shippingFee,
     required String description,
     bool isFeatured = false,
     List<XFile> images = const <XFile>[],
@@ -306,6 +331,8 @@ class StoreService {
         Params.categoryId: categoryId,
         Params.addProductPrice: price,
         Params.addProductStock: stock,
+        Params.addProductDeliveryDays: deliveryDays,
+        Params.addProductShippingFee: shippingFee,
         Params.description: description,
         Params.addProductIsFeatured: isFeatured ? 1 : 0,
       },
@@ -317,18 +344,21 @@ class StoreService {
     );
   }
 
-  /// POST `updateProduct` — multipart: product_id + name, category_id, price, stock, description, is_featured, `images[]`, optional repeated `attribute_value_ids[]`.
+  /// POST `updateProduct` — multipart: product_id + name, category_id, price, stock, delivery_days, shipping_fee, description, is_featured, `images[]`, optional repeated `attribute_value_ids[]`.
   Future<StatusModel> updateProduct({
     required String productId,
     required String name,
     required String categoryId,
     required String price,
     required String stock,
+    required String deliveryDays,
+    required String shippingFee,
     required String description,
     bool isFeatured = false,
     List<XFile> images = const <XFile>[],
     List<String> attributeValueIds = const [],
   }) async {
+    final pid = productId.trim();
     final stringParts = <MapEntry<String, String>>[];
     for (final id in attributeValueIds) {
       final t = id.trim();
@@ -337,14 +367,17 @@ class StoreService {
       }
     }
 
+    // Multipart form-data: `product_id` first (same as Postman), then addProduct fields.
     return ApiService.instance.multiPartCallApi<StatusModel>(
       url: WebService.store.updateProduct,
-      param: {
-        'product_id': productId,
+      param: <String, dynamic>{
+        Params.productId: pid,
         Params.addProductName: name,
         Params.categoryId: categoryId,
         Params.addProductPrice: price,
         Params.addProductStock: stock,
+        Params.addProductDeliveryDays: deliveryDays,
+        Params.addProductShippingFee: shippingFee,
         Params.description: description,
         Params.addProductIsFeatured: isFeatured ? 1 : 0,
       },
@@ -354,11 +387,14 @@ class StoreService {
     );
   }
 
-  /// POST `deleteProduct` — form-data: product_id
+  /// POST `deleteProduct` — multipart form-data: `product_id` (matches API client form-data).
   Future<StatusModel> deleteProduct({required String productId}) async {
-    return ApiService.instance.call<StatusModel>(
+    return ApiService.instance.multiPartCallApi<StatusModel>(
       url: WebService.store.deleteProduct,
-      param: {'product_id': productId},
+      param: <String, dynamic>{
+        Params.productId: productId.trim(),
+      },
+      filesMap: const {},
       fromJson: StatusModel.fromJson,
     );
   }
@@ -396,7 +432,7 @@ class StoreService {
     final decoded = await ApiService.instance.multiPartCallApi<Map<String, dynamic>>(
       url: WebService.store.addToCart,
       param: {
-        'product_id': productId,
+        Params.productId: productId,
         'quantity': quantity,
       },
       multipartStringParts: stringParts.isEmpty ? null : stringParts,
@@ -489,6 +525,37 @@ class StoreService {
     return out;
   }
 
+  /// [fetchCartItems] then GET product detail per unique id to fill [StoreProduct.deliveryDays] / [shippingFee].
+  Future<List<CartItem>> fetchCartItemsEnriched() async {
+    final items = await fetchCartItems();
+    if (items.isEmpty) return items;
+    final ids = <String>{};
+    for (final e in items) {
+      if (e.product.id.isNotEmpty) ids.add(e.product.id);
+    }
+    final detailById = <String, StoreProduct>{};
+    await Future.wait(ids.map((id) async {
+      try {
+        final d = await fetchProductDetail(id);
+        if (d != null) detailById[id] = d;
+      } catch (_) {}
+    }));
+    if (detailById.isEmpty) return items;
+    return items
+        .map((item) {
+          final d = detailById[item.product.id];
+          if (d == null) return item;
+          return CartItem(
+            product: item.product.mergeFromDetailFetch(d),
+            quantity: item.quantity,
+            variantText: item.variantText,
+            serverCartId: item.serverCartId,
+            selectedAttributeValueIds: item.selectedAttributeValueIds,
+          );
+        })
+        .toList();
+  }
+
   /// POST `form-data`: `code`.
   Future<CouponApplyResult> applyCoupon({required String code}) async {
     final trimmed = code.trim();
@@ -553,6 +620,152 @@ class StoreService {
       throw Exception(
           decoded['message']?.toString() ?? 'Payment confirmation failed');
     }
+  }
+
+  /// POST `order/fetchMySoldOrders` — multipart form-data (same as Postman), seller scope from token.
+  Future<List<SoldOrder>> fetchMySoldOrders() async {
+    final decoded =
+        await ApiService.instance.multiPartCallApi<Map<String, dynamic>>(
+      url: WebService.order.fetchMySoldOrders,
+      param: <String, dynamic>{},
+      filesMap: const {},
+      fromJson: (json) => json,
+    );
+    if (decoded['status'] != true) {
+      throw Exception(
+          decoded['message']?.toString() ?? 'Failed to load sold orders');
+    }
+    final data = decoded['data'];
+    if (data is! List) return [];
+    final out = <SoldOrder>[];
+    for (final e in data) {
+      if (e is Map<String, dynamic>) {
+        out.add(SoldOrder.fromJson(e));
+      }
+    }
+    return out;
+  }
+
+  /// POST `order/fetchMyPurchasedOrders` — buyer; `data` list (same shape as sold orders).
+  Future<List<SoldOrder>> fetchMyPurchasedOrders() async {
+    final decoded =
+        await ApiService.instance.multiPartCallApi<Map<String, dynamic>>(
+      url: WebService.order.fetchMyPurchasedOrders,
+      param: <String, dynamic>{},
+      filesMap: const {},
+      fromJson: (json) => json,
+    );
+    if (decoded['status'] != true) {
+      throw Exception(
+          decoded['message']?.toString() ?? 'Failed to load purchased orders');
+    }
+    final data = decoded['data'];
+    if (data is! List) return [];
+    final out = <SoldOrder>[];
+    for (final e in data) {
+      if (e is Map<String, dynamic>) {
+        out.add(SoldOrder.fromJson(e));
+      }
+    }
+    return out;
+  }
+
+  /// POST `order/cancelOrder` — `order_id`, `cancel_reason` (typically pending only).
+  Future<StatusModel> cancelOrder({
+    required String orderId,
+    required String cancelReason,
+  }) async {
+    return ApiService.instance.multiPartCallApi<StatusModel>(
+      url: WebService.order.cancelOrder,
+      param: <String, dynamic>{
+        Params.orderId: orderId.trim(),
+        Params.cancelReason: cancelReason.trim(),
+      },
+      filesMap: const {},
+      fromJson: StatusModel.fromJson,
+    );
+  }
+
+  /// POST `order/acceptOrder` — seller: `order_id`, `product_id`, `rating` (1–5).
+  Future<StatusModel> acceptOrder({
+    required String orderId,
+    required String productId,
+    int rating = 5,
+  }) async {
+    final r = rating.clamp(1, 5);
+    return ApiService.instance.multiPartCallApi<StatusModel>(
+      url: WebService.order.acceptOrder,
+      param: <String, dynamic>{
+        Params.orderId: orderId.trim(),
+        Params.productId: productId.trim(),
+        Params.rating: r,
+      },
+      filesMap: const {},
+      fromJson: StatusModel.fromJson,
+    );
+  }
+
+  /// POST `order/rejectOrder` — seller: `order_id`, `cancel_reason`.
+  Future<StatusModel> rejectOrderSeller({
+    required String orderId,
+    required String cancelReason,
+  }) async {
+    return ApiService.instance.multiPartCallApi<StatusModel>(
+      url: WebService.order.rejectOrder,
+      param: <String, dynamic>{
+        Params.orderId: orderId.trim(),
+        Params.cancelReason: cancelReason.trim(),
+      },
+      filesMap: const {},
+      fromJson: StatusModel.fromJson,
+    );
+  }
+
+  /// POST `order/completeOrder` — seller: `order_id` only.
+  Future<StatusModel> completeSellerOrder({required String orderId}) async {
+    return ApiService.instance.multiPartCallApi<StatusModel>(
+      url: WebService.order.completeOrder,
+      param: <String, dynamic>{
+        Params.orderId: orderId.trim(),
+      },
+      filesMap: const {},
+      fromJson: StatusModel.fromJson,
+    );
+  }
+
+  /// POST `order/reportProduct` — `product_id`, `reason`.
+  Future<StatusModel> reportOrderProduct({
+    required String productId,
+    required String reason,
+  }) async {
+    return ApiService.instance.multiPartCallApi<StatusModel>(
+      url: WebService.order.reportProduct,
+      param: <String, dynamic>{
+        Params.productId: productId.trim(),
+        Params.reason: reason.trim(),
+      },
+      filesMap: const {},
+      fromJson: StatusModel.fromJson,
+    );
+  }
+
+  /// POST `addReview` — `product_id`, `rating`, `review`.
+  Future<StatusModel> addProductReview({
+    required String productId,
+    required int rating,
+    required String review,
+  }) async {
+    final r = rating.clamp(1, 5);
+    return ApiService.instance.multiPartCallApi<StatusModel>(
+      url: WebService.store.addReview,
+      param: <String, dynamic>{
+        Params.productId: productId.trim(),
+        Params.rating: r,
+        Params.review: review.trim(),
+      },
+      filesMap: const {},
+      fromJson: StatusModel.fromJson,
+    );
   }
 
   static String? _parsePaymentClientSecret(Map<String, dynamic> decoded) {
