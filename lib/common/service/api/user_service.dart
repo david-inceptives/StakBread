@@ -191,6 +191,9 @@ class UserService {
       String? regionName,
       String? timezone,
       int? isVerify}) async {
+    if (!SessionManager.instance.isLogin()) {
+      return SessionManager.instance.getUser();
+    }
     UserModel userModel = await ApiService.instance.multiPartCallApi(
         url: WebService.user.updateUserDetails,
         filesMap: {

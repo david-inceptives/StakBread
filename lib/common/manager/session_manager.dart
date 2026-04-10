@@ -143,7 +143,10 @@ class SessionManager {
 
   void setLang(String langCode) {
     storage.write(SessionKeys.lang, langCode);
-    UserService.instance.updateUserDetails(appLanguage: langCode);
+    // Avoid updateUserDetails before login — fresh install hits 401 and routes to SessionExpired.
+    if (isLogin()) {
+      UserService.instance.updateUserDetails(appLanguage: langCode);
+    }
   }
 
   String getLang() {
